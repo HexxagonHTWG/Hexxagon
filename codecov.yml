@@ -1,0 +1,12 @@
+ignore:
+  - "**/gameWorksheet.sc"
+  - "**/GUI.scala"
+  - "**/Main.scala"
+  - "**/resources/"
+  - "**/HexModule.scala"
+
+coverage:
+  status:
+    patch:
+      default:
+        target: 75%
