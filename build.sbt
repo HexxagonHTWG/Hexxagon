@@ -8,11 +8,11 @@ lazy val root = project
     scalaVersion := scala3Version,
 
     libraryDependencies ++= Seq("com.novocode" % "junit-interface" % "0.11" % "test",
-      "org.scalactic" %% "scalactic" % "3.2.10",
-      "org.scalatest" %% "scalatest" % "3.2.10" % "test",
+      "org.scalactic" %% "scalactic" % "3.2.15",
+      "org.scalatest" %% "scalatest" % "3.2.15" % "test",
       "org.scalafx" %% "scalafx" % "16.0.0-R24",
-      "org.scala-lang.modules" %% "scala-xml" % "2.0.1", // XML
-      "com.lihaoyi" %% "upickle" % "1.4.4"), // JSON
+      "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
+      "com.lihaoyi" %% "upickle" % "3.0.0"), // JSON
 
     libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13), // JSON
 
@@ -38,7 +38,7 @@ lazy val root = project
     jacocoExcludes := Seq(
       "*aview.*",
       "*HexModule.*",
-      "*Main.*",
+      "*Main.*"
     ),
 
     jacocoCoverallsServiceName := "github-actions",
@@ -47,4 +47,4 @@ lazy val root = project
     jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
   )
   .enablePlugins(JacocoCoverallsPlugin)
-val scala3Version = "3.0.2"
+val scala3Version = "3.2.2"
