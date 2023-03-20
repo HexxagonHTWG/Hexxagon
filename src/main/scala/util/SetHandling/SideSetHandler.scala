@@ -1,31 +1,21 @@
 package util
 package SetHandling
 
-import scala.util.{Try,Success,Failure}
+import scala.util.{Failure, Success, Try}
 
-class SideSetHandler() extends TopBotSetHandler {
-    var MaxX = 0
-    override def createSetandHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]) = {
-        setBound(x, y)
-        var tmpmatrix = startmatrix
-        setMaxY(startmatrix)
-        setMaxX(startmatrix)
-        tolookat = List(Set((x, y - 1), (x, y + 1), (x + 1, ibound), (x + 1, ibound + 1)),
-                        Set((x, y - 1), (x, y + 1), (MaxX - 1, y - 1), (MaxX - 1, y)))
+class SideSetHandler() extends TopBotSetHandler:
+  var MaxX = 0
 
-        val map = tolookat.map(x => Try(setforeach(x, tmpmatrix, content))).collect{ case Success(x) => x }
-        if map.isEmpty then new CornerSetHandler().createSetandHandle(content, x, y, startmatrix)
-        else map(0)
+  override def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Vector[Vector[Char]] =
+    setBound(x, y)
+    val tmpMatrix = startmatrix
+    setMaxY(startmatrix)
+    setMaxX(startmatrix)
+    toLookAt = List(Set((x, y - 1), (x, y + 1), (x + 1, iBound), (x + 1, iBound + 1)),
+      Set((x, y - 1), (x, y + 1), (MaxX - 1, y - 1), (MaxX - 1, y)))
 
-        //Try(setforeach(tolookat(0), tmpmatrix, content)) match {
-        //    case Success(o) => o
-        //    case Failure(_) => {
-        //        Try(setforeach(tolookat(1), tmpmatrix, content)) match {
-        //            case Success(o) => o 
-        //            case Failure(_) => new CornerSetHandler().createSetandHandle(content, x, y, startmatrix)
-        //        }
-        //    }
-        //}
-    }
-    def setMaxX(ma: Vector[Vector[Char]]) = MaxX = ma(0).size - 1
-}
+    val map = toLookAt.map(x => Try(setForEach(x, tmpMatrix, content))).collect { case Success(x) => x }
+    if map.isEmpty then CornerSetHandler().createSetAndHandle(content, x, y, startmatrix)
+    else map.head
+
+  def setMaxX(ma: Vector[Vector[Char]]): Unit = MaxX = ma(0).size - 1

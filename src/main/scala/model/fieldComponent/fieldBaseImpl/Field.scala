@@ -4,40 +4,38 @@ import model.fieldComponent.{FieldInterface, MatrixInterface}
 
 case class Field()(using val matrix: MatrixInterface[Char]) extends FieldInterface[Char]:
 
-    val eol = "\n"
-    
-    def edgetop = " ___ " + "    ___ " * (matrix.col/2) + eol
-    def edgebot = " " + "   \\___/" * (matrix.col/2) + eol
+  private val EOL = "\n"
 
-    override def fillAll(c: Char): FieldInterface[Char] = copy()(using matrix.fillAll(c))
+  override def fillAll(c: Char): FieldInterface[Char] = copy()(using matrix.fillAll(c))
 
-    override def place(c: Char, x: Int, y: Int): FieldInterface[Char] = copy()(using matrix.fill(c, x, y))
+  override def place(c: Char, x: Int, y: Int): FieldInterface[Char] = copy()(using matrix.fill(c, x, y))
 
-    override def placeAlways(c: Char, x: Int, y: Int): FieldInterface[Char] = copy()(using matrix.fillAlways(c, x, y))
+  override def placeAlways(c: Char, x: Int, y: Int): FieldInterface[Char] = copy()(using matrix.fillAlways(c, x, y))
 
-    def bot(line: Int): String = {
-        var res = "\\___/"
-        
-        matrix.matrix(line).zipWithIndex.foreach(
-        (x, i) => if i % 2 != 0 && i >= 1 && i < matrix.col then res += " " + x.toString + " \\___/")
+  override def reset: FieldInterface[Char] = copy()(using matrix.fillAll(' '))
 
-        res + "\n"
-    }
+  override def field: String =
+    var res = EOL + edgeTop
+    for (l <- 0 until matrix.row) res += (top(l) + bot(l))
+    res += edgeBot
+    res
 
-    def top(line: Int): String = {
-        var res = "/ " + matrix.matrix(line)(0).toString + " \\"
+  def edgeTop: String = " ___ " + "    ___ " * (matrix.col / 2) + EOL
 
-        matrix.matrix(line).zipWithIndex.foreach(
-        (x, i) => if i % 2 == 0 && i >= 2 then res += "___/ " + x + " \\")
+  def edgeBot: String = " " + "   \\___/" * (matrix.col / 2) + EOL
 
-        res + "\n"
-    }
+  def bot(line: Int): String =
+    var res = "\\___/"
 
-    override def reset: FieldInterface[Char]  = copy()(using matrix.fillAll(' '))
-    
-    override def field: String = {
-        var res = eol + edgetop
-        for (l <- 0 until matrix.row) res += (top(l) + bot(l))
-        res += edgebot
-        res
-    }
+    matrix.matrix(line).zipWithIndex.foreach(
+      (x, i) => if i % 2 != 0 && i >= 1 && i < matrix.col then res += " " + x.toString + " \\___/")
+
+    res + "\n"
+
+  def top(line: Int): String =
+    var res = "/ " + matrix.matrix(line)(0).toString + " \\"
+
+    matrix.matrix(line).zipWithIndex.foreach(
+      (x, i) => if i % 2 == 0 && i >= 2 then res += "___/ " + x + " \\")
+
+    res + "\n"

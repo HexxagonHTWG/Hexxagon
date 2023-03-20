@@ -3,20 +3,18 @@ package SetHandling
 
 import scala.util.{Failure, Success, Try}
 
-trait SetHandler {
-    def createSetandHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Vector[Vector[Char]]
-    
-    def setforeach(s: Set[(Int,Int)], matrix: Vector[Vector[Char]], content: Char) = {
-        var tmpmatrix = matrix
-        s.foreach{
-            case (x, y) => {
-                if !tmpmatrix(y)(x).equals(content) 
-                && !tmpmatrix(y)(x).equals(' ') then 
-                    tmpmatrix = tmpmatrix.updated(y, tmpmatrix(y).updated(x, content))
-            }
-        } 
-        tmpmatrix
-    }
+trait SetHandler:
+  var toLookAt: List[Set[(Int, Int)]]
 
-    var tolookat: List[Set[(Int,Int)]]
-}
+  def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Vector[Vector[Char]]
+
+  def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[Char]], content: Char): Seq[Vector[Char]] = {
+    var tmpMatrix = matrix
+    s.foreach {
+      case (x, y) =>
+        if !tmpMatrix(y)(x).equals(content)
+          && !tmpMatrix(y)(x).equals(' ') then
+          tmpMatrix = tmpMatrix.updated(y, tmpMatrix(y).updated(x, content))
+    }
+    tmpMatrix
+  }
