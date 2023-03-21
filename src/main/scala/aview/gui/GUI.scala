@@ -1,7 +1,6 @@
 package aview.gui
 
-import _main_.HexModule.given
-import controller.GameStatus.*
+import controller.GameStatus.{GAME_OVER, IDLE, TURN_PLAYER_1, TURN_PLAYER_2}
 import controller.controllerComponent.ControllerInterface
 import model.fieldComponent.FieldInterface
 import scalafx.Includes.*
@@ -77,7 +76,7 @@ class GUI(using controller: ControllerInterface[Char]) extends JFXApp3 with Obse
         }
         border.bottom = new HBox {
           padding = Insets(size, 0, size / 2, size * 0.75)
-          if controller.gameStatus == GAMEOVER then
+          if controller.gameStatus == GAME_OVER then
             val O = controller.hexField.matrix.oCount
             val X = controller.hexField.matrix.xCount
             val winner = if O < X then "PLAYER 1 WON" else if O == X then "DRAW" else "PLAYER 2 WON"
@@ -154,10 +153,10 @@ class GUI(using controller: ControllerInterface[Char]) extends JFXApp3 with Obse
   private def setMouse(p: Hex, i: Int, j: Int): Unit =
     p.setOnMouseClicked(_ => {
       controller.gameStatus match {
-        case TURNPLAYER1 => controller.place('X', i, j)
-        case TURNPLAYER2 => controller.place('O', i, j)
+        case TURN_PLAYER_1 => controller.place('X', i, j)
+        case TURN_PLAYER_2 => controller.place('O', i, j)
         case IDLE => controller.place('X', i, j)
-        case GAMEOVER => println("GAME OVER")
+        case GAME_OVER => println("GAME OVER")
       }
     })
 

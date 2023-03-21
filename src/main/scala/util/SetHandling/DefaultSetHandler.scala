@@ -5,9 +5,9 @@ import scala.util.{Failure, Success, Try}
 
 class DefaultSetHandler() extends SetHandler:
   var iBound: Int = 0
-  var toLookAt: List[Nothing] = List()
+  var toLookAt: List[Set[(Int, Int)]] = List()
 
-  override def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Vector[Vector[Char]] =
+  override def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Seq[Vector[Char]] =
     if x < 0 || y < 0 then return startmatrix
     else
       setBound(x, y)

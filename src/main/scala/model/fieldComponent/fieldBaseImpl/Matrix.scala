@@ -38,7 +38,7 @@ case class Matrix(matrix: Vector[Vector[Char]], xCount: Int = 0, oCount: Int = 0
     val xCount = tmpMatrix.flatten.count(x => x == 'X')
     val oCount = tmpMatrix.flatten.count(x => x == 'O')
 
-    copy(tmpMatrix, xCount, oCount)
+    copy(Vector.from(tmpMatrix), xCount, oCount)
 
   override def fillAlways(content: Char, x: Int, y: Int): Matrix =
     val tmpMatrix = matrix.updated(y, matrix(y).updated(x, content))

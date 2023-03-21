@@ -1,5 +1,6 @@
 package controller.controllerComponent.controllerBaseImpl
 
+import _main_.HexModule
 import controller.GameStatus
 import controller.GameStatus.*
 import controller.controllerComponent.ControllerInterface

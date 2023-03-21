@@ -4,6 +4,7 @@ import model.fieldComponent.FieldInterface
 import model.fileIOComponent.FileIOInterface
 
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
+import _main_.FlexibleModule
 
 class FileIO extends FileIOInterface:
   override def load: FieldInterface[Char] =

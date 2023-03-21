@@ -58,11 +58,11 @@ class ControllerSpec extends AnyWordSpec:
         controller.hexField.matrix.cell(2, 2) should be('O')
       }
       "change its gamestatus dependent on players turn" in {
-        controller.gameStatus should be(TURNPLAYER1)
+        controller.gameStatus should be(TURN_PLAYER_1)
         controller.place('X', 4, 2)
-        controller.gameStatus should be(TURNPLAYER2)
+        controller.gameStatus should be(TURN_PLAYER_2)
         controller.place('O', 5, 2)
-        controller.gameStatus should be(TURNPLAYER1)
+        controller.gameStatus should be(TURN_PLAYER_1)
       }
       "don't place a stone if it's not the players turn" in {
         val stone = controller.hexField.matrix.cell(1, 1)

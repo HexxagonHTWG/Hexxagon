@@ -1,5 +1,4 @@
 ignore:
-  - "**/gameWorksheet.sc"
   - "**/GUI.scala"
   - "**/Main.scala"
   - "**/resources/"

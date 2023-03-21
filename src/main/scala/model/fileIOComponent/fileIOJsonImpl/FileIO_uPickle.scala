@@ -4,6 +4,7 @@ import model.fieldComponent.FieldInterface
 import model.fileIOComponent.FileIOInterface
 import ujson.Obj
 import upickle.default.*
+import _main_.FlexibleModule
 
 import scala.io.Source
 

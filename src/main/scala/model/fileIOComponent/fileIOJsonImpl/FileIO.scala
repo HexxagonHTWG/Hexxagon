@@ -3,6 +3,7 @@ package model.fileIOComponent.fileIOJsonImpl
 import model.fieldComponent.FieldInterface
 import model.fileIOComponent.FileIOInterface
 import play.api.libs.json.*
+import _main_.FlexibleModule
 
 import scala.io.Source
 

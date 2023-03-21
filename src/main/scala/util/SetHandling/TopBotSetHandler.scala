@@ -6,7 +6,7 @@ import scala.util.{Failure, Success, Try}
 class TopBotSetHandler() extends DefaultSetHandler {
   var MaxY = 0
 
-  override def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Vector[Vector[Char]] =
+  override def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Seq[Vector[Char]] =
     setBound(x, y)
     val tmpMatrix = startmatrix
     setMaxY(startmatrix)

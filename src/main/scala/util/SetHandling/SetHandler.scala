@@ -6,7 +6,7 @@ import scala.util.{Failure, Success, Try}
 trait SetHandler:
   var toLookAt: List[Set[(Int, Int)]]
 
-  def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Vector[Vector[Char]]
+  def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Seq[Vector[Char]]
 
   def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[Char]], content: Char): Seq[Vector[Char]] = {
     var tmpMatrix = matrix
