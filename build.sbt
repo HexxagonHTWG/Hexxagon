@@ -1,11 +1,11 @@
 lazy val root = project
-  .in(file("."))
+  .in(file("./"))
   .settings(
     name := "Hexxagon",
     version := "0.1.0-SNAPSHOT",
     fork / run := true, // not pretty but fixes error on second startup
     connectInput / run := true, // for fork and TUI
-    scalaVersion := scala3Version,
+    scalaVersion := "3.2.2",
 
     libraryDependencies ++= Seq("com.novocode" % "junit-interface" % "0.11" % "test",
       "org.scalactic" %% "scalactic" % "3.2.15",
@@ -47,4 +47,3 @@ lazy val root = project
     jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
   )
   .enablePlugins(JacocoCoverallsPlugin)
-val scala3Version = "3.2.2"

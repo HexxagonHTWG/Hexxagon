@@ -1,32 +1,21 @@
 package util
 package SetHandling
 
-import scala.util.{Try,Success,Failure}
+import scala.util.{Failure, Success, Try}
 
 class TopBotSetHandler() extends DefaultSetHandler {
-    var MaxY = 0
-    
-    override def createSetandHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]) = {
-        setBound(x, y)
-        var tmpmatrix = startmatrix
-        setMaxY(startmatrix)
-        tolookat = List(Set((x, y + 1), (x - 1, 0), (x - 1, ibound), (x + 1, 0), (x + 1, ibound)),
-                        Set((x, y - 1), (x - 1, MaxY), (x - 1, ibound), (x + 1, MaxY), (x + 1, ibound)))
+  var MaxY = 0
 
-        val map = tolookat.map(x => Try(setforeach(x, tmpmatrix, content))).collect{ case Success(x) => x }
-        if map.isEmpty then new SideSetHandler().createSetandHandle(content, x, y, startmatrix)
-        else map(0)
+  override def createSetAndHandle(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]): Seq[Vector[Char]] =
+    setBound(x, y)
+    val tmpMatrix = startmatrix
+    setMaxY(startmatrix)
+    toLookAt = List(Set((x, y + 1), (x - 1, 0), (x - 1, iBound), (x + 1, 0), (x + 1, iBound)),
+      Set((x, y - 1), (x - 1, MaxY), (x - 1, iBound), (x + 1, MaxY), (x + 1, iBound)))
 
-        //Try(setforeach(tolookat(0), tmpmatrix, content)) match {
-        //    case Success(o) => o
-        //    case Failure(_) => {
-        //        Try(setforeach(tolookat(1), tmpmatrix, content)) match {
-        //            case Success(o) => o
-        //            case Failure(_) => new SideSetHandler().createSetandHandle(content, x, y, startmatrix)
-        //        }
-        //    }
-        //}
-    }
+    val map = toLookAt.map(x => Try(setForEach(x, tmpMatrix, content))).collect { case Success(x) => x }
+    if map.isEmpty then new SideSetHandler().createSetAndHandle(content, x, y, startmatrix)
+    else map.head
 
-    def setMaxY(ma: Vector[Vector[Char]]) = MaxY = ma.size - 1
+  def setMaxY(ma: Vector[Vector[Char]]): Unit = MaxY = ma.size - 1
 }
