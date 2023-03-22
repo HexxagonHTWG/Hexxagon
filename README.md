@@ -1,5 +1,5 @@
 [![Scala CI](https://github.com/naedmi/Hexxagon/actions/workflows/scala.yml/badge.svg)](https://github.com/naedmi/Hexxagon/actions/workflows/scala.yml) 
-[![codecov](https://codecov.io/gh/naedmi/Hexxagon/branch/master/graph/badge.svg?token=1GU15EM8AA)](https://codecov.io/gh/naedmi/Hexxagon) 
+[![codecov](https://codecov.io/gh/HexxagonHTWG/Hexxagon/branch/master/graph/badge.svg?token=GGXRQECCY7)](https://codecov.io/gh/HexxagonHTWG/Hexxagon) 
 [![Coverage Status](https://coveralls.io/repos/github/naedmi/Hexxagon/badge.svg)](https://coveralls.io/github/naedmi/Hexxagon?branch=master)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![alt text](https://img.shields.io/github/languages/top/naedmi/Hexxagon?color=magenta)
