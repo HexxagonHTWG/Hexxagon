@@ -8,10 +8,11 @@ import scala.util.matching.Regex
 
 class TUI(using controller: ControllerInterface[Char]) extends Observer:
   controller.add(this)
-  val reg: Regex = ("([0-" + maxIndCol + "]\\s[0-" + maxIndRow + "]\\s[XOxo])").r
   private val maxIndRow = controller.hexField.matrix.row - 1
   private val maxIndCol = controller.hexField.matrix.col - 1
   private val message = s"Input your x and y Coordinate as followed:\n[ 0-$maxIndCol ] [ 0-$maxIndRow ] [ X | O ] \n"
+
+  def reg: Regex = ("([0-" + maxIndCol + "]\\s[0-" + maxIndRow + "]\\s[XOxo])").r
 
   override def update(): Unit = println(controller)
 
