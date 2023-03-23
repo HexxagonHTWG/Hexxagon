@@ -1,5 +1,5 @@
 package util
-package SetHandling
+package setHandling
 
 import scala.util.{Failure, Success, Try}
 

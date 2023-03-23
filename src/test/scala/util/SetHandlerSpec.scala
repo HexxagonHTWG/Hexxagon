@@ -3,7 +3,7 @@ package util
 import model.fieldComponent.fieldBaseImpl.Matrix
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import util.SetHandling.*
+import util.setHandling.*
 
 class SetHandlerSpec extends AnyWordSpec:
   "Looking at indices and a matrix a SetHandler" when {

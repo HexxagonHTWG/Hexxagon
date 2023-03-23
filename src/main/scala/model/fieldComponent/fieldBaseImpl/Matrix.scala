@@ -1,7 +1,7 @@
 package model.fieldComponent.fieldBaseImpl
 
 import model.fieldComponent.MatrixInterface
-import util.SetHandling.DefaultSetHandler
+import util.setHandling.DefaultSetHandler
 
 case class Matrix(matrix: Vector[Vector[Char]], xCount: Int = 0, oCount: Int = 0) extends MatrixInterface[Char]:
   val col: Int = matrix(0).size
