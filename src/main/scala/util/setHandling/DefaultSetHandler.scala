@@ -3,7 +3,7 @@ package setHandling
 
 import scala.util.{Failure, Success, Try}
 
-class DefaultSetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]) extends SetHandler(content, startmatrix):
+class DefaultSetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]) extends SetHandler(content, x, y, startmatrix):
 
   final protected val iBound: Int =
     y - 1 + (if x % 2 == 1 || y - 1 < 0 then 1 + (if x % 2 == 1 && y == 0 then 1 else 0) else 0)

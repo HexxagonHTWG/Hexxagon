@@ -8,7 +8,7 @@ import scala.util.{Failure, Success, Try}
  *
  * Child classes simply change coordinates and the next strategy/handler
  */
-trait SetHandler(content: Char, startmatrix: Vector[Vector[Char]]):
+trait SetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]):
 
   /**
    * Tries to change all stones in given coordinates,
