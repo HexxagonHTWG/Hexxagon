@@ -1,9 +1,10 @@
 package controller.controllerComponent
 
+import model.Player
 import model.fieldComponent.{FieldInterface, MatrixInterface}
 import util.Command
 
-trait CommandTemplate[T <: FieldInterface[Char]](field: T) extends Command[T] {
+trait CommandTemplate[T <: FieldInterface[Player]](field: T) extends Command[T] {
     var fieldCache: T = field
 
     override def noStep(field: T): T = field

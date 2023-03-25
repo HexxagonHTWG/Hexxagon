@@ -1,11 +1,13 @@
 package util
 package setHandling
 
+import model.Player
+
 import scala.util.{Failure, Success, Try}
 
-case class CornerSetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]) extends SideSetHandler(content, x, y, startmatrix):
+case class CornerSetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Player]]) extends SideSetHandler(content, x, y, startmatrix):
 
-  override def nextHandler: Seq[Vector[Char]] = startmatrix
+  override def nextHandler: Seq[Vector[Player]] = startmatrix
 
   override def coordinates: List[Set[(Int, Int)]] = List(
     Set((x, y + 1), (x + 1, y)),

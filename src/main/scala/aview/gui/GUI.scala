@@ -2,6 +2,7 @@ package aview.gui
 
 import controller.GameStatus.{GAME_OVER, IDLE, TURN_PLAYER_1, TURN_PLAYER_2}
 import controller.controllerComponent.ControllerInterface
+import model.Player
 import model.fieldComponent.FieldInterface
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
@@ -21,7 +22,7 @@ import util.Observer
 import scala.math.sqrt
 
 
-class GUI(using controller: ControllerInterface[Char]) extends JFXApp3 with Observer:
+class GUI(using controller: ControllerInterface[Player]) extends JFXApp3 with Observer:
   controller.add(this)
   controller.save()
   val size = 40
@@ -43,7 +44,7 @@ class GUI(using controller: ControllerInterface[Char]) extends JFXApp3 with Obse
         val border = new BorderPane()
         border.setBackground(new Background(Array(new BackgroundFill(new LinearGradient(endX = 0, stops = Stops(LightGrey, LightSteelBlue)), CornerRadii(size), Insets(10)))))
         val pane: Pane = Pane()
-        var tmp: Hex = Hex(0, 0, 0, ' ')
+        var tmp: Hex = Hex(0, 0, 0, Player.Empty)
         for (j <- 0 until controller.hexField.matrix.row) {
           controller.hexField.matrix.matrix(j).zipWithIndex.foreach {
             (x, i) =>
@@ -129,7 +130,7 @@ class GUI(using controller: ControllerInterface[Char]) extends JFXApp3 with Obse
           b2.setOnMouseClicked(x => controller.redo())
           b2.style = css
           val b3 = new Button("FILL")
-          b3.setOnMouseClicked(x => controller.fillAll('X'))
+          b3.setOnMouseClicked(x => controller.fillAll(Player.X))
           b3.style = css
           val b4 = new Button("RESET")
           b4.setOnMouseClicked(x => controller.reset())
@@ -153,14 +154,14 @@ class GUI(using controller: ControllerInterface[Char]) extends JFXApp3 with Obse
   private def setMouse(p: Hex, i: Int, j: Int): Unit =
     p.setOnMouseClicked(_ => {
       controller.gameStatus match {
-        case TURN_PLAYER_1 => controller.place('X', i, j)
-        case TURN_PLAYER_2 => controller.place('O', i, j)
-        case IDLE => controller.place('X', i, j)
+        case TURN_PLAYER_1 => controller.place(Player.X, i, j)
+        case TURN_PLAYER_2 => controller.place(Player.O, i, j)
+        case IDLE => controller.place(Player.O, i, j)
         case GAME_OVER => println("GAME OVER")
       }
     })
 
-class Hex(size: Double, x: Double, y: Double, var t: Char) extends StackPane:
+class Hex(size: Double, x: Double, y: Double, var t: Player) extends StackPane:
   private val cons = sqrt(3) / 2
   private val pol: Polygon = Polygon()
   pol.points ++= Seq(
@@ -177,8 +178,8 @@ class Hex(size: Double, x: Double, y: Double, var t: Char) extends StackPane:
   text.setTextAlignment(scalafx.scene.text.TextAlignment.Center)
   text.style = s"-fx-font: $size arial"
   text.fill = t match {
-    case 'X' => new LinearGradient(endX = 0, stops = Stops(Black, DarkBlue))
-    case 'O' => new LinearGradient(endX = 0, stops = Stops(Black, DarkRed))
+    case Player.X => new LinearGradient(endX = 0, stops = Stops(Black, DarkBlue))
+    case Player.O => new LinearGradient(endX = 0, stops = Stops(Black, DarkRed))
     case _ => White
   }
 

@@ -1,9 +1,10 @@
 package util
 package setHandling
 
+import model.Player
 import scala.util.{Failure, Success, Try}
 
-class SideSetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]) extends TopBotSetHandler(content, x, y, startmatrix):
+class SideSetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Player]]) extends TopBotSetHandler(content, x, y, startmatrix):
   final protected val MaxX = startmatrix.head.size - 1
 
   override def coordinates: List[Set[(Int, Int)]] = List(
@@ -11,5 +12,5 @@ class SideSetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[C
     Set((x, y - 1), (x, y + 1), (MaxX - 1, y - 1), (MaxX - 1, y))
   )
 
-  override protected def nextHandler: Seq[Vector[Char]] = CornerSetHandler(content, x, y, startmatrix).handle()
+  override protected def nextHandler: Seq[Vector[Player]] = CornerSetHandler(content, x, y, startmatrix).handle()
 

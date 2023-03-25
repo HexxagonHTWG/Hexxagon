@@ -1,6 +1,8 @@
 package util
 package setHandling
 
+import model.Player
+
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -8,7 +10,7 @@ import scala.util.{Failure, Success, Try}
  *
  * Child classes simply change coordinates and the next strategy/handler
  */
-trait SetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]]):
+trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Player]]):
 
   /**
    * Tries to change all stones in given coordinates,
@@ -17,7 +19,7 @@ trait SetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]
    *
    * @return the resulting matrix as sequence of vectors
    */
-  final def handle(): Seq[Vector[Char]] =
+  final def handle(): Seq[Vector[Player]] =
     if x < 0 || y < 0 then return startmatrix
     coordinates.map(x => Try(setForEach(x, startmatrix, content)))
       .collectFirst { case Success(x) => x } match
@@ -25,20 +27,19 @@ trait SetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]
       case None => nextHandler
 
   /**
-   * Helper function that sets a given set of coordinates inside a matrix to a given char
+   * Helper function that sets a given set of coordinates inside a matrix to a given Player
    *
    * @param s      set of coordinates to be changed
    * @param matrix matrix of which stones should be changed
-   * @param char   the replacement stone/character
+   * @param player the replacement stone/character
    * @return the resulting matrix with changed coordinates
    */
-  private final def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[Char]], char: Char): Seq[Vector[Char]] = {
+  private final def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[Player]], player: Player): Seq[Vector[Player]] = {
     var tmpMatrix = matrix
     s.foreach {
       (x, y) =>
-        if !tmpMatrix(y)(x).equals(char)
-          && !tmpMatrix(y)(x).equals(' ') then
-          tmpMatrix = tmpMatrix.updated(y, tmpMatrix(y).updated(x, char))
+        if tmpMatrix(y)(x).equals(player.other) then
+          tmpMatrix = tmpMatrix.updated(y, tmpMatrix(y).updated(x, player))
     }
     tmpMatrix
   }
@@ -48,7 +49,7 @@ trait SetHandler(content: Char, x: Int, y: Int, startmatrix: Vector[Vector[Char]
    *
    * @return a fallback matrix, preferably a different implementation of SetHandler.handle()
    */
-  protected def nextHandler: Seq[Vector[Char]]
+  protected def nextHandler: Seq[Vector[Player]]
 
   /**
    * The current coordinates to be looked at in the handle() method

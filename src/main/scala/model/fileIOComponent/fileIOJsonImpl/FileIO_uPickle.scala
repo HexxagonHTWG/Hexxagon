@@ -1,42 +1,43 @@
 package model.fileIOComponent.fileIOJsonImpl
 
+import _main_.FlexibleModule
+import model.Player
 import model.fieldComponent.FieldInterface
 import model.fileIOComponent.FileIOInterface
 import ujson.Obj
 import upickle.default.*
-import _main_.FlexibleModule
 
 import scala.io.Source
 
 class FileIO_uPickle extends FileIOInterface:
-  override def load: FieldInterface[Char] =
+  override def load: FieldInterface[Player] =
     val source: Source = Source.fromFile("field.json")
     val json = ujson.read(source.getLines.mkString)
     val rows = json("rows").num.toInt
     val cols = json("cols").num.toInt
-    var field = FlexibleModule(rows, cols).given_FieldInterface_Char
+    var field = FlexibleModule(rows, cols).given_FieldInterface_Player
     val cells = json("cells")
 
     for (index <- 0 until rows * cols) {
       val row = cells(index)("row").num.toInt
       val col = cells(index)("col").num.toInt
-      val cell = cells(index)("cell").str.head
+      val cell = Player.fromChar(cells(index)("cell").str.head)
       field = field.placeAlways(cell, col, row)
     }
     source.close()
     field
 
-  override def save(field: FieldInterface[Char]): Unit =
+  override def save(field: FieldInterface[Player]): Unit =
     import java.io.*
     val pw = new PrintWriter(new File("field.json"))
     pw.write(ujson.transform(fieldToJson(field), ujson.StringRenderer(indent = 4)).toString)
     pw.close()
 
   // not working with xcount, ocount, turn yet
-  override def exportGame(field: FieldInterface[Char], xcount: Int, ocount: Int, turn: Int): String =
+  override def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String =
     fieldToJson(field).toString
 
-  def fieldToJson(field: FieldInterface[Char]): Obj =
+  def fieldToJson(field: FieldInterface[Player]): Obj =
     ujson.Obj(
       "rows" -> ujson.Num(field.matrix.row),
       "cols" -> ujson.Num(field.matrix.col),
@@ -48,7 +49,7 @@ class FileIO_uPickle extends FileIOInterface:
         )
     )
 
-  def cellToJson(field: FieldInterface[Char], row: Int, col: Int): Obj =
+  def cellToJson(field: FieldInterface[Player], row: Int, col: Int): Obj =
     ujson.Obj(
       "row" -> row,
       "col" -> col,

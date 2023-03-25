@@ -5,31 +5,41 @@ import controller.GameStatus
 import controller.GameStatus.*
 import controller.controllerComponent.ControllerInterface
 import controller.controllerComponent.controllerBaseImpl.{PlaceAllCommand, PlaceCommand}
+import model.Player
 import model.fieldComponent.FieldInterface
 import util.{Observable, UndoManager}
 
 import scala.xml.Elem
 
-class Controller(using var hexField: FieldInterface[Char])
-  extends ControllerInterface[Char]:
+class Controller(using var hexField: FieldInterface[Player])
+  extends ControllerInterface[Player]:
 
   private val GAME_MAX = hexField.matrix.MAX
-  private val undoManager = new UndoManager[FieldInterface[Char]]
+  private val undoManager = new UndoManager[FieldInterface[Player]]
   var gameStatus: GameStatus = IDLE
   private var savedStatus = IDLE
   private var lastStatus = IDLE
 
-  override def fillAll(c: Char): Unit =
+  override def fillAll(c: Player): Unit =
     hexField = undoManager.doStep(hexField, new PlaceAllCommand(hexField, c))
     checkStat()
     notifyObservers()
 
-  override def place(c: Char, x: Int, y: Int): Unit =
-    if ((gameStatus.equals(TURN_PLAYER_1) & c.equals('O'))
-      || (gameStatus.equals(TURN_PLAYER_2) & c.equals('X')))
+  private def checkStat(): Unit =
+    if hexField.matrix.xCount == GAME_MAX
+      || hexField.matrix.oCount == GAME_MAX
+      || hexField.matrix.oCount + hexField.matrix.xCount == GAME_MAX
+    then gameStatus = GAME_OVER
+    else if emptyMatrix then gameStatus = IDLE
+
+  private def emptyMatrix = !hexField.matrix.matrix.flatten.contains(Player.O) && !hexField.matrix.matrix.flatten.contains(Player.X)
+
+  override def place(c: Player, x: Int, y: Int): Unit =
+    if ((gameStatus.equals(TURN_PLAYER_1) & c.equals(Player.O))
+      || (gameStatus.equals(TURN_PLAYER_2) & c.equals(Player.X)))
       print("\nNot your turn!\n")
       notifyObservers()
-    else if !hexField.matrix.cell(x, y).equals(' ') then
+    else if !hexField.matrix.cell(x, y).equals(Player.Empty) then
       println("\nOccupied.")
       notifyObservers()
     else
@@ -39,8 +49,9 @@ class Controller(using var hexField: FieldInterface[Char])
       checkStat()
       if gameStatus == GAME_OVER then notifyObservers()
       else c match {
-        case 'X' => gameStatus = TURN_PLAYER_2;
-        case 'O' => gameStatus = TURN_PLAYER_1;
+        case Player.X => gameStatus = TURN_PLAYER_2
+        case Player.O => gameStatus = TURN_PLAYER_1
+        case _ => ()
       }
       notifyObservers()
 
@@ -53,15 +64,6 @@ class Controller(using var hexField: FieldInterface[Char])
       lastStatus = mem
       checkStat()
       notifyObservers()
-
-  private def checkStat(): Unit =
-    if hexField.matrix.xCount == GAME_MAX
-      || hexField.matrix.oCount == GAME_MAX
-      || hexField.matrix.oCount + hexField.matrix.xCount == GAME_MAX
-    then gameStatus = GAME_OVER
-    else if emptyMatrix then gameStatus = IDLE
-
-  private def emptyMatrix = !hexField.matrix.matrix.flatten.contains('O') && !hexField.matrix.matrix.flatten.contains('X')
 
   override def redo(): Unit =
     if undoManager.redoStack == Nil then notifyObservers()

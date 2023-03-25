@@ -2,11 +2,12 @@ package aview
 
 import _main_.HexModule.given
 import controller.controllerComponent.ControllerInterface
+import model.Player
 import util.Observer
 
 import scala.util.matching.Regex
 
-class TUI(using controller: ControllerInterface[Char]) extends Observer:
+class TUI(using controller: ControllerInterface[Player]) extends Observer:
   controller.add(this)
   val filledWithX = "Filled with X."
   val filledWithO = "Filled with O."
@@ -28,13 +29,13 @@ class TUI(using controller: ControllerInterface[Char]) extends Observer:
         val (x: Int, y: Int, c: Char) = in.split("\\s") match {
           case Array(x, y, c) => (x.toInt, y.toInt, c.charAt(0))
         }
-        controller.place(c.toUpper, x, y)
+        controller.place(Player.fromChar(c), x, y)
         None
       case "fill X" | "fill x" =>
-        controller.fillAll('X')
+        controller.fillAll(Player.X)
         Some(filledWithX)
       case "fill O" | "fill o" =>
-        controller.fillAll('O')
+        controller.fillAll(Player.O)
         Some(filledWithO)
       case "save" => controller.save(); Some("Saved.")
       case "load" => controller.load(); Some("Loaded.")
