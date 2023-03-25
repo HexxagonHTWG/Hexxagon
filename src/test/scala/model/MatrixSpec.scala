@@ -3,7 +3,7 @@ package model
 import model.fieldComponent.fieldBaseImpl.Matrix
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import util.SetHandling.DefaultSetHandler
+import util.setHandling.DefaultSetHandler
 
 import scala.annotation.varargs
 
