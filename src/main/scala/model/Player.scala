@@ -13,7 +13,7 @@ enum Player(value: Char):
     case _ => Empty
 
 object Player:
-  def fromString(s: String): Player = fromChar(s.head)
+  def fromString(s: String): Player = fromChar(s.headOption.getOrElse(' '))
 
   def fromChar(c: Char): Player = c match
     case 'X' => X

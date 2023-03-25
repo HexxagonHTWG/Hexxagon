@@ -72,23 +72,23 @@ class FileIOSpec extends AnyWordSpec:
 
     "used by controller" should {
       "save and load" in {
-        val c = HexModule.given_ControllerInterface_Char
-        c.place('X', 0, 0)
+        val c = HexModule.given_ControllerInterface_Player
+        c.place(Player.X, 0, 0)
         c.save()
         val hex = c.hexField
-        c.place('O', 1, 0)
+        c.place(Player.O, 1, 0)
         c.hexField.toString should not be hex.toString
         c.load()
         c.hexField.toString should be(hex.toString)
       }
 
       "keep the saved gamestatus after loading" in {
-        val c = FlexibleModule(7, 4).given_ControllerInterface_Char
+        val c = FlexibleModule(7, 4).given_ControllerInterface_Player
         c.gameStatus should be(IDLE)
-        c.place('X', 0, 0)
+        c.place(Player.X, 0, 0)
         c.gameStatus should be(TURN_PLAYER_2)
         c.save()
-        c.place('O', 3, 3)
+        c.place(Player.O, 3, 3)
         c.gameStatus should be(TURN_PLAYER_1)
         c.load()
         c.gameStatus should be(TURN_PLAYER_2)
