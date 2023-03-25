@@ -8,6 +8,10 @@ import scala.util.matching.Regex
 
 class TUI(using controller: ControllerInterface[Char]) extends Observer:
   controller.add(this)
+  val filledWithX = "Filled with X."
+  val filledWithO = "Filled with O."
+  val exitMes = "Exiting."
+
   private val maxIndRow = controller.hexField.matrix.row - 1
   private val maxIndCol = controller.hexField.matrix.col - 1
   private val message = s"Input your x and y Coordinate as followed:\n[ 0-$maxIndCol ] [ 0-$maxIndRow ] [ X | O ] \n"
@@ -28,15 +32,15 @@ class TUI(using controller: ControllerInterface[Char]) extends Observer:
         None
       case "fill X" | "fill x" =>
         controller.fillAll('X')
-        Some("Filled with X.")
+        Some(filledWithX)
       case "fill O" | "fill o" =>
         controller.fillAll('O')
-        Some("Filled with O.")
+        Some(filledWithO)
       case "save" => controller.save(); Some("Saved.")
       case "load" => controller.load(); Some("Loaded.")
       case "reset" => controller.reset(); Some("Reset.")
       case "redo" | "r" | "re" => controller.redo(); Some("Redone.")
       case "undo" | "u" | "un" | "z" => controller.undo(); Some("Undone.")
-      case "q" | "e" | "exit" | "quit" | "Exit" | "Quit" => Some("Exiting.")
+      case "q" | "e" | "exit" | "quit" | "Exit" | "Quit" => Some(exitMes)
       case _ => Some("Wrong Input.")
     }

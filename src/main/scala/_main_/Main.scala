@@ -1,12 +1,12 @@
 package _main_
 
+import _main_.HexModule.given
 import aview.TUI
 import aview.gui.GUI
 import controller.controllerComponent.ControllerInterface
 import controller.controllerComponent.controllerBaseImpl.Controller
 import scalafx.application.JFXApp3
 
-import _main_.HexModule.given
 import scala.io.StdIn.readLine
 
 object starter:
@@ -17,7 +17,7 @@ object starter:
     tui.handleInput("save")
     var input = ""
     var tmp = tui.handleInput(input)
-    while (!tmp.contains("Exiting.") & !tmp.contains("Filled with X.") & !tmp.contains("Filled with O.")) {
+    while (!tmp.contains(tui.exitMes) & !tmp.contains(tui.filledWithX) & !tmp.contains(tui.filledWithO)) {
       input = readLine()
       tmp = tui.handleInput(input)
       if tmp.isDefined then println(tmp.get)
