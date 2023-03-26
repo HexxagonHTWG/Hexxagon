@@ -7,11 +7,13 @@ import util.Observer
 
 import scala.util.matching.Regex
 
-class TUI(using controller: ControllerInterface[Player]) extends Observer:
-  controller.add(this)
+object TUI:
   val filledWithX = "Filled with X."
   val filledWithO = "Filled with O."
   val exitMes = "Exiting."
+
+class TUI(using controller: ControllerInterface[Player]) extends Observer:
+  controller.add(this)
 
   private val maxIndRow = controller.hexField.matrix.row - 1
   private val maxIndCol = controller.hexField.matrix.col - 1
@@ -33,15 +35,15 @@ class TUI(using controller: ControllerInterface[Player]) extends Observer:
         None
       case "fill X" | "fill x" =>
         controller.fillAll(Player.X)
-        Some(filledWithX)
+        Some(TUI.filledWithX)
       case "fill O" | "fill o" =>
         controller.fillAll(Player.O)
-        Some(filledWithO)
+        Some(TUI.filledWithO)
       case "save" => controller.save(); Some("Saved.")
       case "load" => controller.load(); Some("Loaded.")
       case "reset" => controller.reset(); Some("Reset.")
       case "redo" | "r" | "re" => controller.redo(); Some("Redone.")
       case "undo" | "u" | "un" | "z" => controller.undo(); Some("Undone.")
-      case "q" | "e" | "exit" | "quit" | "Exit" | "Quit" => Some(exitMes)
+      case "q" | "e" | "exit" | "quit" | "Exit" | "Quit" => Some(TUI.exitMes)
       case _ => Some("Wrong Input.")
     }

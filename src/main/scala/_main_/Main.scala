@@ -17,7 +17,7 @@ object starter:
     tui.handleInput("save")
     var input = ""
     var tmp = tui.handleInput(input)
-    while (!tmp.contains(tui.exitMes) & !tmp.contains(tui.filledWithX) & !tmp.contains(tui.filledWithO)) {
+    while (!tmp.contains(TUI.exitMes) & !tmp.contains(TUI.filledWithX) & !tmp.contains(TUI.filledWithO)) {
       input = readLine()
       tmp = tui.handleInput(input)
       if tmp.isDefined then println(tmp.get)
