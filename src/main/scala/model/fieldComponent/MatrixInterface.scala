@@ -38,8 +38,8 @@ trait MatrixInterface[T]:
   /** Fills a cell with a given element.
    *
    * @param content the element to fill the cell with
-   * @param x x coordinate of the cell
-   * @param y y coordinate of the cell
+   * @param x       x coordinate of the cell
+   * @param y       y coordinate of the cell
    * @return an updated instance of the matrix
    */
   def fill(content: T, x: Int, y: Int): MatrixInterface[T]
@@ -47,8 +47,9 @@ trait MatrixInterface[T]:
   /** Fills a cell with a given element no matter what (needed for FileIO)
    *
    * @param content the element to fill the cell with
-   * @param x x coordinate of the cell
-   * @param y y coordinate of the cell
+   * @param x       x coordinate of the cell
+   * @param y       y coordinate of the cell
+   * @param matrix  optional parameter to fill a matrix other than the current one
    * @return an updated instance of the matrix
    */
-  def fillAlways(content: T, x: Int, y: Int): MatrixInterface[T]
+  def fillAlways(content: T, x: Int, y: Int, matrix: Vector[Vector[T]] = matrix): MatrixInterface[T]

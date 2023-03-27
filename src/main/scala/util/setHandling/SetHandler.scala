@@ -19,7 +19,7 @@ trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Pla
    *
    * @return the resulting matrix as sequence of vectors
    */
-  final def handle(): Seq[Vector[Player]] =
+  final def handle(): Vector[Vector[Player]] =
     if x < 0 || y < 0 then return startmatrix
     coordinates.map(x => Try(setForEach(x, startmatrix, content)))
       .collectFirst { case Success(x) => x } match
@@ -34,7 +34,7 @@ trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Pla
    * @param player the replacement stone/character
    * @return the resulting matrix with changed coordinates
    */
-  private final def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[Player]], player: Player): Seq[Vector[Player]] = {
+  private final def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[Player]], player: Player): Vector[Vector[Player]] = {
     var tmpMatrix = matrix
     s.foreach {
       (x, y) =>
@@ -49,7 +49,7 @@ trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Pla
    *
    * @return a fallback matrix, preferably a different implementation of SetHandler.handle()
    */
-  protected def nextHandler: Seq[Vector[Player]]
+  protected def nextHandler: Vector[Vector[Player]]
 
   /**
    * The current coordinates to be looked at in the handle() method

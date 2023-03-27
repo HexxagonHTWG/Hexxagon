@@ -12,5 +12,5 @@ class SideSetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector
     Set((x, y - 1), (x, y + 1), (MaxX - 1, y - 1), (MaxX - 1, y))
   )
 
-  override protected def nextHandler: Seq[Vector[Player]] = CornerSetHandler(content, x, y, startmatrix).handle()
+  override protected def nextHandler: Vector[Vector[Player]] = CornerSetHandler(content, x, y, startmatrix).handle()
 

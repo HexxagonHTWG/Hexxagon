@@ -13,6 +13,6 @@ class TopBotSetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vect
     Set((x, y - 1), (x - 1, MaxY), (x - 1, iBound), (x + 1, MaxY), (x + 1, iBound))
   )
 
-  override protected def nextHandler: Seq[Vector[Player]] = new SideSetHandler(content, x, y, startmatrix).handle()
+  override protected def nextHandler: Vector[Vector[Player]] = new SideSetHandler(content, x, y, startmatrix).handle()
 
 }

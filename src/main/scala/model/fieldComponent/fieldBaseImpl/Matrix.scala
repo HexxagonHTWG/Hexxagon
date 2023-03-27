@@ -1,8 +1,8 @@
 package model.fieldComponent.fieldBaseImpl
 
+import model.Player
 import model.fieldComponent.MatrixInterface
 import util.setHandling.DefaultSetHandler
-import model.Player
 
 case class Matrix(matrix: Vector[Vector[Player]], xCount: Int = 0, oCount: Int = 0) extends MatrixInterface[Player]:
   val col: Int = matrix(0).size
@@ -21,29 +21,22 @@ case class Matrix(matrix: Vector[Vector[Player]], xCount: Int = 0, oCount: Int =
   override def cell(col: Int, row: Int): Player = matrix(row)(col)
 
   override def fillAll(content: Player): Matrix =
-    var o, x = 0
-    content match {
-      case Player.X => x = MAX; o = 0
-      case Player.O => o = MAX; x = 0
-      case _ => o = 0; x = 0
+    val (x, o) = content match {
+      case Player.X => (MAX, 0)
+      case Player.O => (0, MAX)
+      case _ => (0, 0)
     }
     copy(Vector.fill[Player](row, col)(content), x, o)
 
   def MAX: Int = row * col
 
   override def fill(content: Player, x: Int, y: Int): Matrix =
-    if content.equals(Player.Empty) then copy(matrix.updated(y, matrix(y).updated(x, content)))
+    if content.equals(Player.Empty) then copy(matrix)
 
-    var tmpMatrix = new DefaultSetHandler(content, x, y, matrix).handle()
-    tmpMatrix = tmpMatrix.updated(y, tmpMatrix(y).updated(x, content))
-    val xCount = tmpMatrix.flatten.count(x => x == Player.X)
-    val oCount = tmpMatrix.flatten.count(x => x == Player.O)
+    val tmpMatrix = new DefaultSetHandler(content, x, y, matrix).handle()
+    fillAlways(content, x, y, tmpMatrix)
 
-    copy(Vector.from(tmpMatrix), xCount, oCount)
-
-  override def fillAlways(content: Player, x: Int, y: Int): Matrix =
-    val tmpMatrix = matrix.updated(y, matrix(y).updated(x, content))
-    val xCount = tmpMatrix.flatten.count(x => x == Player.X)
-    val oCount = tmpMatrix.flatten.count(x => x == Player.O)
-
-    copy(tmpMatrix, xCount, oCount)
+  override def fillAlways(content: Player, x: Int, y: Int, matrix: Vector[Vector[Player]] = matrix): Matrix =
+    val m = matrix.updated(y, matrix(y).updated(x, content))
+    val (xCount, oCount) = (m.flatten.count(_.equals(Player.X)), m.flatten.count(_.equals(Player.O)))
+    copy(m, xCount, oCount)

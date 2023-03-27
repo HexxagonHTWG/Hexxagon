@@ -14,4 +14,4 @@ class DefaultSetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vec
       Set((x, y - 1), (x, y + 1), (x - 1, iBound), (x - 1, iBound + 1), (x + 1, iBound), (x + 1, iBound + 1))
     )
 
-  override protected def nextHandler: Seq[Vector[Player]] = new TopBotSetHandler(content, x, y, startmatrix).handle()
+  override protected def nextHandler: Vector[Vector[Player]] = new TopBotSetHandler(content, x, y, startmatrix).handle()
