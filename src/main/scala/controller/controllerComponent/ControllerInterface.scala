@@ -1,6 +1,6 @@
 package controller.controllerComponent
 
-import controller.GameStatus
+import model.GameStatus
 import model.fieldComponent.FieldInterface
 import util.Observable
 
@@ -12,9 +12,9 @@ trait ControllerInterface[T] extends Observable {
   /** Returns the status of the game. */
   def gameStatus: GameStatus
 
-  /** Fills every cell of the game board with a given character.
+  /** Fills every cell of the game board with a parameter.
    *
-   * @param c the character to fill the board with
+   * @param c the object to fill the board with
    */
   def fillAll(c: T): Unit
 
@@ -28,9 +28,9 @@ trait ControllerInterface[T] extends Observable {
    */
   def load(): Unit
 
-  /** Places a character in a cell.
+  /** Places an object in a cell.
    *
-   * @param c the character to fill the cell with
+   * @param c the object to fill the cell with
    * @param x x coordinate of the cell
    * @param y y coordinate of the cell
    */

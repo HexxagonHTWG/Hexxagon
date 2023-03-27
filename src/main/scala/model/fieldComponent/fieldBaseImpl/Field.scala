@@ -1,18 +1,19 @@
 package model.fieldComponent.fieldBaseImpl
 
+import model.Player
 import model.fieldComponent.{FieldInterface, MatrixInterface}
 
-case class Field()(using val matrix: MatrixInterface[Char]) extends FieldInterface[Char]:
+case class Field()(using val matrix: MatrixInterface[Player]) extends FieldInterface[Player]:
 
   private val EOL = "\n"
 
-  override def fillAll(c: Char): FieldInterface[Char] = copy()(using matrix.fillAll(c))
+  override def fillAll(c: Player): FieldInterface[Player] = copy()(using matrix.fillAll(c))
 
-  override def place(c: Char, x: Int, y: Int): FieldInterface[Char] = copy()(using matrix.fill(c, x, y))
+  override def place(c: Player, x: Int, y: Int): FieldInterface[Player] = copy()(using matrix.fill(c, x, y))
 
-  override def placeAlways(c: Char, x: Int, y: Int): FieldInterface[Char] = copy()(using matrix.fillAlways(c, x, y))
+  override def placeAlways(c: Player, x: Int, y: Int): FieldInterface[Player] = copy()(using matrix.fillAlways(c, x, y))
 
-  override def reset: FieldInterface[Char] = copy()(using matrix.fillAll(' '))
+  override def reset: FieldInterface[Player] = copy()(using matrix.fillAll(Player.Empty))
 
   override def field: String =
     var res = EOL + edgeTop

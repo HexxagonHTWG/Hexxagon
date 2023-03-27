@@ -1,48 +1,42 @@
 package model.fieldComponent.fieldBaseImpl
 
+import model.Player
 import model.fieldComponent.MatrixInterface
-import util.SetHandling.DefaultSetHandler
+import util.setHandling.DefaultSetHandler
 
-case class Matrix(matrix: Vector[Vector[Char]], xCount: Int = 0, oCount: Int = 0) extends MatrixInterface[Char]:
+case class Matrix(matrix: Vector[Vector[Player]], xCount: Int = 0, oCount: Int = 0) extends MatrixInterface[Player]:
   val col: Int = matrix(0).size
   val row: Int = matrix.size
 
   def this(col: Int, row: Int) =
     this(
       if (col < 0 || row < 0 || col > 10 || row > 10) // 10 not working with regex
-        Vector.fill[Char](6, 9)(' ') // default values
+        Vector.fill[Player](6, 9)(Player.Empty) // default values
       else if col % 2 == 0 then
-        Vector.fill[Char](row, col + 1)(' ')
+        Vector.fill[Player](row, col + 1)(Player.Empty)
       else
-        Vector.fill[Char](row, col)(' '),
+        Vector.fill[Player](row, col)(Player.Empty),
       0, 0)
 
-  override def cell(col: Int, row: Int): Char = matrix(row)(col)
+  override def cell(col: Int, row: Int): Player = matrix(row)(col)
 
-  override def fillAll(content: Char): Matrix =
-    var o, x = 0
-    content match {
-      case 'X' => x = MAX; o = 0
-      case 'O' => o = MAX; x = 0
-      case _ => o = 0; x = 0
+  override def fillAll(content: Player): Matrix =
+    val (x, o) = content match {
+      case Player.X => (MAX, 0)
+      case Player.O => (0, MAX)
+      case _ => (0, 0)
     }
-    copy(Vector.fill[Char](row, col)(content), x, o)
+    copy(Vector.fill[Player](row, col)(content), x, o)
 
   def MAX: Int = row * col
 
-  override def fill(content: Char, x: Int, y: Int): Matrix =
-    if content.equals(' ') then copy(matrix.updated(y, matrix(y).updated(x, content)))
+  override def fill(content: Player, x: Int, y: Int): Matrix =
+    if content.equals(Player.Empty) then copy(matrix)
 
-    var tmpMatrix = new DefaultSetHandler().createSetAndHandle(content, x, y, matrix)
-    tmpMatrix = tmpMatrix.updated(y, tmpMatrix(y).updated(x, content))
-    val xCount = tmpMatrix.flatten.count(x => x == 'X')
-    val oCount = tmpMatrix.flatten.count(x => x == 'O')
+    val tmpMatrix = new DefaultSetHandler(content, x, y, matrix).handle()
+    fillAlways(content, x, y, tmpMatrix)
 
-    copy(Vector.from(tmpMatrix), xCount, oCount)
-
-  override def fillAlways(content: Char, x: Int, y: Int): Matrix =
-    val tmpMatrix = matrix.updated(y, matrix(y).updated(x, content))
-    val xCount = tmpMatrix.flatten.count(x => x == 'X')
-    val oCount = tmpMatrix.flatten.count(x => x == 'O')
-
-    copy(tmpMatrix, xCount, oCount)
+  override def fillAlways(content: Player, x: Int, y: Int, matrix: Vector[Vector[Player]] = matrix): Matrix =
+    val m = matrix.updated(y, matrix(y).updated(x, content))
+    val (xCount, oCount) = (m.flatten.count(_.equals(Player.X)), m.flatten.count(_.equals(Player.O)))
+    copy(m, xCount, oCount)

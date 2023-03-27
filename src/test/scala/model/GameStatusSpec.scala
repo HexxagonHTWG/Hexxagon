@@ -1,7 +1,8 @@
-package controller
+package model
 
-import controller.GameStatus.*
 import controller.controllerComponent.controllerBaseImpl.*
+import model.GameStatus.*
+import model.Player
 import model.fieldComponent.fieldBaseImpl.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
@@ -24,10 +25,10 @@ class GameStatusSpec extends AnyWordSpec:
     }
     "be controlled via Controller" in {
       val c = Controller(using new Field(using new Matrix(9, 6)))
-      c.place('X', 0, 0)
+      c.place(Player.X, 0, 0)
       c.gameStatus should be(TURN_PLAYER_2)
       c.gameStatus.message() should be(TURN_PLAYER_2.message())
-      c.place('O', 1, 0)
+      c.place(Player.O, 1, 0)
       c.gameStatus should be(TURN_PLAYER_1)
       c.gameStatus.message() should be(TURN_PLAYER_1.message())
     }

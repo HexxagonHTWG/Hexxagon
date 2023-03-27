@@ -21,13 +21,13 @@ class FieldSpec extends AnyWordSpec:
         hex.field should be(new Field(using new Matrix(hex.matrix.col, hex.matrix.row)).field)
       }
       "placing at 8 5 X" in {
-        hex.place('X', 8, 5).matrix should be(new Matrix(9, 6).fill('X', 8, 5))
+        hex.place(Player.X, 8, 5).matrix should be(new Matrix(9, 6).fill(Player.X, 8, 5))
       }
       "be the same size as an 8 - 6 Grid" in {
         new Field(using new Matrix(9, 6)).field should be(new Field(using new Matrix(8, 6)).field)
       }
       "be filled with one method call" in {
-        hex.fillAll('X').matrix should be(new Matrix(9, 6).fillAll('X'))
+        hex.fillAll(Player.X).matrix should be(new Matrix(9, 6).fillAll(Player.X))
       }
     }
 
@@ -44,11 +44,11 @@ class FieldSpec extends AnyWordSpec:
         hex.field should be(new Field(using new Matrix(9, 6)).field)
       }
       "be empty in every Cell at the beginning" in {
-        hex.matrix.matrix.contains('X') should be(false)
-        hex.matrix.matrix.contains('O') should be(false)
+        hex.matrix.matrix.contains(Player.X) should be(false)
+        hex.matrix.matrix.contains(Player.O) should be(false)
         val nhex = new Field(using new Matrix(2, 3))
-        nhex.matrix.matrix.contains('X') should be(false)
-        nhex.matrix.matrix.contains('O') should be(false)
+        nhex.matrix.matrix.contains(Player.X) should be(false)
+        nhex.matrix.matrix.contains(Player.O) should be(false)
       }
     }
     "created as Single Cell" should {
@@ -56,32 +56,32 @@ class FieldSpec extends AnyWordSpec:
       var contr = new Controller(using new Field(using new Matrix(1, 1)))
 
       "contain a Space when empty" in {
-        contr.hexField.matrix.matrix(0)(0) should be(' ')
+        contr.hexField.matrix.matrix(0)(0) should be(Player.Empty)
       }
       "contain a X" in {
-        contr.place('X', 0, 0)
-        contr.hexField.matrix.matrix(0)(0) should be('X')
+        contr.place(Player.X, 0, 0)
+        contr.hexField.matrix.matrix(0)(0) should be(Player.X)
       }
       "contain a O" in {
         contr = new Controller(using new Field(using new Matrix(1, 1)))
-        contr.place('O', 0, 0)
-        contr.hexField.matrix.matrix(0)(0) should be('O')
+        contr.place(Player.O, 0, 0)
+        contr.hexField.matrix.matrix(0)(0) should be(Player.O)
       }
       "be filled completely" in {
-        contr.fillAll('X')
-        contr.hexField.matrix.matrix.flatten should contain('X')
-        contr.hexField.matrix.matrix.flatten should not contain ' '
-        contr.hexField.matrix.matrix.flatten should not contain 'O'
+        contr.fillAll(Player.X)
+        contr.hexField.matrix.matrix.flatten should contain(Player.X)
+        contr.hexField.matrix.matrix.flatten should not contain Player.Empty
+        contr.hexField.matrix.matrix.flatten should not contain Player.O
       }
     }
     "handling FileIO" should {
       "able to place stones without rules applying" in {
         var hex = new Field(using new Matrix(9, 6))
         var hex2 = new Field(using new Matrix(9, 6))
-        hex = hex.place('X', 0, 0).asInstanceOf[Field]
-        hex2 = hex2.placeAlways('X', 0, 0).asInstanceOf[Field]
+        hex = hex.place(Player.X, 0, 0).asInstanceOf[Field]
+        hex2 = hex2.placeAlways(Player.X, 0, 0).asInstanceOf[Field]
         hex.toString should be(hex2.toString)
-        hex.place('O', 0, 1).toString should not be hex2.placeAlways('O', 0, 1).toString
+        hex.place(Player.O, 0, 1).toString should not be hex2.placeAlways(Player.O, 0, 1).toString
       }
     }
   }

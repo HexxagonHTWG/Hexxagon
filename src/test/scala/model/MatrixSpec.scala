@@ -3,19 +3,19 @@ package model
 import model.fieldComponent.fieldBaseImpl.Matrix
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
-import util.SetHandling.DefaultSetHandler
+import util.setHandling.DefaultSetHandler
 
 import scala.annotation.varargs
 
 class MatrixSpec extends AnyWordSpec:
   "A Matrix" when {
     "initialized" should {
-      "contain only ' '" in {
+      "contain only Player.Empty" in {
         val matrix = new Matrix(9, 6)
-        matrix should be(Matrix(Vector.fill[Char](6, 9)(' ')))
-        matrix.matrix.filter(_.contains(' ')) should be(Vector.fill[Char](matrix.row, matrix.col)(' '))
-        matrix.matrix.filter(_.contains('X')) should be(Vector())
-        matrix.matrix.filter(_.contains('O')) should be(Vector())
+        matrix should be(Matrix(Vector.fill[Player](6, 9)(Player.Empty)))
+        matrix.matrix.filter(_.contains(Player.Empty)) should be(Vector.fill[Player](matrix.row, matrix.col)(Player.Empty))
+        matrix.matrix.filter(_.contains(Player.X)) should be(Vector())
+        matrix.matrix.filter(_.contains(Player.O)) should be(Vector())
       }
       "have its counters on 0" in {
         val matrix = new Matrix(9, 6)
@@ -37,80 +37,72 @@ class MatrixSpec extends AnyWordSpec:
     }
     "having a stone placed" should {
       var matrix = new Matrix(5, 4)
-      matrix = matrix.fill('O', 0, 0)
-      matrix = matrix.fill('X', 1, 0)
-      matrix = matrix.fill('O', 2, 0)
-      matrix = matrix.fill(' ', 4, 3)
+      matrix = matrix.fill(Player.O, 0, 0)
+      matrix = matrix.fill(Player.X, 1, 0)
+      matrix = matrix.fill(Player.O, 2, 0)
+      matrix = matrix.fill(Player.Empty, 4, 3)
       "contain stone in the cell" in {
         matrix.oCount should be(2)
-        matrix.matrix.flatten.count(x => x == 'O') should be(2)
+        matrix.matrix.flatten.count(x => x == Player.O) should be(2)
         matrix.xCount should be(1)
-        matrix.matrix.flatten.count(x => x == 'X') should be(1)
-        matrix.cell(0, 0) should be('X')
-        matrix.cell(1, 0) should be('O')
-        matrix.cell(2, 0) should be('O')
-        matrix.cell(4, 3) should be(' ')
+        matrix.matrix.flatten.count(x => x == Player.X) should be(1)
+        matrix.cell(0, 0) should be(Player.X)
+        matrix.cell(1, 0) should be(Player.O)
+        matrix.cell(2, 0) should be(Player.O)
+        matrix.cell(4, 3) should be(Player.Empty)
       }
     }
     "placing a stone on top of a stone" should {
       var matrix = new Matrix(5, 4)
       "counters should substract 1" in {
-        matrix = matrix.fill('O', 2, 2)
+        matrix = matrix.fill(Player.O, 2, 2)
         matrix.oCount should be(1)
         matrix.xCount should be(0)
-        matrix = matrix.fill('X', 2, 2)
+        matrix = matrix.fill(Player.X, 2, 2)
         matrix.oCount should be(0)
         matrix.xCount should be(1)
       }
     }
     "being filled with a stone" should {
       var matrix = new Matrix(5, 5)
-      "only contain 'X'" in {
-        matrix = matrix.fillAll('X')
+      "only contain Player.X" in {
+        matrix = matrix.fillAll(Player.X)
         matrix.xCount should be(matrix.row * matrix.col)
         matrix.oCount should be(0)
-        matrix.matrix.flatten.contains(' ') should be(false)
-        matrix.matrix.flatten.contains('O') should be(false)
-        matrix.matrix.flatten.contains('X') should be(true)
+        matrix.matrix.flatten.contains(Player.Empty) should be(false)
+        matrix.matrix.flatten.contains(Player.O) should be(false)
+        matrix.matrix.flatten.contains(Player.X) should be(true)
       }
-      "only contain 'O'" in {
-        matrix = matrix.fillAll('O')
+      "only contain Player.O" in {
+        matrix = matrix.fillAll(Player.O)
         matrix.oCount should be(matrix.row * matrix.col)
         matrix.xCount should be(0)
-        matrix.matrix.flatten.contains(' ') should be(false)
-        matrix.matrix.flatten.contains('X') should be(false)
-        matrix.matrix.flatten.contains('O') should be(true)
+        matrix.matrix.flatten.contains(Player.Empty) should be(false)
+        matrix.matrix.flatten.contains(Player.X) should be(false)
+        matrix.matrix.flatten.contains(Player.O) should be(true)
       }
       "fill results in new matrix" in {
         var mat = new Matrix(1, 1)
-        mat.fillAll(' ') should be(new Matrix(1, 1))
-        mat = mat.fill('X', 0, 0)
-        mat.cell(0, 0) should be('X')
-        mat = mat.fillAll(' ')
-        mat.cell(0, 0) should be(' ')
-      }
-      "only contain 'P'" in {
-        matrix = matrix.fillAll('P')
-        matrix.oCount should be(0)
-        matrix.xCount should be(0)
-        matrix.matrix.flatten.contains(' ') should be(false)
-        matrix.matrix.flatten.contains('X') should be(false)
-        matrix.matrix.flatten.contains('O') should be(false)
+        mat.fillAll(Player.Empty) should be(new Matrix(1, 1))
+        mat = mat.fill(Player.X, 0, 0)
+        mat.cell(0, 0) should be(Player.X)
+        mat = mat.fillAll(Player.Empty)
+        mat.cell(0, 0) should be(Player.Empty)
       }
     }
     "used for FileIO" should {
       "fill an entry without rules applying" in {
         var m = new Matrix(9, 6)
         var m2 = new Matrix(9, 6)
-        m = m.fill('X', 0, 0)
-        m2 = m2.fillAlways('X', 0, 0)
+        m = m.fill(Player.X, 0, 0)
+        m2 = m2.fillAlways(Player.X, 0, 0)
         m should be(m2)
         m.oCount should be(m2.oCount)
-        m = m.fill('O', 0, 1)
-        m2 = m2.fillAlways('O', 0, 1)
+        m = m.fill(Player.O, 0, 1)
+        m2 = m2.fillAlways(Player.O, 0, 1)
         m should not be m2
         m.oCount should not be m2.oCount
-        m2 = m2.fillAlways('O', 0, 0)
+        m2 = m2.fillAlways(Player.O, 0, 0)
         m2 should be(m)
       }
     }

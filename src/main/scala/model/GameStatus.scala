@@ -1,4 +1,4 @@
-package controller
+package model
 
 enum GameStatus(mes: String):
   case IDLE extends GameStatus("")
