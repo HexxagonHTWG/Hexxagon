@@ -1,6 +1,6 @@
 package aview.gui
 
-import controller.GameStatus.{GAME_OVER, IDLE, TURN_PLAYER_1, TURN_PLAYER_2}
+import model.GameStatus.{GAME_OVER, IDLE, TURN_PLAYER_1, TURN_PLAYER_2}
 import controller.controllerComponent.ControllerInterface
 import model.Player
 import model.fieldComponent.FieldInterface

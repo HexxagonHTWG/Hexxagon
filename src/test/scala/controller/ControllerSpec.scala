@@ -1,6 +1,6 @@
 package controller
 
-import controller.GameStatus.*
+import model.GameStatus.*
 import controller.controllerComponent.controllerBaseImpl.Controller
 import model.Player
 import model.fieldComponent.fieldBaseImpl.*

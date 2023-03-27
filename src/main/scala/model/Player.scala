@@ -12,6 +12,11 @@ enum Player(value: Char):
     case O => X
     case _ => Empty
 
+  def gameStatus: GameStatus = this match
+    case X => GameStatus.TURN_PLAYER_1
+    case O => GameStatus.TURN_PLAYER_2
+    case _ => GameStatus.IDLE
+
 object Player:
   def fromString(s: String): Player = fromChar(s.headOption.getOrElse(' '))
 

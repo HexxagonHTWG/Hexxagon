@@ -1,6 +1,6 @@
 package controller.controllerComponent
 
-import controller.GameStatus
+import model.GameStatus
 import model.fieldComponent.FieldInterface
 import util.Observable
 

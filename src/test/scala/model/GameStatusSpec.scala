@@ -1,7 +1,7 @@
-package controller
+package model
 
-import controller.GameStatus.*
 import controller.controllerComponent.controllerBaseImpl.*
+import model.GameStatus.*
 import model.Player
 import model.fieldComponent.fieldBaseImpl.*
 import org.scalatest.matchers.should.Matchers.*

@@ -1,7 +1,7 @@
 package model
 
 import _main_.{FlexibleModule, HexModule}
-import controller.GameStatus.*
+import GameStatus.*
 import controller.controllerComponent.controllerBaseImpl.Controller
 import model.fieldComponent.fieldBaseImpl.{Field, Matrix}
 import model.fileIOComponent.*

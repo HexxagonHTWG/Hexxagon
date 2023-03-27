@@ -1,12 +1,11 @@
 package controller.controllerComponent.controllerBaseImpl
 
 import _main_.HexModule
-import controller.GameStatus
-import controller.GameStatus.*
 import controller.controllerComponent.ControllerInterface
 import controller.controllerComponent.controllerBaseImpl.{PlaceAllCommand, PlaceCommand}
-import model.Player
+import model.GameStatus.*
 import model.fieldComponent.FieldInterface
+import model.{GameStatus, Player}
 import util.{Observable, UndoManager}
 
 import scala.xml.Elem
@@ -17,26 +16,26 @@ class Controller(using var hexField: FieldInterface[Player])
   private val GAME_MAX = hexField.matrix.MAX
   private val undoManager = new UndoManager[FieldInterface[Player]]
   var gameStatus: GameStatus = IDLE
-  private var savedStatus = IDLE
-  private var lastStatus = IDLE
+  private var savedStatus = gameStatus
+  private var lastStatus = gameStatus
 
   override def fillAll(c: Player): Unit =
     hexField = undoManager.doStep(hexField, new PlaceAllCommand(hexField, c))
     checkStat()
     notifyObservers()
 
-  private def checkStat(): Unit =
+  private def checkStat(): GameStatus =
     if hexField.matrix.xCount == GAME_MAX
       || hexField.matrix.oCount == GAME_MAX
       || hexField.matrix.oCount + hexField.matrix.xCount == GAME_MAX
     then gameStatus = GAME_OVER
     else if emptyMatrix then gameStatus = IDLE
+    gameStatus
 
-  private def emptyMatrix = !hexField.matrix.matrix.flatten.contains(Player.O) && !hexField.matrix.matrix.flatten.contains(Player.X)
+  private def emptyMatrix = hexField.matrix.matrix.flatten.collect({ case Player.Empty => Player.Empty }).length == GAME_MAX
 
   override def place(c: Player, x: Int, y: Int): Unit =
-    if ((gameStatus.equals(TURN_PLAYER_1) & c.equals(Player.O))
-      || (gameStatus.equals(TURN_PLAYER_2) & c.equals(Player.X)))
+    if gameStatus.equals(c.other.gameStatus) then
       print("\nNot your turn!\n")
       notifyObservers()
     else if !hexField.matrix.cell(x, y).equals(Player.Empty) then
@@ -46,17 +45,12 @@ class Controller(using var hexField: FieldInterface[Player])
       undoManager.redoStack = Nil
       hexField = undoManager.doStep(hexField, new PlaceCommand(hexField, c, x, y))
       lastStatus = gameStatus
-      checkStat()
-      if gameStatus == GAME_OVER then notifyObservers()
-      else c match {
-        case Player.X => gameStatus = TURN_PLAYER_2
-        case Player.O => gameStatus = TURN_PLAYER_1
-        case _ => ()
-      }
+      if checkStat() != GAME_OVER then gameStatus = c.other.gameStatus
       notifyObservers()
 
   override def undo(): Unit =
-    if emptyMatrix || gameStatus == GAME_OVER then notifyObservers()
+    if emptyMatrix || gameStatus == GAME_OVER then
+      notifyObservers()
     else
       val mem = gameStatus
       hexField = undoManager.undoStep(hexField)
@@ -96,7 +90,8 @@ class Controller(using var hexField: FieldInterface[Player])
 
   override def toString: String =
     gameStatus.message() + hexField.toString
-      + "\nX: " + hexField.matrix.xCount + "\tO: " + hexField.matrix.oCount
+      + "\nX: " + hexField.matrix.xCount
+      + "\tO: " + hexField.matrix.oCount
       + "\n" + "_" * (4 * hexField.matrix.col + 1) + "\n"
 
   override def exportField: String =

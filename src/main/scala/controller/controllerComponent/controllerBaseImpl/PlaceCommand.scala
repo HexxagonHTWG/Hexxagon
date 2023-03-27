@@ -13,17 +13,16 @@ case class GenericCommand[T <: FieldInterface[Player]](field: T, function: T => 
     fieldCache = t
     command
 
+  def command: T = function(field)
+
   override def undoStep(t: T): T =
-    val oldField = field
-    val f = fieldCache
+    val (oldField, f) = (field, fieldCache)
     fieldCache = oldField
     f
 
   override def redoStep(t: T): T =
     fieldCache = t
     command
-
-  def command: T = function(field)
 
 class PlaceCommand[T <: FieldInterface[Player]](field: T, content: Player, x: Int, y: Int) extends GenericCommand(field: T, (t: T) => t.place(content, x, y).asInstanceOf[T])
 

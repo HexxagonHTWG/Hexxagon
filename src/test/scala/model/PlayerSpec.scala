@@ -1,7 +1,7 @@
-package controller
+package model
 
-import controller.GameStatus.*
 import controller.controllerComponent.controllerBaseImpl.*
+import model.GameStatus.*
 import model.Player
 import model.fieldComponent.fieldBaseImpl.*
 import org.scalatest.matchers.should.Matchers.*
@@ -37,6 +37,18 @@ class PlayerSpec extends AnyWordSpec:
         Player.fromString("O") should be(Player.O)
         Player.fromString(" ") should be(Player.Empty)
         Player.fromString("") should be(Player.Empty)
+      }
+    }
+    "have a corresponding game status" when {
+      "asking for it's own" in {
+        Player.X.gameStatus should be(GameStatus.TURN_PLAYER_1)
+        Player.O.gameStatus should be(GameStatus.TURN_PLAYER_2)
+        Player.Empty.gameStatus should be(GameStatus.IDLE)
+      }
+      "asking for the other player" in {
+        Player.X.other.gameStatus should be(GameStatus.TURN_PLAYER_2)
+        Player.O.other.gameStatus should be(GameStatus.TURN_PLAYER_1)
+        Player.Empty.other.gameStatus should be(GameStatus.IDLE)
       }
     }
   }
