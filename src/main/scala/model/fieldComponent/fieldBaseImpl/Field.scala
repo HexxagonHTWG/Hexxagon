@@ -15,28 +15,31 @@ case class Field()(using val matrix: MatrixInterface[Player]) extends FieldInter
 
   override def reset: FieldInterface[Player] = copy()(using matrix.fillAll(Player.Empty))
 
-  override def field: String =
-    var res = EOL + edgeTop
-    for (l <- 0 until matrix.row) res += (top(l) + bot(l))
-    res += edgeBot
-    res
+  override def field: String = {
+    val fieldRows = (0 until matrix.row).map { l => top(l) + bot(l) }
+    (Seq(EOL + edgeTop) ++ fieldRows :+ edgeBot).mkString
+  }
 
   def edgeTop: String = " ___ " + "    ___ " * (matrix.col / 2) + EOL
 
   def edgeBot: String = " " + "   \\___/" * (matrix.col / 2) + EOL
 
-  def bot(line: Int): String =
-    var res = "\\___/"
+  def bot(line: Int): String = {
+    val row = matrix.matrix(line)
+    val botStr = row.zipWithIndex
+      .filter { case (_, i) => i % 2 != 0 && i >= 1 && i < matrix.col }
+      .map { case (x, _) => s" $x " }
+      .mkString("\\___/")
 
-    matrix.matrix(line).zipWithIndex.foreach(
-      (x, i) => if i % 2 != 0 && i >= 1 && i < matrix.col then res += " " + x.toString + " \\___/")
+    s"\\___/$botStr\\___/$EOL"
+  }
 
-    res + "\n"
+  def top(line: Int): String = {
+    val row = matrix.matrix(line)
+    val topStr = row.zipWithIndex
+      .filter { case (_, i) => i % 2 == 0 && i >= 2 }
+      .map { case (x, _) => s" $x " }
+      .mkString("___/", "\\___/", "\\")
 
-  def top(line: Int): String =
-    var res = "/ " + matrix.matrix(line)(0).toString + " \\"
-
-    matrix.matrix(line).zipWithIndex.foreach(
-      (x, i) => if i % 2 == 0 && i >= 2 then res += "___/ " + x + " \\")
-
-    res + "\n"
+    s"/ ${matrix.matrix(line)(0)} \\$topStr$EOL"
+  }
