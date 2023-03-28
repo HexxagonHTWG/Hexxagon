@@ -1,10 +1,31 @@
 package controller
 
-import controller.controllerComponent.controllerBaseImpl.{PlaceAllCommand, PlaceCommand}
+import controller.controllerComponent.controllerBaseImpl.{GenericCommand, PlaceAllCommand, PlaceCommand}
 import model.Player
+import model.fieldComponent.FieldInterface
 import model.fieldComponent.fieldBaseImpl.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+
+import scala.reflect.io.File
+
+class GenericCommandSpec extends AnyWordSpec:
+  "A GenericCommand" should {
+    var hex = new Field(using new Matrix(9, 6))
+
+    "execute a given function on a field" when {
+      "given a function that places a stone" in {
+        val genericCommand = GenericCommand(hex, field => field.place(Player.X, 0, 0).asInstanceOf[Field])
+        hex = genericCommand.doStep(hex)
+        hex.matrix.cell(0, 0) should be(Player.X)
+      }
+    }
+    "act equal to a place command if correct function is given" in {
+      val genericCommand = GenericCommand(hex, (field: Field) => field.place(Player.X, 0, 0).asInstanceOf[Field])
+      val placeCommand = new PlaceCommand(hex, Player.X, 0, 0)
+      placeCommand.doStep(hex) should be(genericCommand.doStep(hex))
+    }
+  }
 
 class PlaceCommandSpec extends AnyWordSpec:
   "A PlaceCommand" should {

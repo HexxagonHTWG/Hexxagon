@@ -45,5 +45,6 @@ class TUI(using controller: ControllerInterface[Player]) extends Observer:
       case "redo" | "r" | "re" => controller.redo(); Some("Redone.")
       case "undo" | "u" | "un" | "z" => controller.undo(); Some("Undone.")
       case "q" | "e" | "exit" | "quit" | "Exit" | "Quit" => Some(TUI.exitMes)
+      case "" => None
       case _ => Some("Wrong Input.")
     }
