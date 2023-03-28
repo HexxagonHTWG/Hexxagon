@@ -15,14 +15,17 @@ object starter:
   def runTUI(): Unit = {
     println(tui.startMessage)
     tui.handleInput("save")
-    var input = ""
-    var tmp = tui.handleInput(input)
-    while (!tmp.contains(TUI.exitMes) & !tmp.contains(TUI.filledWithX) & !tmp.contains(TUI.filledWithO)) {
-      input = readLine()
-      tmp = tui.handleInput(input)
-      if tmp.isDefined then println(tmp.get)
-    }
+    processInputLine()
   }
+
+  private def processInputLine(): Unit =
+    val nextLine = readLine()
+    val input = tui.handleInput(nextLine)
+    input.foreach(println)
+    input match {
+      case i if i.contains(TUI.exitMes) || i.contains(TUI.filledWithX) || i.contains(TUI.filledWithO) =>
+      case _ => Some(processInputLine())
+    }
 
   def runGUI(): Unit =
     GUI().start()
