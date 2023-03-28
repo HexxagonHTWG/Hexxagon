@@ -7,7 +7,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import util.setHandling.*
 
 class SetHandlerSpec extends AnyWordSpec:
-  "Looking at indices and a matrix a SetHandler" when {
+  "Looking at indices,a matrix and a SetHandler" when {
     "created and used by a client" should {
       var mat = new Matrix(5, 5)
       "give back the same matrix when nothing fits" in {
@@ -43,5 +43,12 @@ class SetHandlerSpec extends AnyWordSpec:
         SideSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler] should be(true)
         TopBotSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler] should be(true)
       }
+    }
+  }
+  "A SetHandler interface" should {
+    "have a handle method" in {
+      val (c, x, y, m) = (Player.X, 0, 0, new Matrix(5, 5).matrix)
+      val handler = new DefaultSetHandler(c, x, y, m).asInstanceOf[SetHandler]
+      handler.handle() should be(CornerSetHandler(c, x, y, m).asInstanceOf[SetHandler].handle())
     }
   }

@@ -38,6 +38,9 @@ class PlayerSpec extends AnyWordSpec:
         Player.fromString(" ") should be(Player.Empty)
         Player.fromString("") should be(Player.Empty)
       }
+      "directly" in {
+        Player.Empty.isInstanceOf[Player] should be(true)
+      }
     }
     "have a corresponding game status" when {
       "asking for it's own" in {
