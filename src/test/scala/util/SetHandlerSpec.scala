@@ -36,19 +36,31 @@ class SetHandlerSpec extends AnyWordSpec:
       }
       "is a chain of responsibility" in {
         val (c, x, y, m) = (Player.X, 0, 0, mat.matrix)
-        CornerSetHandler(c, x, y, m).isInstanceOf[SideSetHandler] should be(true)
-        CornerSetHandler(c, x, y, m).isInstanceOf[TopBotSetHandler] should be(true)
-        CornerSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler] should be(true)
-        SideSetHandler(c, x, y, m).isInstanceOf[TopBotSetHandler] should be(true)
-        SideSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler] should be(true)
-        TopBotSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler] should be(true)
+        CornerSetHandler(c, x, y, m).isInstanceOf[SideSetHandler[Player]] should be(true)
+        CornerSetHandler(c, x, y, m).isInstanceOf[TopBotSetHandler[Player]] should be(true)
+        CornerSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler[Player]] should be(true)
+        SideSetHandler(c, x, y, m).isInstanceOf[TopBotSetHandler[Player]] should be(true)
+        SideSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler[Player]] should be(true)
+        TopBotSetHandler(c, x, y, m).isInstanceOf[DefaultSetHandler[Player]] should be(true)
       }
     }
   }
   "A SetHandler interface" should {
     "have a handle method" in {
       val (c, x, y, m) = (Player.X, 0, 0, new Matrix(5, 5).matrix)
-      val handler = new DefaultSetHandler(c, x, y, m).asInstanceOf[SetHandler]
-      handler.handle() should be(CornerSetHandler(c, x, y, m).asInstanceOf[SetHandler].handle())
+      val handler = new DefaultSetHandler(c, x, y, m).asInstanceOf[SetHandler[Player]]
+      handler.handle() should be(CornerSetHandler(c, x, y, m).asInstanceOf[SetHandler[Player]].handle())
+    }
+    "be generic" when {
+      "used with a Player" in {
+        val (c, x, y, m) = (Player.X, 0, 0, new Matrix(5, 5).matrix)
+        val handler = new DefaultSetHandler(c, x, y, m).asInstanceOf[SetHandler[Player]]
+        handler.handle() should be(CornerSetHandler(c, x, y, m).asInstanceOf[SetHandler[Player]].handle())
+      }
+      "used with a anything extending the Opposite trait" in {
+        val (c, x, y, m) = (new MockOpposite("A"), 0, 0, new Matrix(5, 5).matrix)
+        val handler = new DefaultSetHandler(c, x, y, m).asInstanceOf[SetHandler[Opposite]]
+        handler.handle() should be(CornerSetHandler(c, x, y, m).asInstanceOf[SetHandler[Opposite]].handle())
+      }
     }
   }

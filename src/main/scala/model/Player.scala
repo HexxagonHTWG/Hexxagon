@@ -1,13 +1,15 @@
 package model
 
-enum Player(value: Char):
+import util.Opposite
+
+enum Player(value: Char) extends Opposite:
   case X extends Player('X')
   case O extends Player('O')
   case Empty extends Player(' ')
 
   override def toString: String = value.toString
 
-  def other: Player = this match
+  override def other: Player = this match
     case X => O
     case O => X
     case _ => Empty

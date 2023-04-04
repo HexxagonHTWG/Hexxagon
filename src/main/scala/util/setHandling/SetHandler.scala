@@ -1,8 +1,6 @@
 package util
 package setHandling
 
-import model.Player
-
 import scala.util.{Failure, Success, Try}
 
 /**
@@ -10,7 +8,7 @@ import scala.util.{Failure, Success, Try}
  *
  * Child classes simply change coordinates and the next strategy/handler
  */
-trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Player]]):
+trait SetHandler[T <: Opposite](content: T, x: Int, y: Int, startmatrix: Vector[Vector[T]]):
 
   /**
    * Tries to change all stones in given coordinates,
@@ -19,7 +17,7 @@ trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Pla
    *
    * @return the resulting matrix as sequence of vectors
    */
-  final def handle(): Vector[Vector[Player]] =
+  final def handle(): Vector[Vector[T]] =
     if x < 0 || y < 0 then return startmatrix
     coordinates.map(x => Try(setForEach(x, startmatrix, content)))
       .collectFirst { case Success(x) => x } match
@@ -27,14 +25,14 @@ trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Pla
       case None => nextHandler
 
   /**
-   * Helper function that sets a given set of coordinates inside a matrix to a given Player
+   * Helper function that sets a given set of coordinates inside a matrix to a given T
    *
    * @param s      set of coordinates to be changed
    * @param matrix matrix of which stones should be changed
    * @param player the replacement stone/character
    * @return the resulting matrix with changed coordinates
    */
-  private final def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[Player]], player: Player): Vector[Vector[Player]] = {
+  private final def setForEach(s: Set[(Int, Int)], matrix: Vector[Vector[T]], player: T): Vector[Vector[T]] = {
     var tmpMatrix = matrix
     s.foreach {
       (x, y) =>
@@ -49,7 +47,7 @@ trait SetHandler(content: Player, x: Int, y: Int, startmatrix: Vector[Vector[Pla
    *
    * @return a fallback matrix, preferably a different implementation of SetHandler.handle()
    */
-  protected def nextHandler: Vector[Vector[Player]]
+  protected def nextHandler: Vector[Vector[T]]
 
   /**
    * The current coordinates to be looked at in the handle() method
