@@ -26,9 +26,12 @@ lazy val commonSettings = Seq(
       clazz = 0
     ),
     Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
-    "utf-8"),
+    "utf-8"
+  ),
 
   jacocoExcludes := Seq(
+    "gui",
+    "tui.service.*",
   ),
 )
 
