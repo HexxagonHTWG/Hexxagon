@@ -3,11 +3,10 @@ package lib.controllerBaseImpl
 import lib.*
 import lib.GameStatus.*
 import lib.fieldComponent.FieldInterface
-import service.HexModule
 
 import scala.xml.Elem
 
-class Controller(using var hexField: FieldInterface[Player])
+class Controller(using var hexField: FieldInterface[Player])(using val fileIO: FileIOInterface)
   extends ControllerInterface[Player]:
 
   private val GAME_MAX = hexField.matrix.MAX
@@ -65,12 +64,12 @@ class Controller(using var hexField: FieldInterface[Player])
     notifyObservers()
 
   override def save(): Unit =
-    HexModule.given_FileIOInterface.save(hexField)
+    fileIO.save(hexField)
     savedStatus = gameStatus
     notifyObservers()
 
   override def load(): Unit =
-    hexField = HexModule.given_FileIOInterface.load
+    hexField = fileIO.load
     gameStatus = savedStatus
     checkStat()
     notifyObservers()
@@ -92,5 +91,5 @@ class Controller(using var hexField: FieldInterface[Player])
       + "\n" + "_" * (4 * hexField.matrix.col + 1) + "\n"
 
   override def exportField: String =
-    HexModule.given_FileIOInterface.exportGame(hexField, hexField.matrix.xCount, hexField.matrix.oCount,
+    fileIO.exportGame(hexField, hexField.matrix.xCount, hexField.matrix.oCount,
       if (gameStatus.message().equals(TURN_PLAYER_2.message())) 2 else 1)

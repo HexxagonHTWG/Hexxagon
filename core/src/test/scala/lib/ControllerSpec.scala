@@ -1,12 +1,13 @@
 package lib
 
+import di.PersistenceModule.given_FileIOInterface
+import di.{CoreModule, FlexibleCoreModule, FlexibleProviderModule}
 import lib.GameStatus.*
 import lib.Observer
 import lib.controllerBaseImpl.Controller
 import lib.fieldComponent.fieldBaseImpl.{Field, Matrix}
 import org.scalatest.matchers.should.Matchers.{be, *}
 import org.scalatest.wordspec.AnyWordSpec
-import service.{FlexibleModule, HexModule}
 
 class ControllerSpec extends AnyWordSpec:
   "A Controller" when {
@@ -103,7 +104,7 @@ class ControllerSpec extends AnyWordSpec:
     }
     "using persistence" should {
       "save and load" in {
-        val c = HexModule.given_ControllerInterface_Player
+        val c = CoreModule.given_ControllerInterface_Player
         c.place(Player.X, 0, 0)
         c.save()
         val hex = c.hexField
@@ -114,8 +115,7 @@ class ControllerSpec extends AnyWordSpec:
       }
 
       "keep the saved gamestatus after loading" in {
-        // TODO: fix DI with different sized field (FlexibleModule(7, 4)...) - bigger than default causes index out of bounds
-        val c = FlexibleModule(6, 4).given_ControllerInterface_Player
+        val c = FlexibleCoreModule(7, 4).given_ControllerInterface_Player
         c.gameStatus should be(IDLE)
         c.place(Player.X, 0, 0)
         c.gameStatus should be(TURN_PLAYER_2)
