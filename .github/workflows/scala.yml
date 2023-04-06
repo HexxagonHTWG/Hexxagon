@@ -7,6 +7,7 @@ on:
 
 jobs:
   build:
+    name: Build 🛠️
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,6 +20,8 @@ jobs:
         run: sbt compile
 
   run_tests:
+    name: Test 🧪 and Upload Coverage 📊
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
