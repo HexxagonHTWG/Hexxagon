@@ -21,6 +21,6 @@ object Player:
   def fromString(s: String): Player = fromChar(s.headOption.getOrElse(' '))
 
   def fromChar(c: Char): Player = c match
-    case 'X' => X
-    case 'O' => O
+    case 'X' | 'x' => X
+    case 'O' | 'o' => O
     case _ => Empty

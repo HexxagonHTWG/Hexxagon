@@ -6,7 +6,6 @@ import service.HexModule.given_ControllerInterface_Player
 import scala.io.StdIn.readLine
 
 object TuiService extends App:
-  // TODO: check why tui is not working - "Not your turn!"
   starter.runTUI()
 
 object starter:
