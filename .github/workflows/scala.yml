@@ -28,20 +28,8 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
         run: |
           export CI_BRANCH="${GITHUB_REF#refs/heads/}"
-          sbt clean jacocoAggregate jacocoCoveralls 
-
-  codecov:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up JDK 17
-        uses: actions/setup-java@v2
-        with:
-          java-version: '17'
-          distribution: 'adopt'
+          sbt clean jacocoAggregate jacocoCoveralls
       - name: Download Codecov
         run: curl -Os https://uploader.codecov.io/latest/linux/codecov
-      - name: Add x Flag
-        run: chmod +x codecov
       - name: Run Codecov
-        run: ./codecov -t ${{ secrets.CODECOV_TOKEN }}
+        run: chmod +x codecov && ./codecov -t ${{ secrets.CODECOV_TOKEN }}

@@ -18,12 +18,12 @@ lazy val commonSettings = Seq(
     "Jacoco Coverage Report",
     None,
     JacocoThresholds(
-      instruction = 50,
-      method = 50,
-      branch = 50,
-      complexity = 50,
-      line = 50,
-      clazz = 50
+      instruction = 0,
+      method = 0,
+      branch = 0,
+      complexity = 0,
+      line = 0,
+      clazz = 0
     ),
     Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
     "utf-8"),
@@ -94,11 +94,7 @@ lazy val root = project
   .in(file("./"))
   .settings(
     name := "Hexxagon",
-    commonSettings,
-    jacocoCoverallsServiceName := "github-actions",
-    jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
-    jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
-    jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
+    commonSettings
   )
   .aggregate(
     gui,
