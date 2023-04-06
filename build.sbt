@@ -5,6 +5,10 @@ lazy val commonDependencies = Seq(
 )
 
 lazy val commonSettings = Seq(
+  version := "0.1.0-SNAPSHOT",
+  scalaVersion := "3.2.2",
+  organization := "org.hex",
+
   target := {
     baseDirectory.value / "target" / "scala-3.2.2"
   },
@@ -19,7 +23,6 @@ lazy val commonSettings = Seq(
     "utf-8"),
 
   jacocoExcludes := Seq(
-    "*HexModule.*",
   ),
 
   jacocoCoverallsServiceName := "github-actions",
@@ -31,8 +34,6 @@ lazy val commonSettings = Seq(
 lazy val gui = (project in file("gui"))
   .settings(
     name := "gui",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := "3.2.2",
     commonSettings,
     libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
     libraryDependencies ++= {
@@ -52,17 +53,13 @@ lazy val gui = (project in file("gui"))
 lazy val tui = (project in file("tui"))
   .settings(
     name := "tui",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := "3.2.2",
-    commonSettings
+    commonSettings,
   )
   .dependsOn(core, provider, persistence, utils)
 
 lazy val core = (project in file("core"))
   .settings(
     name := "core",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := "3.2.2",
     commonSettings
   )
   .dependsOn(provider, persistence, utils)
@@ -70,8 +67,6 @@ lazy val core = (project in file("core"))
 lazy val provider = (project in file("provider"))
   .settings(
     name := "provider",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := "3.2.2",
     commonSettings
   )
   .dependsOn(utils)
@@ -79,8 +74,6 @@ lazy val provider = (project in file("provider"))
 lazy val persistence = (project in file("persistence"))
   .settings(
     name := "persistence",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := "3.2.2",
     commonSettings,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
@@ -93,8 +86,6 @@ lazy val persistence = (project in file("persistence"))
 lazy val utils = (project in file("utils"))
   .settings(
     name := "utils",
-    version := "0.1.0-SNAPSHOT",
-    scalaVersion := "3.2.2",
     commonSettings
   )
 
@@ -102,10 +93,6 @@ lazy val root = project
   .in(file("./"))
   .settings(
     name := "Hexxagon",
-    version := "0.1.0-SNAPSHOT",
-    fork / run := true, // not pretty but fixes error on second startup
-    connectInput / run := true, // for fork and TUI
-    scalaVersion := "3.2.2",
     commonSettings
   )
   .enablePlugins(JacocoCoverallsPlugin)

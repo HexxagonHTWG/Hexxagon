@@ -1,5 +1,6 @@
 package lib
 
+import di.PersistenceModule.given_FileIOInterface
 import lib.controllerBaseImpl.Controller
 import lib.fieldComponent.fieldBaseImpl.{Field, Matrix}
 import org.scalatest.matchers.should.Matchers.*

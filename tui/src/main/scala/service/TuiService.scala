@@ -1,7 +1,7 @@
 package service
 
+import di.CoreModule.given_ControllerInterface_Player
 import lib.TUI
-import service.HexModule.given_ControllerInterface_Player
 
 import scala.io.StdIn.readLine
 

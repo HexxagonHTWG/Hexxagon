@@ -7,6 +7,14 @@
       <list />
     </option>
     <option name="testKind" value="All in package" />
+    <option name="classBuf">
+      <list>
+        <option value="lib.GameStatusSpec" />
+        <option value="lib.FieldSpec" />
+        <option value="lib.MatrixSpec" />
+        <option value="lib.PlayerSpec" />
+      </list>
+    </option>
     <option name="searchTest" value="In single module" />
     <option name="shortenClasspath" value="NONE" />
     <method v="2">
