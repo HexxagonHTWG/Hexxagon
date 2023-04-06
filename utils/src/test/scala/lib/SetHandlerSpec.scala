@@ -1,13 +1,13 @@
 package lib
 
-import lib.{MockOpposite, Opposite}
+import lib.Opposite
+import lib.setHandling.*
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.setHandling.*
-
 enum Player extends Opposite:
-  case X, O
+  case X extends Player
+  case O extends Player
 
   override def other: Player = this match
     case X => O
@@ -23,7 +23,7 @@ class SetHandlerSpec extends AnyWordSpec:
         new DefaultSetHandler(Player.X, 6, 5, mat).handle() should be(CornerSetHandler(Player.X, 6, 6, mat).handle())
       }
       "handle each case with a different class" in {
-        mat = Vector.from(Vector.from(Vector.fill(5)(Player.O)))
+        mat = Vector.fill(5)(Vector.fill(5)(Player.O))
         new DefaultSetHandler(Player.X, 2, 0, mat).handle() should be(new TopBotSetHandler(Player.X, 2, 0, mat).handle())
         new DefaultSetHandler(Player.X, 0, 2, mat).handle() should be(new SideSetHandler(Player.X, 0, 2, mat).handle())
         new DefaultSetHandler(Player.X, 0, 0, mat).handle() should be(CornerSetHandler(Player.X, 0, 0, mat).handle())

@@ -1,4 +1,4 @@
-package scala
+package lib
 package setHandling
 
 import lib.Opposite
