@@ -1,5 +1,4 @@
 lazy val commonDependencies = Seq(
-  "com.novocode" % "junit-interface" % "0.11" % "test",
   "org.scalactic" %% "scalactic" % "3.2.15",
   "org.scalatest" %% "scalatest" % "3.2.15" % "test",
 )
@@ -18,17 +17,19 @@ lazy val commonSettings = Seq(
   jacocoReportSettings := JacocoReportSettings(
     "Jacoco Coverage Report",
     None,
-    JacocoThresholds(),
-    Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML), // note XML formatter
+    JacocoThresholds(
+      instruction = 50,
+      method = 50,
+      branch = 50,
+      complexity = 50,
+      line = 50,
+      clazz = 50
+    ),
+    Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
     "utf-8"),
 
   jacocoExcludes := Seq(
   ),
-
-  jacocoCoverallsServiceName := "github-actions",
-  jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
-  jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
-  jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
 )
 
 lazy val gui = (project in file("gui"))
@@ -93,6 +94,17 @@ lazy val root = project
   .in(file("./"))
   .settings(
     name := "Hexxagon",
-    commonSettings
+    commonSettings,
+    jacocoCoverallsServiceName := "github-actions",
+    jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
+    jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
+    jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
   )
-  .enablePlugins(JacocoCoverallsPlugin)
+  .aggregate(
+    gui,
+    tui,
+    core,
+    provider,
+    persistence,
+    utils
+  )
