@@ -30,8 +30,9 @@ lazy val commonSettings = Seq(
   ),
 
   jacocoExcludes := Seq(
-    "gui",
-    "tui.service.*",
+    "**.Gui*",
+    "**.GUI*",
+    "**.TuiService*",
   ),
 )
 
