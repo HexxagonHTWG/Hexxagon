@@ -1,20 +1,10 @@
-lazy val commonDependencies = Seq(
-  "org.scalactic" %% "scalactic" % "3.2.15",
-  "org.scalatest" %% "scalatest" % "3.2.15" % "test",
-)
-
-lazy val commonSettings = Seq(
-  version := "0.1.0-SNAPSHOT",
-  scalaVersion := "3.2.2",
-  organization := "org.hex",
-
-  target := {
+ThisBuild / version := "0.1.0"
+ThisBuild / scalaVersion := "3.2.2"
+ThisBuild / organization := "org.hex"
+ThisBuild / target := {
     baseDirectory.value / "target" / "scala-3.2.2"
-  },
-
-  libraryDependencies ++= commonDependencies,
-
-  jacocoReportSettings := JacocoReportSettings(
+  }
+ThisBuild / jacocoReportSettings := JacocoReportSettings(
     "Jacoco Coverage Report",
     None,
     JacocoThresholds(
@@ -27,19 +17,22 @@ lazy val commonSettings = Seq(
     ),
     Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
     "utf-8"
-  ),
-
-  jacocoExcludes := Seq(
+  )
+ThisBuild / jacocoExcludes := Seq(
     "**.Gui*",
     "**.GUI*",
-    "**.TuiService*",
-  ),
+    "**.TuiService*"
+  )
+
+lazy val commonDependencies = Seq(
+  "org.scalactic" %% "scalactic" % "3.2.15",
+  "org.scalatest" %% "scalatest" % "3.2.15" % "test"
 )
 
-lazy val gui = (project in file("gui"))
+lazy val gui = project
   .settings(
     name := "gui",
-    commonSettings,
+    libraryDependencies ++= commonDependencies,
     libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
     libraryDependencies ++= {
       // Determine OS version of JavaFX binaries
@@ -51,54 +44,54 @@ lazy val gui = (project in file("gui"))
       }
       Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
         .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
-    },
+    }
   )
   .dependsOn(core, provider, persistence, utils)
 
-lazy val tui = (project in file("tui"))
+lazy val tui = project
   .settings(
     name := "tui",
-    commonSettings,
+    libraryDependencies ++= commonDependencies
   )
   .dependsOn(core, provider, persistence, utils)
 
-lazy val core = (project in file("core"))
+lazy val core = project
   .settings(
     name := "core",
-    commonSettings
+    libraryDependencies ++= commonDependencies
   )
   .dependsOn(provider, persistence, utils)
 
-lazy val provider = (project in file("provider"))
+lazy val provider = project
   .settings(
     name := "provider",
-    commonSettings
+    libraryDependencies ++= commonDependencies
   )
   .dependsOn(utils)
 
-lazy val persistence = (project in file("persistence"))
+lazy val persistence = project
   .settings(
     name := "persistence",
-    commonSettings,
+    libraryDependencies ++= commonDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
       "com.lihaoyi" %% "upickle" % "3.0.0", // JSON
-      ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13), // JSON
+      "com.typesafe.play" %% "play-json" % "2.9.3" cross CrossVersion.for3Use2_13 // JSON
     )
   )
   .dependsOn(provider, utils)
 
-lazy val utils = (project in file("utils"))
+lazy val utils = project
   .settings(
     name := "utils",
-    commonSettings
+    libraryDependencies ++= commonDependencies
   )
 
 lazy val root = project
   .in(file("./"))
   .settings(
     name := "Hexxagon",
-    commonSettings
+    libraryDependencies ++= commonDependencies
   )
   .aggregate(
     gui,
