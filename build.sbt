@@ -2,6 +2,7 @@
  * General Settings
  * ===================================================================================================================== */
 ThisBuild / version := "0.1.0-SNAPSHOT"
+ThisBuild / isSnapshot := true
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
 ThisBuild / versionScheme := Some("early-semver")
