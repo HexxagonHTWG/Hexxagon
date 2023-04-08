@@ -36,7 +36,8 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
-          sbt clean jacocoAggregate
+          sbt clean coverage test
+          sbt coverageAggregate
       - uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

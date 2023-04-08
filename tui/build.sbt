@@ -1,5 +1,3 @@
-This / jacocoExcludes ++= Seq(
-  "**service.*"
-)
+This / coverageExcludedFiles := ".*/service/.*"
 
 This / libraryDependencies += "org.hex" %% "core" % version.value
