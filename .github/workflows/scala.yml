@@ -37,10 +37,10 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
           sbt clean jacoco
-      - name: Download Codecov
-        run: curl -Os https://uploader.codecov.io/latest/linux/codecov
-      - name: Run Codecov
-        run: chmod +x codecov && ./codecov -t ${{ secrets.CODECOV_TOKEN }}
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
 
   publish:
     if: github.ref == 'refs/heads/master'
