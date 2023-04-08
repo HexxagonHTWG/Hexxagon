@@ -1,7 +1,7 @@
 /* =====================================================================================================================
  * General Settings
  * ===================================================================================================================== */
-ThisBuild / version := "0.1.1-SNAPSHOT"
+ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
 ThisBuild / versionScheme := Some("early-semver")
