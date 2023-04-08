@@ -1,21 +1,39 @@
-lazy val root = project
-  .in(file("./"))
+ThisBuild / version := "0.1.0"
+ThisBuild / scalaVersion := "3.2.2"
+ThisBuild / organization := "org.hex"
+ThisBuild / target := {
+    baseDirectory.value / "target" / "scala-3.2.2"
+  }
+ThisBuild / jacocoReportSettings := JacocoReportSettings(
+    "Jacoco Coverage Report",
+    None,
+    JacocoThresholds(
+      instruction = 0,
+      method = 0,
+      branch = 0,
+      complexity = 0,
+      line = 0,
+      clazz = 0
+    ),
+    Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
+    "utf-8"
+  )
+ThisBuild / jacocoExcludes := Seq(
+    "**.Gui*",
+    "**.GUI*",
+    "**.TuiService*"
+  )
+
+lazy val commonDependencies = Seq(
+  "org.scalactic" %% "scalactic" % "3.2.15",
+  "org.scalatest" %% "scalatest" % "3.2.15" % "test"
+)
+
+lazy val gui = project
   .settings(
-    name := "Hexxagon",
-    version := "0.1.0-SNAPSHOT",
-    fork / run := true, // not pretty but fixes error on second startup
-    connectInput / run := true, // for fork and TUI
-    scalaVersion := "3.2.2",
-
-    libraryDependencies ++= Seq("com.novocode" % "junit-interface" % "0.11" % "test",
-      "org.scalactic" %% "scalactic" % "3.2.15",
-      "org.scalatest" %% "scalatest" % "3.2.15" % "test",
-      "org.scalafx" %% "scalafx" % "16.0.0-R24",
-      "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
-      "com.lihaoyi" %% "upickle" % "3.0.0"), // JSON
-
-    libraryDependencies += ("com.typesafe.play" %% "play-json" % "2.9.3").cross(CrossVersion.for3Use2_13), // JSON
-
+    name := "gui",
+    libraryDependencies ++= commonDependencies,
+    libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
     libraryDependencies ++= {
       // Determine OS version of JavaFX binaries
       lazy val osName = System.getProperty("os.name") match {
@@ -26,24 +44,60 @@ lazy val root = project
       }
       Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
         .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
-    },
-
-    jacocoReportSettings := JacocoReportSettings(
-      "Jacoco Coverage Report",
-      None,
-      JacocoThresholds(),
-      Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML), // note XML formatter
-      "utf-8"),
-
-    jacocoExcludes := Seq(
-      "*aview.*",
-      "*HexModule.*",
-      "*Main.*"
-    ),
-
-    jacocoCoverallsServiceName := "github-actions",
-    jacocoCoverallsBranch := sys.env.get("CI_BRANCH"),
-    jacocoCoverallsPullRequest := sys.env.get("GITHUB_EVENT_NAME"),
-    jacocoCoverallsRepoToken := sys.env.get("COVERALLS_REPO_TOKEN")
+    }
   )
-  .enablePlugins(JacocoCoverallsPlugin)
+  .dependsOn(core, provider, persistence, utils)
+
+lazy val tui = project
+  .settings(
+    name := "tui",
+    libraryDependencies ++= commonDependencies
+  )
+  .dependsOn(core, provider, persistence, utils)
+
+lazy val core = project
+  .settings(
+    name := "core",
+    libraryDependencies ++= commonDependencies
+  )
+  .dependsOn(provider, persistence, utils)
+
+lazy val provider = project
+  .settings(
+    name := "provider",
+    libraryDependencies ++= commonDependencies
+  )
+  .dependsOn(utils)
+
+lazy val persistence = project
+  .settings(
+    name := "persistence",
+    libraryDependencies ++= commonDependencies,
+    libraryDependencies ++= Seq(
+      "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
+      "com.lihaoyi" %% "upickle" % "3.0.0", // JSON
+      "com.typesafe.play" %% "play-json" % "2.9.3" cross CrossVersion.for3Use2_13 // JSON
+    )
+  )
+  .dependsOn(provider, utils)
+
+lazy val utils = project
+  .settings(
+    name := "utils",
+    libraryDependencies ++= commonDependencies
+  )
+
+lazy val root = project
+  .in(file("./"))
+  .settings(
+    name := "Hexxagon",
+    libraryDependencies ++= commonDependencies
+  )
+  .aggregate(
+    gui,
+    tui,
+    core,
+    provider,
+    persistence,
+    utils
+  )
