@@ -37,14 +37,7 @@ ThisBuild / credentials := {
 ThisBuild / jacocoReportSettings := JacocoReportSettings(
   "Jacoco Coverage Report",
   None,
-  JacocoThresholds(
-    instruction = 0,
-    method = 0,
-    branch = 0,
-    complexity = 0,
-    line = 0,
-    clazz = 0
-  ),
+  JacocoThresholds(),
   Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
   "utf-8"
 )
