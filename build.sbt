@@ -44,6 +44,7 @@ lazy val commonDependencies = Seq(
 lazy val gui = project
   .settings(
     name := "gui",
+    description := "GUI for Hexxagon",
     libraryDependencies ++= commonDependencies,
     libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
     libraryDependencies ++= {
@@ -63,6 +64,7 @@ lazy val gui = project
 lazy val tui = project
   .settings(
     name := "tui",
+    description := "TUI for Hexxagon",
     libraryDependencies ++= commonDependencies
   )
   .dependsOn(core)
@@ -70,6 +72,7 @@ lazy val tui = project
 lazy val core = project
   .settings(
     name := "core",
+    description := "Core Package for Hexxagon - contains controller",
     libraryDependencies ++= commonDependencies
   )
   .dependsOn(persistence)
@@ -77,6 +80,7 @@ lazy val core = project
 lazy val persistence = project
   .settings(
     name := "persistence",
+    description := "Persistence Package for Hexxagon - contains FileIO",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
@@ -89,6 +93,7 @@ lazy val persistence = project
 lazy val provider = project
   .settings(
     name := "provider",
+    description := "Provider Package for Hexxagon - contains model",
     libraryDependencies ++= commonDependencies
   )
   .dependsOn(utils)
@@ -96,6 +101,7 @@ lazy val provider = project
 lazy val utils = project
   .settings(
     name := "utils",
+    description := "Utils Package for Hexxagon - contains useful classes and traits",
     libraryDependencies ++= commonDependencies
   )
 
