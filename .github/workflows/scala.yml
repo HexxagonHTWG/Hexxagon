@@ -60,15 +60,15 @@ jobs:
         with:
           minor-identifier: "#minor"
           major-identifier: "#major"
-      - name: Current version
+      - name: Save versions
         run: |
           echo "LATEST_VERSION=${{ steps.version.outputs.version }}" >> $GITHUB_ENV
-          echo ${{ env.LATEST_VERSION }}
-      - name: Previous version
+          echo "PREVIOUS_VERSION=${{ steps.version.outputs.previous-version }}" >> $GITHUB_ENV
+      - name: Compare versions
         run: |
-          echo ${{ steps.version.outputs.previous-version }}
+          echo ${{ env.PREVIOUS_VERSION }} <---> ${{ env.LATEST_VERSION }}
       - name: Publish
-        if: ${{ env.LATEST_VERSION != '' }}
+        if: ${{ env.LATEST_VERSION != '' && env.PREVIOUS_VERSION != env.LATEST_VERSION }}
         run: sbt publish
         env:
           LATEST_VERSION: ${{ env.LATEST_VERSION }}
