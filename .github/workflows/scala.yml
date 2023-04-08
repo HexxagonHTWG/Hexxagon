@@ -2,6 +2,7 @@ name: Scala CI
 
 on:
   push:
+    branches: [ master, dev ]
   pull_request:
     branches: [ master ]
 
@@ -53,15 +54,19 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      - name: Bump Version
-        id: bump
-        uses: nnichols/maven-version-bump-action@v3
+      - name: Git Version
+        id: version
+        uses: codacy/git-version@2.7.1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Save Version
+          minor-identifier: "#minor"
+          major-identifier: "#major"
+      - name: Current version
         run: |
-          echo "LATEST_VERSION=${{ steps.bump.outputs.version }}" >> $GITHUB_ENV
+          echo "LATEST_VERSION=${{ steps.version.outputs.version }}" >> $GITHUB_ENV
           echo ${{ env.LATEST_VERSION }}
+      - name: Previous version
+        run: |
+          echo ${{ steps.version.outputs.previous-version }}
       - name: Publish
         if: ${{ env.LATEST_VERSION != '' }}
         run: sbt publish
