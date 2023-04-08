@@ -1,8 +1,7 @@
 ignore:
   - "**/GUI.scala"
-  - "**/Main.scala"
-  - "**/resources/"
-  - "**/HexModule.scala"
+  - "**/TuiService.scala"
+  - "**/resources/*"
 
 coverage:
   status:
