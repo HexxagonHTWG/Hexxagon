@@ -1,3 +1,3 @@
 This / jacocoExcludes ++= Seq(
-  "**.service.*"
+  "**service.*"
 )

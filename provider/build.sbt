@@ -1,5 +1,5 @@
 This / jacocoExcludes ++= Seq(
-  "**.di.*"
+  "**di.*"
 )
 
 // This / libraryDependencies += "org.hex" %% "utils" % "0.1.0"

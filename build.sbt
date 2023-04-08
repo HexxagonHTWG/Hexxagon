@@ -15,13 +15,15 @@ ThisBuild / target := {
 ThisBuild / resolvers += "GitHub HexxagonHTWG Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon"
 ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon")
 ThisBuild / publishMavenStyle := true
-ThisBuild / credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
-ThisBuild / publish / credentials += Credentials(
-  "GitHub Package Registry",
-  "maven.pkg.github.com",
-  "HexxagonHTWG",
-  System.getenv("GITHUB_TOKEN")
-)
+ThisBuild / credentials += Some(Credentials(Path.userHome / ".sbt" / ".credentials"))
+  .getOrElse(
+    Credentials(
+      "GitHub Package Registry",
+      "maven.pkg.github.com",
+      "HexxagonHTWG",
+      System.getenv("GITHUB_TOKEN")
+    )
+  )
 
 /* =====================================================================================================================
  * Jacoco Settings

@@ -29,7 +29,7 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: |
-          sbt clean jacocoAggregate
+          sbt clean jacoco
       - name: Download Codecov
         run: curl -Os https://uploader.codecov.io/latest/linux/codecov
       - name: Run Codecov
