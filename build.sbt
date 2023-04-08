@@ -1,3 +1,6 @@
+/* =====================================================================================================================
+ * General Settings
+ * ===================================================================================================================== */
 ThisBuild / version := "0.1.1-SNAPSHOT"
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
@@ -6,9 +9,13 @@ ThisBuild / target := {
   baseDirectory.value / "target" / "scala-3.2.2"
 }
 
-// publish to github packages settings
+/* =====================================================================================================================
+ * GitHub Packages Settings
+ * ===================================================================================================================== */
+ThisBuild / resolvers += "GitHub HexxagonHTWG Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon"
 ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon")
 ThisBuild / publishMavenStyle := true
+ThisBuild / credentials += Credentials(Path.userHome / ".sbt" / ".credentials")
 ThisBuild / credentials += Credentials(
   "GitHub Package Registry",
   "maven.pkg.github.com",
@@ -16,6 +23,9 @@ ThisBuild / credentials += Credentials(
   System.getenv("GITHUB_TOKEN")
 )
 
+/* =====================================================================================================================
+ * Jacoco Settings
+ * ===================================================================================================================== */
 ThisBuild / jacocoReportSettings := JacocoReportSettings(
   "Jacoco Coverage Report",
   None,
@@ -30,12 +40,10 @@ ThisBuild / jacocoReportSettings := JacocoReportSettings(
   Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
   "utf-8"
 )
-ThisBuild / jacocoExcludes := Seq(
-  "**.Gui*",
-  "**.GUI*",
-  "**.TuiService*"
-)
 
+/* =====================================================================================================================
+ * Project Settings
+ * ===================================================================================================================== */
 lazy val commonDependencies = Seq(
   "org.scalactic" %% "scalactic" % "3.2.15",
   "org.scalatest" %% "scalatest" % "3.2.15" % "test"

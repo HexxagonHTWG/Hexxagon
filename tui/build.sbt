@@ -1,3 +1,3 @@
-ThisProject / jacocoExcludes ++= Seq(
+This / jacocoExcludes ++= Seq(
   "**.service.*"
 )
