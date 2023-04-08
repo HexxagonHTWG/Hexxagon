@@ -5,9 +5,6 @@ ThisBuild / version := "0.1.1-SNAPSHOT"
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
 ThisBuild / versionScheme := Some("early-semver")
-ThisBuild / target := {
-  baseDirectory.value / "target" / "scala-3.2.2"
-}
 
 /* =====================================================================================================================
  * GitHub Packages Settings
@@ -15,15 +12,21 @@ ThisBuild / target := {
 ThisBuild / resolvers += "GitHub HexxagonHTWG Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon"
 ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon")
 ThisBuild / publishMavenStyle := true
-ThisBuild / credentials += Some(Credentials(Path.userHome / ".sbt" / ".credentials"))
-  .getOrElse(
-    Credentials(
-      "GitHub Package Registry",
-      "maven.pkg.github.com",
-      "HexxagonHTWG",
-      System.getenv("GITHUB_TOKEN")
+ThisBuild / credentials := {
+  val credFile = Path.userHome / ".sbt" / ".credentials"
+  if (credFile.exists()) {
+    Seq(Credentials(credFile))
+  } else {
+    Seq(
+      Credentials(
+        "GitHub Package Registry",
+        "maven.pkg.github.com",
+        "HexxagonHTWG",
+        System.getenv("GITHUB_TOKEN")
+      )
     )
-  )
+  }
+}
 
 /* =====================================================================================================================
  * Jacoco Settings
