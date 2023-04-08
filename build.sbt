@@ -2,27 +2,38 @@ ThisBuild / version := "0.1.0"
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
 ThisBuild / target := {
-    baseDirectory.value / "target" / "scala-3.2.2"
-  }
+  baseDirectory.value / "target" / "scala-3.2.2"
+}
+
+// publish to github packages settings
+ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon")
+ThisBuild / publishMavenStyle := true
+ThisBuild / credentials += Credentials(
+  "GitHub Package Registry",
+  "maven.pkg.github.com",
+  "HexxagonHTWG",
+  System.getenv("GITHUB_TOKEN")
+)
+
 ThisBuild / jacocoReportSettings := JacocoReportSettings(
-    "Jacoco Coverage Report",
-    None,
-    JacocoThresholds(
-      instruction = 0,
-      method = 0,
-      branch = 0,
-      complexity = 0,
-      line = 0,
-      clazz = 0
-    ),
-    Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
-    "utf-8"
-  )
+  "Jacoco Coverage Report",
+  None,
+  JacocoThresholds(
+    instruction = 0,
+    method = 0,
+    branch = 0,
+    complexity = 0,
+    line = 0,
+    clazz = 0
+  ),
+  Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
+  "utf-8"
+)
 ThisBuild / jacocoExcludes := Seq(
-    "**.Gui*",
-    "**.GUI*",
-    "**.TuiService*"
-  )
+  "**.Gui*",
+  "**.GUI*",
+  "**.TuiService*"
+)
 
 lazy val commonDependencies = Seq(
   "org.scalactic" %% "scalactic" % "3.2.15",
@@ -46,28 +57,21 @@ lazy val gui = project
         .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
     }
   )
-  .dependsOn(core, provider, persistence, utils)
+  .dependsOn(core)
 
 lazy val tui = project
   .settings(
     name := "tui",
     libraryDependencies ++= commonDependencies
   )
-  .dependsOn(core, provider, persistence, utils)
+  .dependsOn(core)
 
 lazy val core = project
   .settings(
     name := "core",
     libraryDependencies ++= commonDependencies
   )
-  .dependsOn(provider, persistence, utils)
-
-lazy val provider = project
-  .settings(
-    name := "provider",
-    libraryDependencies ++= commonDependencies
-  )
-  .dependsOn(utils)
+  .dependsOn(persistence)
 
 lazy val persistence = project
   .settings(
@@ -79,7 +83,14 @@ lazy val persistence = project
       "com.typesafe.play" %% "play-json" % "2.9.3" cross CrossVersion.for3Use2_13 // JSON
     )
   )
-  .dependsOn(provider, utils)
+  .dependsOn(provider)
+
+lazy val provider = project
+  .settings(
+    name := "provider",
+    libraryDependencies ++= commonDependencies
+  )
+  .dependsOn(utils)
 
 lazy val utils = project
   .settings(
@@ -91,7 +102,8 @@ lazy val root = project
   .in(file("./"))
   .settings(
     name := "Hexxagon",
-    libraryDependencies ++= commonDependencies
+    libraryDependencies ++= commonDependencies,
+    publishArtifact := false
   )
   .aggregate(
     gui,
