@@ -46,7 +46,16 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
+      - name: Bump Version
+        id: bump
+        uses: nnichols/maven-version-bump-action@v3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Save Version
+        run: |
+          echo $steps.bump.outputs.version > LATEST_VERSION
       - name: Publish
         run: sbt publish
         env:
+          LATEST_VERSION: ${{ secrets.LATEST_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
