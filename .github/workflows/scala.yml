@@ -19,6 +19,13 @@ jobs:
       - name: compile
         run: sbt compile
 
+  dependency-graph:
+    name: Update Dependency Graph 📈
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: scalacenter/sbt-dependency-submission@v2
+
   run_tests:
     name: Test 🧪 and Upload Coverage 📊
     needs: build
@@ -53,9 +60,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Save Version
         run: |
-          echo $steps.bump.outputs.version > LATEST_VERSION
+          echo ${{ steps.bump.outputs.version }} >> $LATEST_VERSION
+          echo ${{ LATEST_VERSION }}
       - name: Publish
         run: sbt publish
         env:
-          LATEST_VERSION: ${{ secrets.LATEST_VERSION }}
+          LATEST_VERSION: ${{ LATEST_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

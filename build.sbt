@@ -2,10 +2,8 @@
  * General Settings
  * ===================================================================================================================== */
 ThisBuild / version := {
-  System.getenv("LATEST_VERSION") match {
-    case null => "0.0.0"
-    case v => v
-  }
+  val lv = System.getenv("LATEST_VERSION")
+  if (lv == null || lv.isBlank) "0.0.0" else lv
 }
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
