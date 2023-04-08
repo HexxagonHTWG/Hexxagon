@@ -60,10 +60,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Save Version
         run: |
-          echo ${{ steps.bump.outputs.version }}
           echo "LATEST_VERSION=${{ steps.bump.outputs.version }}" >> $GITHUB_ENV
           echo ${{ env.LATEST_VERSION }}
       - name: Publish
+        if: ${{ env.LATEST_VERSION != '' }}
         run: sbt publish
         env:
           LATEST_VERSION: ${{ env.LATEST_VERSION }}
