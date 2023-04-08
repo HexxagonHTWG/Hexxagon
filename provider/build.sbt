@@ -1,0 +1,3 @@
+ThisProject / jacocoExcludes ++= Seq(
+  "**.di.*"
+)
