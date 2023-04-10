@@ -1,8 +1,10 @@
 ignore:
   - "**/GUI.scala"
+  - "**/GuiService.scala"
   - "**/TuiService.scala"
-  - "**/resources/*"
-
+  - "**/resources"
+  - "**/PersistenceModule.scala"
+  - "**/ProviderModule.scala"
 coverage:
   status:
     patch:

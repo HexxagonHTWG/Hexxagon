@@ -1,11 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Jacoco" type="SbtRunConfiguration" factoryName="sbt Task" show_console_on_std_err="false" show_console_on_std_out="false">
+  <configuration default="false" name="Scoverage - Aggregate" type="SbtRunConfiguration" factoryName="sbt Task" show_console_on_std_err="false" show_console_on_std_out="false">
     <option name="allowRunningInParallel" value="false" />
     <option name="projectPathOnTarget" />
     <option name="selectedOptions">
       <list />
     </option>
-    <option name="tasks" value="jacoco" />
+    <option name="tasks" value="coverageAggregate" />
     <option name="useSbtShell" value="false" />
     <option name="vmparams" value="" />
     <option name="workingDir" value="$PROJECT_DIR$" />

@@ -32,24 +32,6 @@ ThisBuild / credentials := {
 }
 
 /* =====================================================================================================================
- * Jacoco Settings
- * ===================================================================================================================== */
-ThisBuild / jacocoReportSettings := JacocoReportSettings(
-  "Jacoco Coverage Report",
-  None,
-  JacocoThresholds(
-    instruction = 0,
-    method = 0,
-    branch = 0,
-    complexity = 0,
-    line = 0,
-    clazz = 0
-  ),
-  Seq(JacocoReportFormats.ScalaHTML, JacocoReportFormats.XML),
-  "utf-8"
-)
-
-/* =====================================================================================================================
  * Project Settings
  * ===================================================================================================================== */
 lazy val commonDependencies = Seq(
