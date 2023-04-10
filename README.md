@@ -31,6 +31,8 @@ Each module has its own sbt file. You can run the project by selecting the main 
 Testing is done with ScalaTest. You can run the tests by the predefined run configurations in `.test` or by
 running `sbt test`.
 
+A push to master or dev will trigger a GitHub Action that will run the tests and build the project.
+
 ### Pushing to master
 
 Using `#major` or `#minor` in your commit message will trigger a corresponding version bump. Any commit to master will
