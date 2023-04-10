@@ -3,11 +3,6 @@ name: Scala CI
 on:
   push:
     branches: [ master, dev ]
-  pull_request:
-    branches: [ master ]
-concurrency:
-  group: ci
-  cancel-in-progress: true
 
 jobs:
   build:
