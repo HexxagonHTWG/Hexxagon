@@ -75,3 +75,8 @@ jobs:
         env:
           LATEST_VERSION: ${{ env.LATEST_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Tag Release
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ env.LATEST_VERSION }}
+          message: "Releasing version ${{ env.LATEST_VERSION }}"
