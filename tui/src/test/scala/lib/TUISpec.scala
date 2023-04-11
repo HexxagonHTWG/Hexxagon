@@ -37,13 +37,16 @@ class TUISpec extends AnyWordSpec:
         tui.handleInput("fill o") should be(Some("Filled with O."))
         tui.handleInput("fill O") should be(Some("Filled with O."))
       }
+      "save the game when save" in {
+        tui.handleInput("save") should be(Some("Saved."))
+      }
+      "load the game when load" in {
+        tui.handleInput("load") should be(Some("Loaded."))
+      }
       "exit when q | exit | quit | ..." in {
-        tui.handleInput("q") should be(Some("Exiting."))
-        tui.handleInput("e") should be(Some("Exiting."))
-        tui.handleInput("exit") should be(Some("Exiting."))
-        tui.handleInput("quit") should be(Some("Exiting."))
-        tui.handleInput("Exit") should be(Some("Exiting."))
-        tui.handleInput("Quit") should be(Some("Exiting."))
+        val in = Seq("q", "e", "exit", "quit", "Exit", "Quit")
+        TUI.exitMes should be("Exiting.")
+        for (i <- in) tui.handleInput(i) should be(Some(TUI.exitMes))
       }
       "reset when reset" in {
         tui.handleInput("reset") should be(Some("Reset."))

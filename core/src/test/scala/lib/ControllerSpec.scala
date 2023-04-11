@@ -113,7 +113,6 @@ class ControllerSpec extends AnyWordSpec:
         c.load()
         c.hexField.toString should be(hex.toString)
       }
-
       "keep the saved gamestatus after loading" in {
         val c = FlexibleCoreModule(7, 4).given_ControllerInterface_Player
         c.gameStatus should be(IDLE)
