@@ -45,18 +45,7 @@ lazy val gui = project
     name := "gui",
     description := "GUI for Hexxagon",
     libraryDependencies ++= commonDependencies,
-    libraryDependencies += "org.scalafx" %% "scalafx" % "16.0.0-R24",
-    libraryDependencies ++= {
-      // Determine OS version of JavaFX binaries
-      lazy val osName = System.getProperty("os.name") match {
-        case n if n.startsWith("Linux") => "linux"
-        case n if n.startsWith("Mac") => "mac"
-        case n if n.startsWith("Windows") => "win"
-        case _ => throw new Exception("Unknown platform!")
-      }
-      Seq("base", "controls", "fxml", "graphics", "media", "swing", "web")
-        .map(m => "org.openjfx" % s"javafx-$m" % "16" classifier osName)
-    }
+    libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31",
   )
   .dependsOn(core)
 
@@ -83,8 +72,8 @@ lazy val persistence = project
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
-      "com.lihaoyi" %% "upickle" % "3.0.0", // JSON
-      "com.typesafe.play" %% "play-json" % "2.9.3" cross CrossVersion.for3Use2_13 // JSON
+      "com.lihaoyi" %% "upickle" % "3.1.0", // JSON
+      "com.typesafe.play" %% "play-json" % "2.10.0-RC7", // JSON
     )
   )
   .dependsOn(provider)
