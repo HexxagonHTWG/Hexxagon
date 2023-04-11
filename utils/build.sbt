@@ -1,1 +1,1 @@
-This / Test / parallelExecution := true
+This / Test / fork := false
