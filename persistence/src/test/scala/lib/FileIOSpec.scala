@@ -2,10 +2,12 @@ package lib
 
 import lib.GameStatus.*
 import lib.fieldComponent.fieldBaseImpl.*
+import org.scalatest.PrivateMethodTester
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
+import play.api.libs.json.JsObject
 
-class FileIOSpec extends AnyWordSpec:
+class FileIOSpec extends AnyWordSpec with PrivateMethodTester:
   "A FileIO" when {
     val matrix = new Matrix(9, 6)
     val field = new Field(using matrix)
@@ -27,6 +29,11 @@ class FileIOSpec extends AnyWordSpec:
         fileIOxml.save(field)
         fileIOxml.load should be(field)
       }
+      "exort a field" in {
+        val gameToXml = PrivateMethod[xml.Elem](Symbol("gameToXml"))
+        val s = fileIOxml invokePrivate gameToXml(field, 0, 0, 0)
+        fileIOxml.exportGame(field, 0, 0, 0) should be(s.toString)
+      }
     }
 
     "used with json" should {
@@ -45,6 +52,11 @@ class FileIOSpec extends AnyWordSpec:
       "load field from json" in {
         fileIOjson.save(field)
         fileIOjson.load should be(field)
+      }
+      "exort a field" in {
+        val gameToJson = PrivateMethod[JsObject](Symbol("gameToJson"))
+        val s = fileIOjson invokePrivate gameToJson(field, 0, 0, 0)
+        fileIOjson.exportGame(field, 0, 0, 0) should be(s.toString)
       }
     }
 

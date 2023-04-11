@@ -1,0 +1,1 @@
+This / Test / parallelExecution := true

@@ -8,6 +8,7 @@ ThisBuild / version := {
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
 ThisBuild / versionScheme := Some("early-semver")
+ThisBuild / Test / parallelExecution := false
 
 /* =====================================================================================================================
  * GitHub Packages Settings
