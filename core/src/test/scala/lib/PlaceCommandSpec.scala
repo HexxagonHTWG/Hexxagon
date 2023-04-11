@@ -5,8 +5,6 @@ import lib.fieldComponent.fieldBaseImpl.{Field, Matrix}
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
-import scala.reflect.io.File
-
 class GenericCommandSpec extends AnyWordSpec:
   "A GenericCommand" should {
     var hex = new Field(using new Matrix(9, 6))
