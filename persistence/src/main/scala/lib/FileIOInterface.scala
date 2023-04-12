@@ -22,3 +22,7 @@ trait FileIOInterface:
    * @return the game status
    */
   def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String
+
+  def encode(field: FieldInterface[Player]): String
+
+  def decode(field: String): FieldInterface[Player]

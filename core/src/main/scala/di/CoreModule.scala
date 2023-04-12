@@ -1,7 +1,7 @@
 package di
 
 import lib.defaultImpl.Controller
-import lib.{ControllerInterface, Player}
+import lib.{ControllerInterface, CoreRestClient, Player}
 
 class FlexibleCoreModule(rows: Int, cols: Int):
   given ControllerInterface[Player] = Controller(
@@ -17,3 +17,7 @@ object CoreModule:
     using PersistenceModule.given_FileIOInterface
   )
 
+object RestModule:
+  given ControllerInterface[Player] = CoreRestClient(
+    using PersistenceModule.given_FileIOInterface
+  )

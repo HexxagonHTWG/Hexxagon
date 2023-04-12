@@ -3,6 +3,7 @@ package service
 import cats.effect.*
 import com.comcast.ip4s.*
 import di.CoreModule.given_ControllerInterface_Player as controller
+import di.{CoreModule, PersistenceModule}
 import lib.defaultImpl.Controller
 import lib.{ControllerInterface, Player}
 import org.http4s.HttpRoutes
@@ -13,6 +14,8 @@ import org.http4s.server.middleware.Logger
 
 object CoreRestService extends IOApp:
 
+  private lazy val defaultResponse =
+    Ok(PersistenceModule.given_FileIOInterface.encode(controller.hexField))
   private val restController = HttpRoutes.of[IO] {
     case GET -> Root / "field" =>
       Ok(controller.hexField.toString)
@@ -20,30 +23,30 @@ object CoreRestService extends IOApp:
       Ok(controller.gameStatus.toString)
     case POST -> Root / "fillAll" / c =>
       controller.fillAll(Player.fromString(c))
-      Ok(controller.hexField.toString)
+      defaultResponse
     case POST -> Root / "save" =>
       controller.save()
-      Ok(controller.hexField.toString)
+      defaultResponse
     case POST -> Root / "load" =>
       controller.load()
-      Ok(controller.hexField.toString)
+      defaultResponse
     case POST -> Root / "place" / c / x / y =>
       controller.place(Player.fromString(c), x.toInt, y.toInt)
-      Ok(controller.hexField.toString)
+      defaultResponse
     case POST -> Root / "undo" =>
       controller.undo()
-      Ok(controller.hexField.toString)
+      defaultResponse
     case POST -> Root / "redo" =>
       controller.redo()
-      Ok(controller.hexField.toString)
+      defaultResponse
     case POST -> Root / "reset" =>
       controller.reset()
-      Ok(controller.hexField.toString)
+      defaultResponse
     case GET -> Root / "exportField" =>
-      Ok(controller.exportField)
+      defaultResponse
   }.orNotFound
 
-  private val loggingService = Logger.httpApp(true, false)(restController)
+  private val loggingService = Logger.httpApp(false, false)(restController)
 
   def run(args: List[String]): IO[ExitCode] =
     EmberServerBuilder

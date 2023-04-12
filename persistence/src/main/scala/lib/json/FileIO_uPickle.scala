@@ -1,7 +1,7 @@
 package lib.json
 
-import lib.{FileIOInterface, Player}
 import lib.field.FieldInterface
+import lib.{FileIOInterface, Player}
 import ujson.Obj
 import upickle.default.*
 
@@ -30,10 +30,6 @@ class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInte
     pw.write(ujson.transform(fieldToJson(field), ujson.StringRenderer(indent = 4)).toString)
     pw.close()
 
-  // not working with xcount, ocount, turn yet
-  override def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String =
-    fieldToJson(field).toString
-
   def fieldToJson(field: FieldInterface[Player]): Obj =
     ujson.Obj(
       "rows" -> ujson.Num(field.matrix.row),
@@ -52,3 +48,23 @@ class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInte
       "col" -> col,
       "cell" -> field.matrix.cell(col, row).toString
     )
+
+  // not working with xcount, ocount, turn yet
+  override def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String =
+    fieldToJson(field).toString
+
+  override def encode(field: FieldInterface[Player]): String = fieldToJson(field).toString
+
+  override def decode(field: String): FieldInterface[Player] =
+    val json = ujson.read(field)
+    val rows = json("rows").num.toInt
+    val cols = json("cols").num.toInt
+    val cells = json("cells")
+
+    for (index <- 0 until rows * cols) {
+      val row = cells(index)("row").num.toInt
+      val col = cells(index)("col").num.toInt
+      val cell = Player.fromChar(cells(index)("cell").str.head)
+      this.field = this.field.placeAlways(cell, col, row)
+    }
+    this.field

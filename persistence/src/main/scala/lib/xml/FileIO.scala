@@ -8,8 +8,6 @@ import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
   override def load: FieldInterface[Player] =
     val file = scala.xml.XML.loadFile("field.xml")
-    val rows = file \\ "field" \ "@rows"
-    val cols = file \\ "field" \ "@cols"
 
     val cells = file \\ "cell"
     for (cell <- cells) {
@@ -59,3 +57,7 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
       i <- 0 until field.matrix.col
     } yield cellToXml(field, l, i)}
     </field>
+
+  override def encode(field: FieldInterface[Player]): String = "Not implemented"
+
+  override def decode(field: String): FieldInterface[Player] = this.field
