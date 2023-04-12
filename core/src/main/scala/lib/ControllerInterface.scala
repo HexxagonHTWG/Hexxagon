@@ -4,7 +4,7 @@ import lib.Observable
 import lib.field.FieldInterface
 
 /** Interface to implement the controller unit. */
-trait ControllerInterface[T] extends Observable {
+trait ControllerInterface[T] extends Observable:
   /** Field of the game. */
   var hexField: FieldInterface[T]
 
@@ -46,4 +46,3 @@ trait ControllerInterface[T] extends Observable {
 
   /** Returns the field of the game. */
   def exportField: String
-}

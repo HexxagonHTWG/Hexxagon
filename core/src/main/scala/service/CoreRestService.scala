@@ -11,7 +11,7 @@ import org.http4s.ember.server.*
 import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
 
-object CoreRestService extends IOApp {
+object CoreRestService extends IOApp:
 
   private val restController = HttpRoutes.of[IO] {
     case GET -> Root / "field" =>
@@ -54,4 +54,3 @@ object CoreRestService extends IOApp {
       .build
       .use(_ => IO.never)
       .as(ExitCode.Success)
-}

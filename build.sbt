@@ -18,9 +18,9 @@ ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "ht
 ThisBuild / publishMavenStyle := true
 ThisBuild / credentials := {
   val credFile = Path.userHome / ".sbt" / ".credentials"
-  if (credFile.exists()) {
+  if (credFile.exists())
     Seq(Credentials(credFile))
-  } else {
+  else
     Seq(
       Credentials(
         "GitHub Package Registry",
@@ -29,7 +29,6 @@ ThisBuild / credentials := {
         System.getenv("GITHUB_TOKEN")
       )
     )
-  }
 }
 
 /* =====================================================================================================================
