@@ -1,6 +1,6 @@
-package lib.fileIOJsonImpl
+package lib.json
 
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 import lib.{FileIOInterface, Player}
 import play.api.libs.json.*
 

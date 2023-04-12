@@ -1,7 +1,7 @@
-package lib.fieldComponent.fieldBaseImpl
+package lib.field.defaultImpl
 
 import lib.Player
-import lib.fieldComponent.MatrixInterface
+import lib.field.MatrixInterface
 import lib.setHandling.DefaultSetHandler
 
 case class Matrix(matrix: Vector[Vector[Player]], xCount: Int = 0, oCount: Int = 0) extends MatrixInterface[Player]:

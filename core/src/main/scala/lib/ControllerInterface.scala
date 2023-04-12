@@ -1,7 +1,7 @@
 package lib
 
 import lib.Observable
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 
 /** Interface to implement the controller unit. */
 trait ControllerInterface[T] extends Observable {

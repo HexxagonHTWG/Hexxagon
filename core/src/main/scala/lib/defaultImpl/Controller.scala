@@ -1,8 +1,8 @@
-package lib.controllerBaseImpl
+package lib.defaultImpl
 
 import lib.*
 import lib.GameStatus.*
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 
 import scala.xml.Elem
 

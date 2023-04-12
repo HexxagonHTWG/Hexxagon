@@ -1,6 +1,6 @@
-package lib.controllerBaseImpl
+package lib.defaultImpl
 
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 import lib.{Command, Player}
 
 case class GenericCommand[T <: FieldInterface[Player]](field: T, function: T => T) extends Command[T]:

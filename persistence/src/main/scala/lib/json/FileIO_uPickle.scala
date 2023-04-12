@@ -1,7 +1,7 @@
-package lib.fileIOJsonImpl
+package lib.json
 
 import lib.{FileIOInterface, Player}
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 import ujson.Obj
 import upickle.default.*
 

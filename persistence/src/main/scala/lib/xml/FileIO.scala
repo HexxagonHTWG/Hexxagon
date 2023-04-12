@@ -1,6 +1,6 @@
-package lib.fileIOXMLImpl
+package lib.xml
 
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 import lib.{FileIOInterface, Player}
 
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}

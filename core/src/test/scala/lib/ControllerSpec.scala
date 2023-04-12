@@ -4,9 +4,9 @@ import di.PersistenceModule.given_FileIOInterface
 import di.{CoreModule, FlexibleCoreModule, FlexibleProviderModule}
 import lib.GameStatus.*
 import lib.Observer
-import lib.controllerBaseImpl.Controller
-import lib.fieldComponent.fieldBaseImpl.{Field, Matrix}
-import org.scalatest.matchers.should.Matchers.{be, *}
+import lib.defaultImpl.Controller
+import lib.field.defaultImpl.{Field, Matrix}
+import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
 class ControllerSpec extends AnyWordSpec:

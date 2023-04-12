@@ -1,4 +1,4 @@
-package lib.fieldComponent
+package lib.field
 
 /** Interface to implement the cells of the game board as a matrix. */
 trait MatrixInterface[T]:

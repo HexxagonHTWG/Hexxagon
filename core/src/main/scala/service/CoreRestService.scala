@@ -3,7 +3,7 @@ package service
 import cats.effect.*
 import com.comcast.ip4s.*
 import di.CoreModule.given_ControllerInterface_Player as controller
-import lib.controllerBaseImpl.Controller
+import lib.defaultImpl.Controller
 import lib.{ControllerInterface, Player}
 import org.http4s.HttpRoutes
 import org.http4s.dsl.io.*

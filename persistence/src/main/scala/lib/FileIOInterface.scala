@@ -1,7 +1,7 @@
 package lib
 
 import lib.Player
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 
 /** Interface to implement file IO for the current game status. */
 trait FileIOInterface:

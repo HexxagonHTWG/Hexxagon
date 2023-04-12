@@ -1,8 +1,8 @@
 package lib
 
 import di.PersistenceModule.given_FileIOInterface
-import lib.controllerBaseImpl.Controller
-import lib.fieldComponent.fieldBaseImpl.{Field, Matrix}
+import lib.defaultImpl.Controller
+import lib.field.defaultImpl.{Field, Matrix}
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 

@@ -1,6 +1,6 @@
 package di
 
-import lib.controllerBaseImpl.Controller
+import lib.defaultImpl.Controller
 import lib.{ControllerInterface, Player}
 
 class FlexibleCoreModule(rows: Int, cols: Int):
