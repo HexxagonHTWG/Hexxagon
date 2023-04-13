@@ -46,3 +46,10 @@ trait ControllerInterface[T] extends Observable:
 
   /** Returns the field of the game. */
   def exportField: String
+
+  /** Default toString */
+  override def toString: String =
+    gameStatus.message() + hexField.toString
+      + "\nX: " + hexField.matrix.xCount
+      + "\tO: " + hexField.matrix.oCount
+      + "\n" + "_" * (4 * hexField.matrix.col + 1) + "\n"

@@ -57,7 +57,3 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
       i <- 0 until field.matrix.col
     } yield cellToXml(field, l, i)}
     </field>
-
-  override def encode(field: FieldInterface[Player]): String = "Not implemented"
-
-  override def decode(field: String): FieldInterface[Player] = this.field

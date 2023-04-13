@@ -84,12 +84,6 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
 
   private def emptyMatrix = hexField.matrix.matrix.flatten.collect({ case Player.Empty => Player.Empty }).length == GAME_MAX
 
-  override def toString: String =
-    gameStatus.message() + hexField.toString
-      + "\nX: " + hexField.matrix.xCount
-      + "\tO: " + hexField.matrix.oCount
-      + "\n" + "_" * (4 * hexField.matrix.col + 1) + "\n"
-
   override def exportField: String =
     fileIO.exportGame(hexField, hexField.matrix.xCount, hexField.matrix.oCount,
       if (gameStatus.message().equals(TURN_PLAYER_2.message())) 2 else 1)

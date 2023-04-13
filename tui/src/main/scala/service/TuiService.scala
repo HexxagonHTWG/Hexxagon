@@ -1,16 +1,17 @@
 package service
 
-import di.CoreModule.given_ControllerInterface_Player
+import di.{CoreModule, RestModule}
 import lib.TUI
 
 import scala.io.StdIn.readLine
 
 object TuiService extends App:
-  starter.runTUI()
+  Starter(TUI(using CoreModule.given_ControllerInterface_Player)).runTUI()
 
-object starter:
-  val tui: TUI = TUI()
+object TuiRestService extends App:
+  Starter(TUI(using RestModule.given_ControllerInterface_Player)).runTUI()
 
+case class Starter(tui: TUI):
   def runTUI(): Unit = {
     println(tui.startMessage)
     tui.handleInput("save")

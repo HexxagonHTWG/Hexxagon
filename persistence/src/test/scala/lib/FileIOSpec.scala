@@ -2,6 +2,7 @@ package lib
 
 import lib.GameStatus.*
 import lib.field.defaultImpl.*
+import lib.json.HexJson
 import org.scalatest.PrivateMethodTester
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
@@ -39,12 +40,12 @@ class FileIOSpec extends AnyWordSpec with PrivateMethodTester:
     "used with json" should {
       val fileIOjson = json.FileIO(using field)
       "save current state of field in json" in {
-        val json = fileIOjson.fieldToJson(field)
+        val json = HexJson.fieldToJson(field)
         (json \ "rows").get.toString should be("6")
         (json \ "cols").get.toString should be("9")
       }
       "save current state of cell in json" in {
-        val cellJson = fileIOjson.cellToJson(field, 0, 0)
+        val cellJson = HexJson.cellToJson(field, 0, 0)
         (cellJson \ "row").get.toString should be("0")
         (cellJson \ "col").get.toString should be("0")
         (cellJson \ "cell").get.toString should be("\" \"")

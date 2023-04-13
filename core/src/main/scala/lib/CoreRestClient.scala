@@ -1,44 +1,41 @@
 package lib
 
-import cats.effect.IO
-import cats.effect.unsafe.implicits.global
 import di.CoreModule
 import lib.field.FieldInterface
-import org.http4s.*
-import org.http4s.ember.client.EmberClientBuilder
-import org.http4s.headers.Accept
-import org.http4s.implicits.uri
+import lib.json.HexJson
 
-class CoreRestClient(using persistence: FileIOInterface) extends ControllerInterface[Player]:
+case class CoreRestClient() extends ControllerInterface[Player]:
   private val coreUrl = "http://0.0.0.0:8080"
-  var hexField: FieldInterface[Player] = persistence.decode(exportField)
+  var hexField: FieldInterface[Player] = HexJson.decode(exportField)
 
-  override def gameStatus: GameStatus = GameStatus.valueOf(
-    request(Method.GET, "/gameStatus")
-  )
+  override def gameStatus: GameStatus = GameStatus.valueOf(requests.get(s"$coreUrl/status").text())
 
-  private def request(method: Method, path: String) = httpClient(Request[IO](
-    method = method,
-    uri = Uri.fromString(s"$coreUrl$path").getOrElse(Uri()),
-    headers = Headers(
-      Accept(MediaType.application.json),
-    )
-  )).unsafeRunSync()
+  override def fillAll(c: Player): Unit =
+    hexField = HexJson.decode(requests.post(s"$coreUrl/fillAll/$c").text())
+    notifyObservers()
 
-  private def httpClient(request: Request[IO]): IO[String] = EmberClientBuilder.default[IO].build.use(_.expect[String](request))
+  override def save(): Unit =
+    hexField = HexJson.decode(requests.post(s"$coreUrl/save").text())
+    notifyObservers()
 
-  override def fillAll(c: Player): Unit = hexField = persistence.decode(request(Method.POST, "/fillAll/$c"))
+  override def load(): Unit =
+    hexField = HexJson.decode(requests.post(s"$coreUrl/load").text())
+    notifyObservers()
 
-  override def save(): Unit = hexField = persistence.decode(request(Method.POST, "/save"))
+  override def place(c: Player, x: Int, y: Int): Unit =
+    hexField = HexJson.decode(requests.post(s"$coreUrl/place/$c/$x/$y").text())
+    notifyObservers()
 
-  override def load(): Unit = hexField = persistence.decode(request(Method.POST, "/load"))
+  override def undo(): Unit =
+    hexField = HexJson.decode(requests.post(s"$coreUrl/undo").text())
+    notifyObservers()
 
-  override def place(c: Player, x: Int, y: Int): Unit = hexField = persistence.decode(request(Method.POST, "/place/$c/$x/$y"))
+  override def redo(): Unit =
+    hexField = HexJson.decode(requests.post(s"$coreUrl/redo").text())
+    notifyObservers()
 
-  override def undo(): Unit = hexField = persistence.decode(request(Method.POST, "/undo"))
+  override def reset(): Unit =
+    hexField = HexJson.decode(requests.post(s"$coreUrl/reset").text())
+    notifyObservers()
 
-  override def redo(): Unit = hexField = persistence.decode(request(Method.POST, "/redo"))
-
-  override def reset(): Unit = hexField = persistence.decode(request(Method.POST, "/reset"))
-
-  override def exportField: String = request(Method.GET, "/exportField")
+  override def exportField: String = requests.get(s"$coreUrl/exportField").text()

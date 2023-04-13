@@ -5,6 +5,7 @@ import com.comcast.ip4s.*
 import di.CoreModule.given_ControllerInterface_Player as controller
 import di.{CoreModule, PersistenceModule}
 import lib.defaultImpl.Controller
+import lib.json.HexJson
 import lib.{ControllerInterface, Player}
 import org.http4s.HttpRoutes
 import org.http4s.dsl.io.*
@@ -14,8 +15,6 @@ import org.http4s.server.middleware.Logger
 
 object CoreRestService extends IOApp:
 
-  private lazy val defaultResponse =
-    Ok(PersistenceModule.given_FileIOInterface.encode(controller.hexField))
   private val restController = HttpRoutes.of[IO] {
     case GET -> Root / "field" =>
       Ok(controller.hexField.toString)
@@ -45,7 +44,6 @@ object CoreRestService extends IOApp:
     case GET -> Root / "exportField" =>
       defaultResponse
   }.orNotFound
-
   private val loggingService = Logger.httpApp(false, false)(restController)
 
   def run(args: List[String]): IO[ExitCode] =
@@ -57,3 +55,6 @@ object CoreRestService extends IOApp:
       .build
       .use(_ => IO.never)
       .as(ExitCode.Success)
+
+  private def defaultResponse =
+    Ok(HexJson.encode(controller.hexField))
