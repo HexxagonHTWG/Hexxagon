@@ -154,6 +154,7 @@ class GUI(using controller: ControllerInterface[Player]) extends JFXApp3 with Ob
         case TURN_PLAYER_2 => controller.place(Player.O, i, j)
         case IDLE => controller.place(Player.O, i, j)
         case GAME_OVER => println("GAME OVER")
+        case ERROR => println(ERROR)
       }
     })
 

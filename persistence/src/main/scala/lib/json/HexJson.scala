@@ -5,6 +5,8 @@ import lib.Player
 import lib.field.FieldInterface
 import play.api.libs.json.{JsNumber, JsObject, Json}
 
+import scala.util.{Failure, Success, Try}
+
 object HexJson:
 
   def encode(field: FieldInterface[Player]): String = fieldToJson(field).toString
@@ -30,7 +32,9 @@ object HexJson:
 
   def decode(field: String): FieldInterface[Player] =
     var hexField = ProviderModule.given_FieldInterface_Player
-    val json = Json.parse(field)
+    val json = Try(Json.parse(field)) match
+      case Success(value) => value
+      case Failure(_) => return hexField
     val rows = (json \ "rows").get.toString.toInt
     val cols = (json \ "cols").get.toString.toInt
 
