@@ -13,7 +13,7 @@ import scala.util.{Failure, Success, Try}
 case class CoreRestClient() extends ControllerInterface[Player] with StrictLogging:
   private lazy val config = ConfigFactory.load()
   private val coreUrl =
-    Try(s"${config.getString("http.protocol")}://${config.getString("http.host")}:${config.getString("http.port")}") match
+    Try(s"http://${config.getString("http.core.host")}:${config.getString("http.core.port")}") match
       case Success(value) => value
       case Failure(exception) => logger.error(exception.getMessage); "http://0.0.0.0:8080"
 
@@ -43,14 +43,18 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
 
   private def http(method: Requester, url: String): String =
     Try(method(url)) match
-      case Success(response) => val r = response.text()
-        logger.info(if r.length > 26 then
-          r.substring(0, 26) + "..."
-        else
-          r
+      case Success(response) =>
+        val r = response.text()
+        logger.debug(
+          if r.length > 26 then
+            r.substring(0, 26) + "..."
+          else
+            r
         )
         r
-      case Failure(exception) => logger.error(exception.getMessage); ""
+      case Failure(exception) =>
+        logger.error(exception.getMessage)
+        ""
 
   override def undo(): Unit =
     hexField = HexJson.decode(http(requests.post, s"$coreUrl/undo"))

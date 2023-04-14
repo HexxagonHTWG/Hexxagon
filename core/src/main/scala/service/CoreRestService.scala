@@ -54,10 +54,10 @@ object CoreRestService extends IOApp:
     EmberServerBuilder
       .default[IO]
       .withHost(
-        Host.fromString(Try(config.getString("http.host")).getOrElse("0.0.0.0")).get
+        Host.fromString(Try(config.getString("http.core.host")).getOrElse("0.0.0.0")).get
       )
       .withPort(
-        Port.fromString(Try(config.getString("http.port")).getOrElse("8080")).get
+        Port.fromString(Try(config.getString("http.core.port")).getOrElse("8080")).get
       )
       .withHttpApp(loggingService)
       .build
