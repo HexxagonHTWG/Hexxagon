@@ -1,5 +1,6 @@
 package lib
 
+import com.typesafe.config.ConfigFactory
 import di.CoreModule
 import geny.Bytes
 import lib.field.FieldInterface
@@ -9,7 +10,12 @@ import requests.{Requester, Response}
 import scala.util.{Failure, Success, Try}
 
 case class CoreRestClient() extends ControllerInterface[Player]:
-  private val coreUrl = "http://0.0.0.0:8080"
+  private lazy val config = ConfigFactory.load()
+  private val coreUrl =
+    Try(s"${config.getString("http.protocol")}://${config.getString("http.host")}:${config.getString("http.port")}") match
+      case Success(value) => value
+      case Failure(exception) => println(exception); "http://0.0.0.0:8080"
+
   var hexField: FieldInterface[Player] = HexJson.decode(exportField)
 
   override def gameStatus: GameStatus = GameStatus.valueOf(
@@ -38,6 +44,11 @@ case class CoreRestClient() extends ControllerInterface[Player]:
     hexField = HexJson.decode(http(requests.post, s"$coreUrl/undo"))
     notifyObservers()
 
+  private def http(method: Requester, url: String): String =
+    Try(method(url)) match
+      case Success(response) => response.text()
+      case Failure(exception) => println(exception); ""
+
   override def redo(): Unit =
     hexField = HexJson.decode(http(requests.post, s"$coreUrl/redo"))
     notifyObservers()
@@ -45,10 +56,5 @@ case class CoreRestClient() extends ControllerInterface[Player]:
   override def reset(): Unit =
     hexField = HexJson.decode(http(requests.post, s"$coreUrl/reset"))
     notifyObservers()
-
-  private def http(method: Requester, url: String): String =
-    Try(method(url)) match
-      case Success(response) => response.text()
-      case Failure(exception) => println(exception); ""
 
   override def exportField: String = http(requests.get, s"$coreUrl/exportField")

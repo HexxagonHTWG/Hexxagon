@@ -44,7 +44,8 @@ lazy val http4sDependencies = Seq(
 )
 lazy val commonDependencies = Seq(
   "org.scalactic" %% "scalactic" % "3.2.15",
-  "org.scalatest" %% "scalatest" % "3.2.15" % "test"
+  "org.scalatest" %% "scalatest" % "3.2.15" % "test",
+  "com.typesafe" % "config" % "1.4.2"
 )
 
 /* =====================================================================================================================

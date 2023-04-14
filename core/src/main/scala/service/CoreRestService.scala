@@ -2,6 +2,7 @@ package service
 
 import cats.effect.*
 import com.comcast.ip4s.*
+import com.typesafe.config.ConfigFactory
 import di.CoreModule.given_ControllerInterface_Player as controller
 import di.{CoreModule, PersistenceModule}
 import lib.defaultImpl.Controller
@@ -13,8 +14,11 @@ import org.http4s.ember.server.*
 import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
 
+import scala.util.Try
+
 object CoreRestService extends IOApp:
 
+  private lazy val config = ConfigFactory.load()
   private val restController = HttpRoutes.of[IO] {
     case GET -> Root / "field" =>
       Ok(controller.hexField.toString)
@@ -49,8 +53,12 @@ object CoreRestService extends IOApp:
   def run(args: List[String]): IO[ExitCode] =
     EmberServerBuilder
       .default[IO]
-      .withHost(ipv4"0.0.0.0")
-      .withPort(port"8080")
+      .withHost(
+        Host.fromString(Try(config.getString("http.host")).getOrElse("0.0.0.0")).get
+      )
+      .withPort(
+        Port.fromString(Try(config.getString("http.port")).getOrElse("8080")).get
+      )
       .withHttpApp(loggingService)
       .build
       .use(_ => IO.never)
