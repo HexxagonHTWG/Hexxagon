@@ -1,5 +1,6 @@
 package lib.defaultImpl
 
+import com.typesafe.scalalogging.StrictLogging
 import lib.*
 import lib.GameStatus.*
 import lib.field.FieldInterface
@@ -7,7 +8,7 @@ import lib.field.FieldInterface
 import scala.xml.Elem
 
 class Controller(using var hexField: FieldInterface[Player])(using val fileIO: FileIOInterface)
-  extends ControllerInterface[Player]:
+  extends ControllerInterface[Player] with StrictLogging:
 
   private val GAME_MAX = hexField.matrix.MAX
   private val undoManager = new UndoManager[FieldInterface[Player]]
@@ -22,10 +23,10 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
 
   override def place(c: Player, x: Int, y: Int): Unit =
     if gameStatus.equals(c.other.gameStatus) then
-      print("\nNot your turn!\n")
+      logger.warn("\nNot your turn!\n")
       notifyObservers()
     else if !hexField.matrix.cell(x, y).equals(Player.Empty) then
-      println("\nOccupied.")
+      logger.warn("\nOccupied.")
       notifyObservers()
     else
       undoManager.redoStack = Nil
@@ -56,6 +57,16 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
       checkStat()
       notifyObservers()
 
+  private def checkStat(): GameStatus =
+    if hexField.matrix.xCount == GAME_MAX
+      || hexField.matrix.oCount == GAME_MAX
+      || hexField.matrix.oCount + hexField.matrix.xCount == GAME_MAX
+    then gameStatus = GAME_OVER
+    else if emptyMatrix then gameStatus = IDLE
+    gameStatus
+
+  private def emptyMatrix = hexField.matrix.matrix.flatten.collect({ case Player.Empty => Player.Empty }).length == GAME_MAX
+
   override def reset(): Unit =
     hexField = hexField.reset
     gameStatus = IDLE
@@ -73,16 +84,6 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
     gameStatus = savedStatus
     checkStat()
     notifyObservers()
-
-  private def checkStat(): GameStatus =
-    if hexField.matrix.xCount == GAME_MAX
-      || hexField.matrix.oCount == GAME_MAX
-      || hexField.matrix.oCount + hexField.matrix.xCount == GAME_MAX
-    then gameStatus = GAME_OVER
-    else if emptyMatrix then gameStatus = IDLE
-    gameStatus
-
-  private def emptyMatrix = hexField.matrix.matrix.flatten.collect({ case Player.Empty => Player.Empty }).length == GAME_MAX
 
   override def exportField: String =
     fileIO.exportGame(hexField, hexField.matrix.xCount, hexField.matrix.oCount,

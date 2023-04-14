@@ -1,5 +1,6 @@
 package lib
 
+import com.typesafe.scalalogging.StrictLogging
 import lib.GameStatus.*
 import scalafx.Includes.*
 import scalafx.application.JFXApp3
@@ -18,7 +19,7 @@ import scalafx.stage.Stage
 import scala.math.sqrt
 
 
-class GUI(using controller: ControllerInterface[Player]) extends JFXApp3 with Observer:
+class GUI(using controller: ControllerInterface[Player]) extends JFXApp3 with Observer with StrictLogging:
   controller.add(this)
   controller.save()
   val size = 40
@@ -153,8 +154,8 @@ class GUI(using controller: ControllerInterface[Player]) extends JFXApp3 with Ob
         case TURN_PLAYER_1 => controller.place(Player.X, i, j)
         case TURN_PLAYER_2 => controller.place(Player.O, i, j)
         case IDLE => controller.place(Player.O, i, j)
-        case GAME_OVER => println("GAME OVER")
-        case ERROR => println(ERROR)
+        case GAME_OVER => logger.info("GAME OVER")
+        case ERROR => logger.error(ERROR.message())
       }
     })
 

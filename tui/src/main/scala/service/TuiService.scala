@@ -1,5 +1,6 @@
 package service
 
+import com.typesafe.scalalogging.{Logger, StrictLogging}
 import di.{CoreModule, RestModule}
 import lib.TUI
 
@@ -13,7 +14,7 @@ object TuiRestService extends App:
 
 case class Starter(tui: TUI):
   def runTUI(): Unit = {
-    println(tui.startMessage)
+    logger.info(tui.startMessage)
     tui.handleInput("save")
     processInputLine()
   }
@@ -21,9 +22,10 @@ case class Starter(tui: TUI):
   private def processInputLine(): Unit =
     val nextLine = readLine()
     val input = tui.handleInput(nextLine)
-    input.foreach(println)
+    input.foreach(logger.info(_))
     input match {
       case i if i.contains(TUI.exitMes) || i.contains(TUI.filledWithX) || i.contains(TUI.filledWithO) =>
       case _ => Some(processInputLine())
     }
 
+  private def logger = Logger("Tui")

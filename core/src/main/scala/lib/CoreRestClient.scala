@@ -1,6 +1,7 @@
 package lib
 
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.StrictLogging
 import di.CoreModule
 import geny.Bytes
 import lib.field.FieldInterface
@@ -9,12 +10,12 @@ import requests.{Requester, Response}
 
 import scala.util.{Failure, Success, Try}
 
-case class CoreRestClient() extends ControllerInterface[Player]:
+case class CoreRestClient() extends ControllerInterface[Player] with StrictLogging:
   private lazy val config = ConfigFactory.load()
   private val coreUrl =
     Try(s"${config.getString("http.protocol")}://${config.getString("http.host")}:${config.getString("http.port")}") match
       case Success(value) => value
-      case Failure(exception) => println(exception); "http://0.0.0.0:8080"
+      case Failure(exception) => logger.error(exception.getMessage); "http://0.0.0.0:8080"
 
   var hexField: FieldInterface[Player] = HexJson.decode(exportField)
 
@@ -40,14 +41,20 @@ case class CoreRestClient() extends ControllerInterface[Player]:
     hexField = HexJson.decode(http(requests.post, s"$coreUrl/place/$c/$x/$y"))
     notifyObservers()
 
+  private def http(method: Requester, url: String): String =
+    Try(method(url)) match
+      case Success(response) => val r = response.text()
+        logger.info(if r.length > 26 then
+          r.substring(0, 26) + "..."
+        else
+          r
+        )
+        r
+      case Failure(exception) => logger.error(exception.getMessage); ""
+
   override def undo(): Unit =
     hexField = HexJson.decode(http(requests.post, s"$coreUrl/undo"))
     notifyObservers()
-
-  private def http(method: Requester, url: String): String =
-    Try(method(url)) match
-      case Success(response) => response.text()
-      case Failure(exception) => println(exception); ""
 
   override def redo(): Unit =
     hexField = HexJson.decode(http(requests.post, s"$coreUrl/redo"))
