@@ -36,7 +36,6 @@ ThisBuild / credentials := {
  * ===================================================================================================================== */
 lazy val http4sVersion = "1.0.0-M39"
 lazy val http4sDependencies = Seq(
-  "org.http4s" %% "http4s-ember-client" % http4sVersion,
   "org.http4s" %% "http4s-ember-server" % http4sVersion,
   "org.http4s" %% "http4s-dsl" % http4sVersion,
   "ch.qos.logback" % "logback-classic" % "1.4.6",
