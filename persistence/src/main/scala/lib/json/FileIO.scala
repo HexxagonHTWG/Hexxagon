@@ -24,8 +24,8 @@ case class FileIO() extends FileIOInterface[Player]:
 
   private def gameToJson(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): JsObject =
     Json.obj(
-      "xcount" -> JsNumber(xCount),
-      "ocount" -> JsNumber(oCount),
+      "x-count" -> JsNumber(xCount),
+      "o-count" -> JsNumber(oCount),
       "turn" -> JsNumber(turn),
       "field" -> HexJson.fieldToJson(field)
     )

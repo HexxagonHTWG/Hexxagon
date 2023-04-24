@@ -36,22 +36,17 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface[Pl
     } yield cellToXml(field, l, i)}
     </field>
 
-  def cellToXml(field: FieldInterface[Player], row: Int, col: Int): Elem =
-    <cell row={row.toString} col={col.toString}>
-      {field.matrix.cell(col, row)}
-    </cell>
-
   override def exportGame(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): String =
     gameToXml(field, xCount, oCount, turn).toString
 
   private def gameToXml(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int) =
     <field rows={field.matrix.row.toString} cols={field.matrix.col.toString}>
-      {<xcount>
+      {<x-count>
       {xCount}
-    </xcount>
-      <ocount>
+    </x-count>
+      <o-count>
         {oCount}
-      </ocount>
+      </o-count>
       <turn>
         {turn}
       </turn>}{for {
@@ -59,3 +54,8 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface[Pl
       i <- 0 until field.matrix.col
     } yield cellToXml(field, l, i)}
     </field>
+
+  def cellToXml(field: FieldInterface[Player], row: Int, col: Int): Elem =
+    <cell row={row.toString} col={col.toString}>
+      {field.matrix.cell(col, row)}
+    </cell>

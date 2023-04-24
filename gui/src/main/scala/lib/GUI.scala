@@ -87,14 +87,14 @@ class GUI(using controller: ControllerInterface[Player]) extends JFXApp3 with Ob
             this.padding = Insets(size, 0, size, size * (controller.hexField.matrix.col / 2 - 1))
             this.children += over
           else
-            val xcount = new Label("X: " + controller.hexField.matrix.xCount)
-            val ocount = new Label("O: " + controller.hexField.matrix.oCount)
-            xcount.textAlignment = scalafx.scene.text.TextAlignment.Center
-            ocount.textAlignment = scalafx.scene.text.TextAlignment.Center
-            xcount.style = s"-fx-font: $fontsize $font; -fx-text-fill: linear-gradient(darkblue, blue);"
-            ocount.style = s"-fx-font: $fontsize $font; -fx-text-fill: linear-gradient(black, red);"
-            this.children += xcount
-            this.children += ocount
+            val xCount = new Label("X: " + controller.hexField.matrix.xCount)
+            val oCount = new Label("O: " + controller.hexField.matrix.oCount)
+            xCount.textAlignment = scalafx.scene.text.TextAlignment.Center
+            oCount.textAlignment = scalafx.scene.text.TextAlignment.Center
+            xCount.style = s"-fx-font: $fontsize $font; -fx-text-fill: linear-gradient(darkblue, blue);"
+            oCount.style = s"-fx-font: $fontsize $font; -fx-text-fill: linear-gradient(black, red);"
+            this.children += xCount
+            this.children += oCount
             this.setSpacing(size * controller.hexField.matrix.col - size)
         }
 

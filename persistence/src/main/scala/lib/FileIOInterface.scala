@@ -20,4 +20,4 @@ trait FileIOInterface[T]:
    *
    * @return the game as String
    */
-  def exportGame(field: FieldInterface[T], xcount: Int, ocount: Int, turn: Int): String
+  def exportGame(field: FieldInterface[T], xCount: Int, oCount: Int, turn: Int): String

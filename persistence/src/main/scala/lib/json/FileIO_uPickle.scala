@@ -32,7 +32,7 @@ class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInte
     pw.write(ujson.transform(fieldToJson(field), ujson.StringRenderer(indent = 4)).toString)
     pw.close()
 
-  override def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String =
+  override def exportGame(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): String =
     fieldToJson(field).toString
 
   def fieldToJson(field: FieldInterface[Player]): Obj =
