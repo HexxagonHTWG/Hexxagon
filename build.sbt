@@ -82,6 +82,7 @@ lazy val persistence = project
     name := "persistence",
     description := "Persistence Package for Hexxagon - contains FileIO",
     libraryDependencies ++= commonDependencies,
+    libraryDependencies ++= http4sDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
       "com.lihaoyi" %% "upickle" % "3.1.0", // JSON

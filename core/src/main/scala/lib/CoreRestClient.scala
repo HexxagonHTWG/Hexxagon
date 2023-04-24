@@ -46,10 +46,9 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
       case Success(response) =>
         val r = response.text()
         logger.debug(
-          if r.length > 26 then
-            r.substring(0, 26) + "..."
-          else
-            r
+          String.format(s"%-5s %-32s -> %.20s",
+            method.verb, url, r
+          )
         )
         r
       case Failure(exception) =>
