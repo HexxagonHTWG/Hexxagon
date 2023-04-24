@@ -1,6 +1,6 @@
 package lib
 
-import di.PersistenceModule.given_FileIOInterface
+import di.PersistenceModule.given_FileIOInterface_Player
 import lib.defaultImpl.Controller
 import lib.field.defaultImpl.{Field, Matrix}
 import org.scalatest.matchers.should.Matchers.*

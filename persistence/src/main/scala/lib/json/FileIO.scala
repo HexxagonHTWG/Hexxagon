@@ -6,26 +6,16 @@ import play.api.libs.json.*
 
 import scala.io.Source
 
-class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
+case class FileIO() extends FileIOInterface[Player]:
+  private val fileName = "field.json"
 
   override def load: FieldInterface[Player] =
-    val source: Source = Source.fromFile("field.json")
-    val json: JsValue = Json.parse(source.getLines.mkString)
-    val rows = (json \ "rows").get.toString.toInt
-    val cols = (json \ "cols").get.toString.toInt
-
-    for (index <- 0 until rows * cols) {
-      val row = (json \\ "row")(index).as[Int]
-      val col = (json \\ "col")(index).as[Int]
-      val cell = (json \\ "cell")(index).as[String]
-      field = field.placeAlways(Player.fromString(cell), col, row)
-    }
-    source.close()
-    field
+    val source: Source = Source.fromFile(fileName)
+    HexJson.decode(source.getLines.mkString)
 
   override def save(field: FieldInterface[Player]): Unit =
     import java.io.{File, PrintWriter}
-    val pw = new PrintWriter(new File("field.json"))
+    val pw = new PrintWriter(new File(fileName))
     pw.write(Json.prettyPrint(HexJson.fieldToJson(field)))
     pw.close()
 

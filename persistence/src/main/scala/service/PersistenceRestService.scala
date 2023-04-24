@@ -3,7 +3,7 @@ package service
 import cats.effect.*
 import com.comcast.ip4s.*
 import com.typesafe.config.ConfigFactory
-import di.PersistenceModule.given_FileIOInterface as fileIO
+import di.PersistenceModule.given_FileIOInterface_Player as fileIO
 import lib.Player
 import lib.json.HexJson
 import org.http4s.HttpRoutes

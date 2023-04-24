@@ -7,7 +7,7 @@ import lib.field.FieldInterface
 
 import scala.xml.Elem
 
-class Controller(using var hexField: FieldInterface[Player])(using val fileIO: FileIOInterface)
+class Controller(using var hexField: FieldInterface[Player])(using val fileIO: FileIOInterface[Player])
   extends ControllerInterface[Player] with StrictLogging:
 
   private val GAME_MAX = hexField.matrix.MAX

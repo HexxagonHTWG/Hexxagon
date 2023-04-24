@@ -1,6 +1,7 @@
 package lib.json
 
-import di.ProviderModule
+import di.ProviderModule.given_FieldInterface_Player as defaultField
+import di.{FlexibleProviderModule, ProviderModule}
 import lib.Player
 import lib.field.FieldInterface
 import play.api.libs.json.{JsNumber, JsObject, Json}
@@ -31,12 +32,12 @@ object HexJson:
     )
 
   def decode(field: String): FieldInterface[Player] =
-    var hexField = ProviderModule.given_FieldInterface_Player
     val json = Try(Json.parse(field)) match
       case Success(value) => value
-      case Failure(_) => return hexField
+      case Failure(_) => return defaultField
     val rows = (json \ "rows").get.toString.toInt
     val cols = (json \ "cols").get.toString.toInt
+    var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
 
     for (index <- 0 until rows * cols) {
       val row = (json \\ "row")(index).as[Int]

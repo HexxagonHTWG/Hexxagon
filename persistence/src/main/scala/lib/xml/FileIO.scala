@@ -5,9 +5,11 @@ import lib.{FileIOInterface, Player}
 
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 
-class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
+class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface[Player]:
+  private val fileName = "field.xml"
+
   override def load: FieldInterface[Player] =
-    val file = scala.xml.XML.loadFile("field.xml")
+    val file = scala.xml.XML.loadFile(fileName)
 
     val cells = file \\ "cell"
     for (cell <- cells) {
@@ -20,7 +22,7 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
 
   override def save(field: FieldInterface[Player]): Unit =
     import java.io.*
-    val pw = new PrintWriter(new File("field.xml"))
+    val pw = new PrintWriter(new File(fileName))
     val prettyPrinter = new PrettyPrinter(120, 4)
     val xml = prettyPrinter.format(fieldToXml(field))
     pw.write(xml)

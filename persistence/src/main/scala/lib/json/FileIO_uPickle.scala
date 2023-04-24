@@ -7,9 +7,11 @@ import upickle.default.*
 
 import scala.io.Source
 
-class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInterface:
+class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInterface[Player]:
+  private val fileName = "field.json"
+
   override def load: FieldInterface[Player] =
-    val source: Source = Source.fromFile("field.json")
+    val source: Source = Source.fromFile(fileName)
     val json = ujson.read(source.getLines.mkString)
     val rows = json("rows").num.toInt
     val cols = json("cols").num.toInt
@@ -26,9 +28,12 @@ class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInte
 
   override def save(field: FieldInterface[Player]): Unit =
     import java.io.*
-    val pw = new PrintWriter(new File("field.json"))
+    val pw = new PrintWriter(new File(fileName))
     pw.write(ujson.transform(fieldToJson(field), ujson.StringRenderer(indent = 4)).toString)
     pw.close()
+
+  override def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String =
+    fieldToJson(field).toString
 
   def fieldToJson(field: FieldInterface[Player]): Obj =
     ujson.Obj(
@@ -48,7 +53,3 @@ class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInte
       "col" -> col,
       "cell" -> field.matrix.cell(col, row).toString
     )
-
-  // not working with xcount, ocount, turn yet
-  override def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String =
-    fieldToJson(field).toString

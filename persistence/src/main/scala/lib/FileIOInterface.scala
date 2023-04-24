@@ -1,24 +1,23 @@
 package lib
 
-import lib.Player
 import lib.field.FieldInterface
 
 /** Interface to implement file IO for the current game status. */
-trait FileIOInterface:
+trait FileIOInterface[T]:
   /** Loads field from a file.
    *
    * @return the loaded field
    */
-  def load: FieldInterface[Player]
+  def load: FieldInterface[T]
 
   /** Saves field to a file.
    *
    * @param field the field to be saved
    */
-  def save(field: FieldInterface[Player]): Unit
+  def save(field: FieldInterface[T]): Unit
 
-  /** Returns the game status.
+  /** Returns the game as String.
    *
-   * @return the game status
+   * @return the game as String
    */
-  def exportGame(field: FieldInterface[Player], xcount: Int, ocount: Int, turn: Int): String
+  def exportGame(field: FieldInterface[T], xcount: Int, ocount: Int, turn: Int): String

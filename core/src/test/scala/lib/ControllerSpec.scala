@@ -1,6 +1,6 @@
 package lib
 
-import di.PersistenceModule.given_FileIOInterface
+import di.PersistenceModule.given_FileIOInterface_Player
 import di.{CoreModule, FlexibleCoreModule, FlexibleProviderModule}
 import lib.GameStatus.*
 import lib.Observer

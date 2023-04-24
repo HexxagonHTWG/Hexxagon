@@ -1,17 +1,14 @@
 package di
 
-import lib.FileIOInterface
 import lib.json.{FileIO as FileIOJson, FileIO_uPickle as FileIOJson_uPickle}
 import lib.xml.FileIO as FileIOXml
+import lib.{FileIOInterface, Player}
 
 object PersistenceModule:
-  given FileIOInterface = FileIOJson(using ProviderModule.given_FieldInterface_Player)
+  given FileIOInterface[Player] = FileIOJson()
 
 object XMLPersistenceModule:
-  given FileIOInterface = FileIOXml(using ProviderModule.given_FieldInterface_Player)
+  given FileIOInterface[Player] = FileIOXml(using ProviderModule.given_FieldInterface_Player)
 
 object JsonUPicklePersistenceModule:
-  given FileIOInterface = FileIOJson_uPickle(using ProviderModule.given_FieldInterface_Player)
-
-class FlexiblePersistenceModule(rows: Int, cols: Int):
-  given FileIOInterface = FileIOJson(using FlexibleProviderModule(rows, cols).given_FieldInterface_Player)
+  given FileIOInterface[Player] = FileIOJson_uPickle(using ProviderModule.given_FieldInterface_Player)

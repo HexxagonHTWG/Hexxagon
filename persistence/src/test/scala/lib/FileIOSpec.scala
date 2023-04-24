@@ -38,7 +38,7 @@ class FileIOSpec extends AnyWordSpec with PrivateMethodTester:
     }
 
     "used with json" should {
-      val fileIOjson = json.FileIO(using field)
+      val fileIOjson = json.FileIO()
       "save current state of field in json" in {
         val json = HexJson.fieldToJson(field)
         (json \ "rows").get.toString should be("6")
