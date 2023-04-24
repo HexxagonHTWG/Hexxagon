@@ -3,7 +3,7 @@ package service
 import cats.effect.*
 import com.comcast.ip4s.*
 import com.typesafe.config.ConfigFactory
-import di.CoreModule.given_ControllerInterface_Player as controller
+import di.CoreServerModule.given_ControllerInterface_Player as controller
 import di.{CoreModule, PersistenceModule}
 import lib.defaultImpl.Controller
 import lib.json.HexJson

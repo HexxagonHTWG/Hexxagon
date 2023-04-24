@@ -21,12 +21,10 @@ object PersistenceRestService extends IOApp:
       val field = fileIO.load
       Ok(HexJson.encode(field))
     case req@POST -> Root / "save" =>
-      for {
-        f <- req.as[String]
-        resp <-
-          fileIO.save(HexJson.decode(f))
-          Ok("Saved")
-      } yield resp
+      req.as[String].flatMap { f =>
+        fileIO.save(HexJson.decode(f))
+        Ok("Saved")
+      }
   }.orNotFound
   private val loggingService = Logger.httpApp(false, false)(restController)
 

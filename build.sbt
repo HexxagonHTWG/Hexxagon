@@ -37,15 +37,14 @@ ThisBuild / credentials := {
 lazy val http4sVersion = "1.0.0-M39"
 lazy val http4sDependencies = Seq(
   "org.http4s" %% "http4s-ember-server" % http4sVersion,
-  "org.http4s" %% "http4s-dsl" % http4sVersion,
-  "ch.qos.logback" % "logback-classic" % "1.4.6",
-  "com.lihaoyi" %% "requests" % "0.8.0",
+  "org.http4s" %% "http4s-dsl" % http4sVersion
 )
 lazy val commonDependencies = Seq(
   "org.scalactic" %% "scalactic" % "3.2.15",
   "org.scalatest" %% "scalatest" % "3.2.15" % "test",
   "com.typesafe" % "config" % "1.4.2",
-  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
+  "ch.qos.logback" % "logback-classic" % "1.4.6"
 )
 
 /* =====================================================================================================================
@@ -103,7 +102,8 @@ lazy val utils = project
   .settings(
     name := "utils",
     description := "Utils Package for Hexxagon - contains useful classes and traits",
-    libraryDependencies ++= commonDependencies
+    libraryDependencies ++= commonDependencies,
+    libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
   )
 
 lazy val root = project

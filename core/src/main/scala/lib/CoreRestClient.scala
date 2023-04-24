@@ -4,9 +4,10 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import di.CoreModule
 import geny.Bytes
+import lib.Http.fetch
 import lib.field.FieldInterface
 import lib.json.HexJson
-import requests.{Requester, Response}
+import requests.{Requester, Response, get, post}
 
 import scala.util.{Failure, Success, Try}
 
@@ -20,51 +21,37 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
   var hexField: FieldInterface[Player] = HexJson.decode(exportField)
 
   override def gameStatus: GameStatus = GameStatus.valueOf(
-    http(requests.get, s"$coreUrl/status") match
+    fetch(get, s"$coreUrl/status") match
       case "" => "ERROR"
       case x => x
   )
 
   override def fillAll(c: Player): Unit =
-    hexField = HexJson.decode(http(requests.post, s"$coreUrl/fillAll/$c"))
+    hexField = HexJson.decode(fetch(post, s"$coreUrl/fillAll/$c"))
     notifyObservers()
 
   override def save(): Unit =
-    hexField = HexJson.decode(http(requests.post, s"$coreUrl/save"))
+    hexField = HexJson.decode(fetch(post, s"$coreUrl/save"))
     notifyObservers()
 
   override def load(): Unit =
-    hexField = HexJson.decode(http(requests.post, s"$coreUrl/load"))
+    hexField = HexJson.decode(fetch(post, s"$coreUrl/load"))
     notifyObservers()
 
   override def place(c: Player, x: Int, y: Int): Unit =
-    hexField = HexJson.decode(http(requests.post, s"$coreUrl/place/$c/$x/$y"))
+    hexField = HexJson.decode(fetch(post, s"$coreUrl/place/$c/$x/$y"))
     notifyObservers()
 
-  private def http(method: Requester, url: String): String =
-    Try(method(url)) match
-      case Success(response) =>
-        val r = response.text()
-        logger.debug(
-          String.format(s"%-5s %-32s -> %.20s",
-            method.verb, url, r
-          )
-        )
-        r
-      case Failure(exception) =>
-        logger.error(exception.getMessage)
-        ""
-
   override def undo(): Unit =
-    hexField = HexJson.decode(http(requests.post, s"$coreUrl/undo"))
+    hexField = HexJson.decode(fetch(post, s"$coreUrl/undo"))
     notifyObservers()
 
   override def redo(): Unit =
-    hexField = HexJson.decode(http(requests.post, s"$coreUrl/redo"))
+    hexField = HexJson.decode(fetch(post, s"$coreUrl/redo"))
     notifyObservers()
 
   override def reset(): Unit =
-    hexField = HexJson.decode(http(requests.post, s"$coreUrl/reset"))
+    hexField = HexJson.decode(fetch(post, s"$coreUrl/reset"))
     notifyObservers()
 
-  override def exportField: String = http(requests.get, s"$coreUrl/exportField")
+  override def exportField: String = fetch(get, s"$coreUrl/exportField")

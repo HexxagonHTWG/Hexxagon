@@ -1,7 +1,7 @@
 package service
 
 import com.typesafe.scalalogging.{Logger, StrictLogging}
-import di.{CoreModule, RestModule}
+import di.{CoreModule, CoreRestModule}
 import lib.TUI
 
 import scala.io.StdIn.readLine
@@ -10,7 +10,7 @@ object TuiService extends App:
   Starter(TUI(using CoreModule.given_ControllerInterface_Player)).runTUI()
 
 object TuiRestService extends App:
-  Starter(TUI(using RestModule.given_ControllerInterface_Player)).runTUI()
+  Starter(TUI(using CoreRestModule.given_ControllerInterface_Player)).runTUI()
 
 case class Starter(tui: TUI):
   def runTUI(): Unit = {

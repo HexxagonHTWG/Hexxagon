@@ -17,5 +17,12 @@ object CoreModule:
     using PersistenceModule.given_FileIOInterface_Player
   )
 
-object RestModule:
+object CoreServerModule:
+  given ControllerInterface[Player] = Controller(
+    using ProviderModule.given_FieldInterface_Player
+  )(
+    using PersistenceRestModule.given_FileIOInterface_Player
+  )
+
+object CoreRestModule:
   given ControllerInterface[Player] = CoreRestClient()
