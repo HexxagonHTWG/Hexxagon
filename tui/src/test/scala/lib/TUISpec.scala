@@ -1,8 +1,8 @@
 package lib
 
-import di.PersistenceModule.given_FileIOInterface
-import lib.controllerBaseImpl.Controller
-import lib.fieldComponent.fieldBaseImpl.{Field, Matrix}
+import di.PersistenceModule.given_FileIOInterface_Player
+import lib.defaultImpl.Controller
+import lib.field.defaultImpl.{Field, Matrix}
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 
@@ -44,9 +44,13 @@ class TUISpec extends AnyWordSpec:
         tui.handleInput("load") should be(Some("Loaded."))
       }
       "exit when q | exit | quit | ..." in {
-        val in = Seq("q", "e", "exit", "quit", "Exit", "Quit")
         TUI.exitMes should be("Exiting.")
-        for (i <- in) tui.handleInput(i) should be(Some(TUI.exitMes))
+        tui.handleInput("q") should be(Some(TUI.exitMes))
+        tui.handleInput("e") should be(Some(TUI.exitMes))
+        tui.handleInput("exit") should be(Some(TUI.exitMes))
+        tui.handleInput("quit") should be(Some(TUI.exitMes))
+        tui.handleInput("Exit") should be(Some(TUI.exitMes))
+        tui.handleInput("Quit") should be(Some(TUI.exitMes))
       }
       "reset when reset" in {
         tui.handleInput("reset") should be(Some("Reset."))

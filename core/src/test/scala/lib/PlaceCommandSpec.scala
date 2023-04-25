@@ -1,7 +1,7 @@
 package lib
 
-import lib.controllerBaseImpl.{GenericCommand, PlaceAllCommand, PlaceCommand}
-import lib.fieldComponent.fieldBaseImpl.{Field, Matrix}
+import lib.defaultImpl.{GenericCommand, PlaceAllCommand, PlaceCommand}
+import lib.field.defaultImpl.{Field, Matrix}
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec
 

@@ -1,10 +1,10 @@
 package lib
 
 import lib.Observable
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 
 /** Interface to implement the controller unit. */
-trait ControllerInterface[T] extends Observable {
+trait ControllerInterface[T] extends Observable:
   /** Field of the game. */
   var hexField: FieldInterface[T]
 
@@ -46,4 +46,10 @@ trait ControllerInterface[T] extends Observable {
 
   /** Returns the field of the game. */
   def exportField: String
-}
+
+  /** Default toString */
+  override def toString: String =
+    gameStatus.message() + hexField.toString
+      + "\nX: " + hexField.matrix.xCount
+      + "\tO: " + hexField.matrix.oCount
+      + "\n" + "_" * (4 * hexField.matrix.col + 1) + "\n"

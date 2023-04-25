@@ -1,10 +1,12 @@
 ignore:
-  - "**/GUI.scala"
-  - "**/GuiService.scala"
   - "**/TuiService.scala"
-  - "**/resources"
+  - "**/CoreRestService.scala"
+  - "**/CoreRestClient.scala"
   - "**/PersistenceModule.scala"
+  - "**/PersistenceRestService.scala"
+  - "**/FileIORestClient.scala"
   - "**/ProviderModule.scala"
+  - "**/Http.scala"
 coverage:
   status:
     patch:

@@ -18,9 +18,9 @@ ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "ht
 ThisBuild / publishMavenStyle := true
 ThisBuild / credentials := {
   val credFile = Path.userHome / ".sbt" / ".credentials"
-  if (credFile.exists()) {
+  if (credFile.exists())
     Seq(Credentials(credFile))
-  } else {
+  else
     Seq(
       Credentials(
         "GitHub Package Registry",
@@ -29,17 +29,27 @@ ThisBuild / credentials := {
         System.getenv("GITHUB_TOKEN")
       )
     )
-  }
 }
+
+/* =====================================================================================================================
+ * Common Dependencies
+ * ===================================================================================================================== */
+lazy val http4sVersion = "1.0.0-M39"
+lazy val http4sDependencies = Seq(
+  "org.http4s" %% "http4s-ember-server" % http4sVersion,
+  "org.http4s" %% "http4s-dsl" % http4sVersion
+)
+lazy val commonDependencies = Seq(
+  "org.scalactic" %% "scalactic" % "3.2.15",
+  "org.scalatest" %% "scalatest" % "3.2.15" % "test",
+  "com.typesafe" % "config" % "1.4.2",
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
+  "ch.qos.logback" % "logback-classic" % "1.4.6"
+)
 
 /* =====================================================================================================================
  * Project Settings
  * ===================================================================================================================== */
-lazy val commonDependencies = Seq(
-  "org.scalactic" %% "scalactic" % "3.2.15",
-  "org.scalatest" %% "scalatest" % "3.2.15" % "test"
-)
-
 lazy val gui = project
   .settings(
     name := "gui",
@@ -61,7 +71,8 @@ lazy val core = project
   .settings(
     name := "core",
     description := "Core Package for Hexxagon - contains controller",
-    libraryDependencies ++= commonDependencies
+    libraryDependencies ++= commonDependencies,
+    libraryDependencies ++= http4sDependencies,
   )
   .dependsOn(persistence)
 
@@ -70,6 +81,7 @@ lazy val persistence = project
     name := "persistence",
     description := "Persistence Package for Hexxagon - contains FileIO",
     libraryDependencies ++= commonDependencies,
+    libraryDependencies ++= http4sDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
       "com.lihaoyi" %% "upickle" % "3.1.0", // JSON
@@ -90,7 +102,8 @@ lazy val utils = project
   .settings(
     name := "utils",
     description := "Utils Package for Hexxagon - contains useful classes and traits",
-    libraryDependencies ++= commonDependencies
+    libraryDependencies ++= commonDependencies,
+    libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
   )
 
 lazy val root = project

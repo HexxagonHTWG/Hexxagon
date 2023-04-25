@@ -1,6 +1,6 @@
 package lib
 
-import lib.fieldComponent.fieldBaseImpl.Matrix
+import lib.field.defaultImpl.Matrix
 import lib.setHandling.SetHandler
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.wordspec.AnyWordSpec

@@ -9,6 +9,7 @@ class GameStatusSpec extends AnyWordSpec:
     "have map descriptions for its status" in {
       IDLE.message() should be("")
       GAME_OVER.message() should be("GAME OVER")
+      ERROR.message() should be("Connection Error!")
     }
     "have map descriptions for each players turn" in {
       TURN_PLAYER_1.message() should be("Player 1's turn to place X")
@@ -19,8 +20,9 @@ class GameStatusSpec extends AnyWordSpec:
       GameStatus.valueOf("TURN_PLAYER_1") should be(TURN_PLAYER_1)
       GameStatus.valueOf("IDLE") should be(IDLE)
       GameStatus.valueOf("GAME_OVER") should be(GAME_OVER)
+      GameStatus.valueOf("ERROR") should be(ERROR)
     }
     "have a type with a value of the given ENUMS" in {
-      GameStatus.values should be(Array(IDLE, GAME_OVER, TURN_PLAYER_1, TURN_PLAYER_2))
+      GameStatus.values should be(Array(IDLE, GAME_OVER, TURN_PLAYER_1, TURN_PLAYER_2, ERROR))
     }
   }

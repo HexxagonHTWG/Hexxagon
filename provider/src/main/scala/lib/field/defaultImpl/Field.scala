@@ -1,7 +1,7 @@
-package lib.fieldComponent.fieldBaseImpl
+package lib.field.defaultImpl
 
 import lib.Player
-import lib.fieldComponent.{FieldInterface, MatrixInterface}
+import lib.field.{FieldInterface, MatrixInterface}
 
 case class Field()(using val matrix: MatrixInterface[Player]) extends FieldInterface[Player]:
 

@@ -9,10 +9,10 @@
     <option name="testKind" value="All in package" />
     <option name="classBuf">
       <list>
-        <option value="lib.GenericCommandSpec" />
         <option value="lib.PlaceCommandSpec" />
         <option value="lib.PlaceAllCommandSpec" />
         <option value="lib.ControllerSpec" />
+        <option value="lib.GenericCommandSpec" />
       </list>
     </option>
     <option name="searchTest" value="In single module" />

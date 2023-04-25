@@ -1,15 +1,15 @@
-package lib.fileIOXMLImpl
+package lib.xml
 
-import lib.fieldComponent.FieldInterface
+import lib.field.FieldInterface
 import lib.{FileIOInterface, Player}
 
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 
-class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
+class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface[Player]:
+  private val fileName = "field.xml"
+
   override def load: FieldInterface[Player] =
-    val file = scala.xml.XML.loadFile("field.xml")
-    val rows = file \\ "field" \ "@rows"
-    val cols = file \\ "field" \ "@cols"
+    val file = scala.xml.XML.loadFile(fileName)
 
     val cells = file \\ "cell"
     for (cell <- cells) {
@@ -22,7 +22,7 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
 
   override def save(field: FieldInterface[Player]): Unit =
     import java.io.*
-    val pw = new PrintWriter(new File("field.xml"))
+    val pw = new PrintWriter(new File(fileName))
     val prettyPrinter = new PrettyPrinter(120, 4)
     val xml = prettyPrinter.format(fieldToXml(field))
     pw.write(xml)
@@ -36,22 +36,17 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
     } yield cellToXml(field, l, i)}
     </field>
 
-  def cellToXml(field: FieldInterface[Player], row: Int, col: Int): Elem =
-    <cell row={row.toString} col={col.toString}>
-      {field.matrix.cell(col, row)}
-    </cell>
-
   override def exportGame(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): String =
     gameToXml(field, xCount, oCount, turn).toString
 
   private def gameToXml(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int) =
     <field rows={field.matrix.row.toString} cols={field.matrix.col.toString}>
-      {<xcount>
+      {<x-count>
       {xCount}
-    </xcount>
-      <ocount>
+    </x-count>
+      <o-count>
         {oCount}
-      </ocount>
+      </o-count>
       <turn>
         {turn}
       </turn>}{for {
@@ -59,3 +54,8 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface:
       i <- 0 until field.matrix.col
     } yield cellToXml(field, l, i)}
     </field>
+
+  def cellToXml(field: FieldInterface[Player], row: Int, col: Int): Elem =
+    <cell row={row.toString} col={col.toString}>
+      {field.matrix.cell(col, row)}
+    </cell>

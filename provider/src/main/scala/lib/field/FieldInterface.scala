@@ -1,4 +1,4 @@
-package lib.fieldComponent
+package lib.field
 
 /** Interface to implement the game board. */
 trait FieldInterface[T]:

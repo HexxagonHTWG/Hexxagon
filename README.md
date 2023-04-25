@@ -38,6 +38,8 @@ A push to master or dev will trigger a GitHub Action that will run the tests and
 Using `#major` or `#minor` in your commit message will trigger a corresponding version bump. Any commit to master will
 trigger a new release.
 
+![Coverage](https://codecov.io/github/HexxagonHTWG/Hexxagon/branch/master/graphs/sunburst.svg?token=GGXRQECCY7)
+
 # Contributors
 
 ![GitHub Contributors Image](https://contrib.rocks/image?repo=HexxagonHTWG/Hexxagon)
