@@ -1,7 +1,7 @@
 package lib
 
 import di.PersistenceModule.given_FileIOInterface_Player
-import di.{CoreModule, FlexibleCoreModule, FlexibleProviderModule}
+import di.{CoreModule, CoreServerModule, FlexibleCoreModule, FlexibleProviderModule}
 import lib.GameStatus.*
 import lib.Observer
 import lib.defaultImpl.Controller
@@ -112,6 +112,7 @@ class ControllerSpec extends AnyWordSpec:
         c.hexField.toString should not be hex.toString
         c.load()
         c.hexField.toString should be(hex.toString)
+        c.reset()
       }
       "keep the saved gamestatus after loading" in {
         val c = FlexibleCoreModule(7, 4).given_ControllerInterface_Player
@@ -123,6 +124,18 @@ class ControllerSpec extends AnyWordSpec:
         c.gameStatus should be(TURN_PLAYER_1)
         c.load()
         c.gameStatus should be(TURN_PLAYER_2)
+      }
+      "have a rest implementation that is the same but communicates with persistence (failing in testing because of missing server)" in {
+        val c = CoreModule.given_ControllerInterface_Player
+        val c2 = CoreServerModule.given_ControllerInterface_Player
+        c.toString should be(c2.toString)
+        c.place(Player.X, 0, 0) should be(c2.place(Player.X, 0, 0))
+        c.save()
+        c2.save()
+        c.place(Player.O, 1, 0) should be(c2.place(Player.O, 1, 0))
+        c.load()
+        c2.load()
+        c.toString should not be c2.toString
       }
     }
   }
