@@ -18,7 +18,10 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
       case Success(value) => value
       case Failure(exception) => logger.error(exception.getMessage); "http://0.0.0.0:8080"
 
-  var hexField: FieldInterface[Player] = HexJson.decode(exportField)
+  var hexField: FieldInterface[Player] = 
+    HexJson.decode(exportField) match
+      case Success(value) => value
+      case Failure(_) => null
 
   override def gameStatus: GameStatus = GameStatus.valueOf(
     fetch(get, s"$coreUrl/status") match
@@ -27,34 +30,52 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
   )
 
   override def fillAll(c: Player): Unit =
-    hexField = HexJson.decode(fetch(post, s"$coreUrl/fillAll/$c"))
-    notifyObservers()
+    HexJson.decode(fetch(post, s"$coreUrl/fillAll/$c")) match
+      case Success(value) => 
+        hexField = value
+        notifyObservers()
+      case Failure(_) => logger.error("Failed to fill all")
 
   override def save(): Unit =
-    hexField = HexJson.decode(fetch(post, s"$coreUrl/save"))
-    notifyObservers()
+    HexJson.decode(fetch(post, s"$coreUrl/save")) match
+      case Success(value) => 
+        hexField = value
+        notifyObservers()
+      case Failure(_) => logger.error("Failed to save")
 
   override def load(): Unit =
-    HexJson.decode(fetch(post, s"$coreUrl/load")) match
-      case null => logger.error("Failed to load field")
-      case loadedField => 
-        hexField = loadedField
+    HexJson.decode(fetch(get, s"$coreUrl/load")) match
+      case Success(value) => 
+        hexField = value
         notifyObservers()
+      case Failure(_) => logger.error("Failed to load field")
 
   override def place(c: Player, x: Int, y: Int): Unit =
-    hexField = HexJson.decode(fetch(post, s"$coreUrl/place/$c/$x/$y"))
-    notifyObservers()
+    HexJson.decode(fetch(post, s"$coreUrl/place/$c/$x/$y")) match
+      case Success(value) => 
+        hexField = value
+        notifyObservers()
+      case Failure(_) => logger.error("Failed to place")
 
   override def undo(): Unit =
-    hexField = HexJson.decode(fetch(post, s"$coreUrl/undo"))
-    notifyObservers()
+    HexJson.decode(fetch(post, s"$coreUrl/undo")) match
+      case Success(value) => 
+        hexField = value
+        notifyObservers()
+      case Failure(_) => logger.error("Failed to undo")
 
   override def redo(): Unit =
-    hexField = HexJson.decode(fetch(post, s"$coreUrl/redo"))
-    notifyObservers()
+    HexJson.decode(fetch(post, s"$coreUrl/redo")) match
+      case Success(value) => 
+        hexField = value
+        notifyObservers()
+      case Failure(_) => logger.error("Failed to redo")
 
   override def reset(): Unit =
-    hexField = HexJson.decode(fetch(post, s"$coreUrl/reset"))
-    notifyObservers()
+    HexJson.decode(fetch(post, s"$coreUrl/reset")) match
+      case Success(value) => 
+        hexField = value
+        notifyObservers()
+      case Failure(_) => logger.error("Failed to reset")
 
   override def exportField: String = fetch(get, s"$coreUrl/exportField")
