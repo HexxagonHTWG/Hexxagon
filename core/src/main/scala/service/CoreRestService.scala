@@ -31,8 +31,10 @@ object CoreRestService extends IOApp:
       controller.save()
       defaultResponse
     case POST -> Root / "load" =>
+      val currentField = controller.hexField
       controller.load()
-      defaultResponse
+      if controller.hexField == currentField then BadRequest("No game loaded")
+      else defaultResponse
     case POST -> Root / "place" / c / x / y =>
       controller.place(Player.fromString(c), x.toInt, y.toInt)
       defaultResponse

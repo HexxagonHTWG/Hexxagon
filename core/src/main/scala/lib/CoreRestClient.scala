@@ -35,8 +35,11 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
     notifyObservers()
 
   override def load(): Unit =
-    hexField = HexJson.decode(fetch(post, s"$coreUrl/load"))
-    notifyObservers()
+    HexJson.decode(fetch(post, s"$coreUrl/load")) match
+      case null => logger.error("Failed to load field")
+      case loadedField => 
+        hexField = loadedField
+        notifyObservers()
 
   override def place(c: Player, x: Int, y: Int): Unit =
     hexField = HexJson.decode(fetch(post, s"$coreUrl/place/$c/$x/$y"))

@@ -34,7 +34,7 @@ object HexJson:
   def decode(field: String): FieldInterface[Player] =
     val json = Try(Json.parse(field)) match
       case Success(value) => value
-      case Failure(_) => return defaultField
+      case Failure(_) => return null
     val rows = (json \ "rows").get.toString.toInt
     val cols = (json \ "cols").get.toString.toInt
     var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player

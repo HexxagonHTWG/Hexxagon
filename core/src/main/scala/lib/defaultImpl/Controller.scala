@@ -80,10 +80,13 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
     notifyObservers()
 
   override def load(): Unit =
-    hexField = fileIO.load
-    gameStatus = savedStatus
-    checkStat()
-    notifyObservers()
+    fileIO.load match
+      case null => logger.error("Failed to load field")
+      case field =>
+        hexField = field
+        gameStatus = savedStatus
+        checkStat()
+        notifyObservers()
 
   override def exportField: String =
     fileIO.exportGame(hexField, hexField.matrix.xCount, hexField.matrix.oCount,
