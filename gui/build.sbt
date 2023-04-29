@@ -2,4 +2,6 @@ This / coverageEnabled := false
 
 This / libraryDependencies += "org.hex" %% "core" % version.value
 
-This / mainClass := Some("service.GuiRestService")
+This / Compile / run / mainClass := Some("service.GuiRestService")
+
+ThisBuild / Docker / packageName := "gui"

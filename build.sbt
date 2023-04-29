@@ -8,7 +8,7 @@ ThisBuild / version := {
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
 ThisBuild / versionScheme := Some("early-semver")
-ThisBuild / Test / fork := true
+ThisBuild / fork := true
 
 /* =====================================================================================================================
  * GitHub Packages Settings
@@ -16,20 +16,45 @@ ThisBuild / Test / fork := true
 ThisBuild / resolvers += "GitHub HexxagonHTWG Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon"
 ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "https://maven.pkg.github.com/HexxagonHTWG/Hexxagon")
 ThisBuild / publishMavenStyle := true
-ThisBuild / credentials := {
-  val credFile = Path.userHome / ".sbt" / ".credentials"
-  if (credFile.exists())
-    Seq(Credentials(credFile))
-  else
-    Seq(
-      Credentials(
-        "GitHub Package Registry",
+ThisBuild / credentials ++= {
+  val mvnCredentials = Path.userHome / ".sbt" / ".credentials"
+  val dockerCredentials = Path.userHome / ".sbt" / "docker.credentials"
+  val defaultRealm = "GitHub Package Registry"
+  val defaultUser = "HexxagonHTWG"
+  val defaultToken = System.getenv("GITHUB_TOKEN")
+  Seq(
+    mvnCredentials match {
+      case credFile if credFile.exists() => Credentials(credFile)
+      case _ => Credentials(
+        defaultRealm,
         "maven.pkg.github.com",
-        "HexxagonHTWG",
+        defaultUser,
         System.getenv("GITHUB_TOKEN")
       )
-    )
+    },
+    dockerCredentials match {
+      case credFile if credFile.exists() => Credentials(credFile)
+      case _ => Credentials(
+        defaultRealm,
+        "ghcr.io",
+        defaultUser,
+        System.getenv("GITHUB_TOKEN")
+      )
+    })
 }
+
+/* =====================================================================================================================
+ * Docker Settings
+ * ===================================================================================================================== */
+ThisBuild / Docker / maintainer := "HexxagonHTWG"
+ThisBuild / Docker / dockerUsername := Some("hexxagonhtwg")
+ThisBuild / Docker / dockerBaseImage := "sbtscala/scala-sbt:eclipse-temurin-jammy-19.0.1_10_1.8.2_3.2.2"
+ThisBuild / Docker / dockerUpdateLatest := true
+ThisBuild / Docker / dockerRepository := Some("ghcr.io")
+Global / excludeLintKeys += Docker / dockerBaseImage
+Global / excludeLintKeys += Docker / dockerUpdateLatest
+Global / excludeLintKeys += Docker / maintainer
+Global / excludeLintKeys += Docker / packageName
 
 /* =====================================================================================================================
  * Common Dependencies
@@ -58,6 +83,7 @@ lazy val gui = project
     libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31",
   )
   .dependsOn(core)
+  .enablePlugins(DockerPlugin)
 
 lazy val tui = project
   .settings(
@@ -66,6 +92,7 @@ lazy val tui = project
     libraryDependencies ++= commonDependencies
   )
   .dependsOn(core)
+  .enablePlugins(DockerPlugin)
 
 lazy val core = project
   .settings(
@@ -75,6 +102,7 @@ lazy val core = project
     libraryDependencies ++= http4sDependencies,
   )
   .dependsOn(persistence)
+  .enablePlugins(DockerPlugin)
 
 lazy val persistence = project
   .settings(
@@ -89,6 +117,7 @@ lazy val persistence = project
     )
   )
   .dependsOn(provider)
+  .enablePlugins(DockerPlugin)
 
 lazy val provider = project
   .settings(
@@ -111,7 +140,13 @@ lazy val root = project
   .settings(
     name := "Hexxagon",
     libraryDependencies ++= commonDependencies,
-    publishArtifact := false
+    publishArtifact := false,
+    run := {
+      (gui / Compile / run).evaluated
+      //(tui / Compile / run).evaluated
+      (core / Compile / run).evaluated
+      (persistence / Compile / run).evaluated
+    }
   )
   .aggregate(
     gui,
