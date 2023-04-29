@@ -47,10 +47,10 @@ ThisBuild / credentials ++= {
  * Docker Settings
  * ===================================================================================================================== */
 ThisBuild / Compile / discoveredMainClasses := Seq()
-ThisBuild / Docker / dockerUpdateLatest := true
+ThisBuild / dockerUpdateLatest := true
+ThisBuild / dockerBaseImage := "openjdk:17-jdk"
 ThisBuild / Docker / dockerRepository := Some("docker.io")
 ThisBuild / Docker / dockerUsername := Some("ostabo")
-Global / excludeLintKeys += Docker / dockerUpdateLatest
 
 /* =====================================================================================================================
  * Common Dependencies
@@ -85,7 +85,7 @@ lazy val tui = project
   .settings(
     name := "tui",
     description := "TUI for Hexxagon",
-    libraryDependencies ++= commonDependencies
+    libraryDependencies ++= commonDependencies,
   )
   .dependsOn(core)
   .enablePlugins(DockerPlugin, JavaAppPackaging)
@@ -110,7 +110,7 @@ lazy val persistence = project
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
       "com.lihaoyi" %% "upickle" % "3.1.0", // JSON
       "com.typesafe.play" %% "play-json" % "2.10.0-RC7", // JSON
-    )
+    ),
   )
   .dependsOn(provider)
   .enablePlugins(DockerPlugin, JavaAppPackaging)
@@ -128,7 +128,7 @@ lazy val utils = project
     name := "utils",
     description := "Utils Package for Hexxagon - contains useful classes and traits",
     libraryDependencies ++= commonDependencies,
-    libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0"
+    libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0",
   )
 
 lazy val root = project
