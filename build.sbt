@@ -46,15 +46,11 @@ ThisBuild / credentials ++= {
 /* =====================================================================================================================
  * Docker Settings
  * ===================================================================================================================== */
-ThisBuild / Docker / maintainer := "HexxagonHTWG"
-ThisBuild / Docker / dockerUsername := Some("hexxagonhtwg")
-ThisBuild / Docker / dockerBaseImage := "sbtscala/scala-sbt:eclipse-temurin-jammy-19.0.1_10_1.8.2_3.2.2"
+ThisBuild / Compile / discoveredMainClasses := Seq()
 ThisBuild / Docker / dockerUpdateLatest := true
-ThisBuild / Docker / dockerRepository := Some("ghcr.io")
-Global / excludeLintKeys += Docker / dockerBaseImage
+ThisBuild / Docker / dockerRepository := Some("docker.io")
+ThisBuild / Docker / dockerUsername := Some("ostabo")
 Global / excludeLintKeys += Docker / dockerUpdateLatest
-Global / excludeLintKeys += Docker / maintainer
-Global / excludeLintKeys += Docker / packageName
 
 /* =====================================================================================================================
  * Common Dependencies
@@ -83,7 +79,7 @@ lazy val gui = project
     libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31",
   )
   .dependsOn(core)
-  .enablePlugins(DockerPlugin)
+  .enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val tui = project
   .settings(
@@ -92,7 +88,7 @@ lazy val tui = project
     libraryDependencies ++= commonDependencies
   )
   .dependsOn(core)
-  .enablePlugins(DockerPlugin)
+  .enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val core = project
   .settings(
@@ -102,7 +98,7 @@ lazy val core = project
     libraryDependencies ++= http4sDependencies,
   )
   .dependsOn(persistence)
-  .enablePlugins(DockerPlugin)
+  .enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val persistence = project
   .settings(
@@ -117,7 +113,7 @@ lazy val persistence = project
     )
   )
   .dependsOn(provider)
-  .enablePlugins(DockerPlugin)
+  .enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val provider = project
   .settings(
