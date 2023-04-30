@@ -86,6 +86,7 @@ lazy val tui = project
     name := "tui",
     description := "TUI for Hexxagon",
     libraryDependencies ++= commonDependencies,
+    run / connectInput := true,
   )
   .dependsOn(core)
   .enablePlugins(DockerPlugin, JavaAppPackaging)

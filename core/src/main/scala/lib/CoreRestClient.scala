@@ -13,10 +13,11 @@ import scala.util.{Failure, Success, Try}
 
 case class CoreRestClient() extends ControllerInterface[Player] with StrictLogging:
   private lazy val config = ConfigFactory.load()
+  private val fallBackUrl = "http://0.0.0.0:8080"
   private val coreUrl =
     Try(s"http://${config.getString("http.core.host")}:${config.getString("http.core.port")}") match
       case Success(value) => value
-      case Failure(exception) => logger.error(exception.getMessage); "http://0.0.0.0:8080"
+      case Failure(exception) => logger.error(s"${exception.getMessage} - Using fallback url: $fallBackUrl"); fallBackUrl
 
   var hexField: FieldInterface[Player] = HexJson.decode(exportField)
 

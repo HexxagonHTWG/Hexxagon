@@ -1,0 +1,26 @@
+version: "3.9"
+name: "hexxagon"
+services:
+  gui:
+    container_name: "gui"
+    image: "ostabo/gui:latest"
+    environment:
+      - HOST=core
+  tui:
+    container_name: "tui"
+    image: "ostabo/tui:latest"
+    stdin_open: true
+    environment:
+      - HOST=core
+  core:
+    container_name: "core"
+    image: "ostabo/core:latest"
+    ports:
+      - "9090:9090"
+    environment:
+      - HOST=persistence
+  persistence:
+    container_name: "persistence"
+    image: "ostabo/persistence:latest"
+    ports:
+      - "9091:9091"
