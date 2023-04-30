@@ -22,5 +22,8 @@ services:
   persistence:
     container_name: "persistence"
     image: "ostabo/persistence:latest"
+    working_dir: /fileio
     ports:
       - "9091:9091"
+    volumes:
+      - ./:/fileio:xro

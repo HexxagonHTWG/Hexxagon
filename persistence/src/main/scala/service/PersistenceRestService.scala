@@ -31,6 +31,7 @@ object PersistenceRestService extends IOApp:
   def run(args: List[String]): IO[ExitCode] =
     EmberServerBuilder
       .default[IO]
+      .withHost(Host.fromString("0.0.0.0").get)
       .withPort(
         Port.fromString(Try(config.getString("http.persistence.port")).getOrElse("9091")).get
       )
