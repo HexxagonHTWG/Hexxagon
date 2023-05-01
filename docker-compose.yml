@@ -3,17 +3,24 @@ name: "hexxagon"
 services:
   gui:
     container_name: "gui"
+    depends_on:
+      - core
     image: "ostabo/gui:latest"
     environment:
       - HOST=core
+      - DISPLAY=host.docker.internal:0.0
   tui:
     container_name: "tui"
+    depends_on:
+      - core
     image: "ostabo/tui:latest"
     stdin_open: true
     environment:
       - HOST=core
   core:
     container_name: "core"
+    depends_on:
+      - persistence
     image: "ostabo/core:latest"
     ports:
       - "9090:9090"
