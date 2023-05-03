@@ -20,7 +20,7 @@ object PersistenceRestService extends IOApp:
     case GET -> Root / "load" =>
       Try(fileIO.load) match
         case Success(field) => Ok(HexJson.encode(field))
-        case Failure(_) => BadRequest("Could not load field")
+        case Failure(_) => InternalServerError("Could not load game")
     case req@POST -> Root / "save" =>
       req.as[String].flatMap { f =>
         HexJson.decode(f) match
