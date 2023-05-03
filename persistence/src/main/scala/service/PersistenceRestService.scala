@@ -18,7 +18,7 @@ object PersistenceRestService extends IOApp:
   private lazy val config = ConfigFactory.load()
   private val restController = HttpRoutes.of[IO] {
     case GET -> Root / "load" =>
-      Try(fileIO.load) match
+      fileIO.load match
         case Success(field) => Ok(HexJson.encode(field))
         case Failure(_) => InternalServerError("Could not load game")
     case req@POST -> Root / "save" =>

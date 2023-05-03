@@ -6,25 +6,28 @@ import ujson.Obj
 import upickle.default.*
 
 import scala.io.Source
+import scala.util.Try
 
 class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInterface[Player]:
   private val fileName = "field.json"
 
-  override def load: FieldInterface[Player] =
-    val source: Source = Source.fromFile(fileName)
-    val json = ujson.read(source.getLines.mkString)
-    val rows = json("rows").num.toInt
-    val cols = json("cols").num.toInt
-    val cells = json("cells")
+  override def load: Try[FieldInterface[Player]] =
+    Try {
+      val source: Source = Source.fromFile(fileName)
+      val json = ujson.read(source.getLines.mkString)
+      val rows = json("rows").num.toInt
+      val cols = json("cols").num.toInt
+      val cells = json("cells")
 
-    for (index <- 0 until rows * cols) {
-      val row = cells(index)("row").num.toInt
-      val col = cells(index)("col").num.toInt
-      val cell = Player.fromChar(cells(index)("cell").str.head)
-      field = field.placeAlways(cell, col, row)
+      for (index <- 0 until rows * cols) {
+        val row = cells(index)("row").num.toInt
+        val col = cells(index)("col").num.toInt
+        val cell = Player.fromChar(cells(index)("cell").str.head)
+        field = field.placeAlways(cell, col, row)
+      }
+      source.close()
+      field
     }
-    source.close()
-    field
 
   override def save(field: FieldInterface[Player]): Unit =
     import java.io.*

@@ -28,7 +28,7 @@ class FileIOSpec extends AnyWordSpec with PrivateMethodTester:
       }
       "load field from xml" in {
         fileIOXml.save(field)
-        fileIOXml.load should be(field)
+        fileIOXml.load.get should be(field)
       }
       "export a field" in {
         val gameToXml = PrivateMethod[scala.xml.Elem](Symbol("gameToXml"))
@@ -52,7 +52,7 @@ class FileIOSpec extends AnyWordSpec with PrivateMethodTester:
       }
       "load field from json" in {
         fileIOjson.save(field)
-        fileIOjson.load should be(field)
+        fileIOjson.load.get should be(field)
       }
       "export a field" in {
         val gameToJson = PrivateMethod[JsObject](Symbol("gameToJson"))
@@ -76,7 +76,7 @@ class FileIOSpec extends AnyWordSpec with PrivateMethodTester:
       }
       "load field from json" in {
         fileIOjson.save(field)
-        fileIOjson.load should be(field)
+        fileIOjson.load.get should be(field)
       }
     }
   }
