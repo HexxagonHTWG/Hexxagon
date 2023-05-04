@@ -2,16 +2,16 @@
   <configuration default="false" name="tui/Dockerfile" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
-        <option name="containerName" value="tui" />
+        <option name="containerName" value="hex-tui" />
         <option name="envVars">
           <list>
             <DockerEnvVarImpl>
               <option name="name" value="HOST" />
-              <option name="value" value="core" />
+              <option name="value" value="hex-core" />
             </DockerEnvVarImpl>
           </list>
         </option>
-        <option name="commandLineOptions" value="--link core" />
+        <option name="commandLineOptions" value="--link hex-core" />
         <option name="sourceFilePath" value="tui/Dockerfile" />
       </settings>
     </deployment>

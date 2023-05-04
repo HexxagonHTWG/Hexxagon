@@ -2,12 +2,12 @@
   <configuration default="false" name="core/Dockerfile" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
-        <option name="containerName" value="core" />
+        <option name="containerName" value="hex-core" />
         <option name="envVars">
           <list>
             <DockerEnvVarImpl>
               <option name="name" value="HOST" />
-              <option name="value" value="persistence" />
+              <option name="value" value="hex-persistence" />
             </DockerEnvVarImpl>
           </list>
         </option>
@@ -19,7 +19,7 @@
             </DockerPortBindingImpl>
           </list>
         </option>
-        <option name="commandLineOptions" value="--link persistence" />
+        <option name="commandLineOptions" value="--link hex-persistence" />
         <option name="sourceFilePath" value="core/Dockerfile" />
       </settings>
     </deployment>

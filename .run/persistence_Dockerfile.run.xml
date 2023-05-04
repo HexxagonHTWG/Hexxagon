@@ -2,7 +2,7 @@
   <configuration default="false" name="persistence/Dockerfile" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
-        <option name="containerName" value="persistence" />
+        <option name="containerName" value="hex-persistence" />
         <option name="portBindings">
           <list>
             <DockerPortBindingImpl>
