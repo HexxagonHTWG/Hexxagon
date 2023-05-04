@@ -18,7 +18,6 @@ ThisBuild / publishTo := Some("GitHub HexxagonHTWG Apache Maven Packages" at "ht
 ThisBuild / publishMavenStyle := true
 ThisBuild / credentials ++= {
   val mvnCredentials = Path.userHome / ".sbt" / ".credentials"
-  val dockerCredentials = Path.userHome / ".sbt" / "docker.credentials"
   val defaultRealm = "GitHub Package Registry"
   val defaultUser = "HexxagonHTWG"
   val defaultToken = System.getenv("GITHUB_TOKEN")
@@ -31,16 +30,8 @@ ThisBuild / credentials ++= {
         defaultUser,
         System.getenv("GITHUB_TOKEN")
       )
-    },
-    dockerCredentials match {
-      case credFile if credFile.exists() => Credentials(credFile)
-      case _ => Credentials(
-        defaultRealm,
-        "ghcr.io",
-        defaultUser,
-        System.getenv("GITHUB_TOKEN")
-      )
-    })
+    }
+  )
 }
 
 /* =====================================================================================================================
@@ -97,6 +88,7 @@ lazy val core = project
     description := "Core Package for Hexxagon - contains controller",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= http4sDependencies,
+    dockerExposedPorts ++= Seq(9090),
   )
   .dependsOn(persistence)
   .enablePlugins(DockerPlugin, JavaAppPackaging)
@@ -112,6 +104,7 @@ lazy val persistence = project
       "com.lihaoyi" %% "upickle" % "3.1.0", // JSON
       "com.typesafe.play" %% "play-json" % "2.10.0-RC7", // JSON
     ),
+    dockerExposedPorts ++= Seq(9091)
   )
   .dependsOn(provider)
   .enablePlugins(DockerPlugin, JavaAppPackaging)
