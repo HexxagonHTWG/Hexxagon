@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="gui/Dockerfile" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
+  <configuration default="false" name="gui/Dockerfile-local" type="docker-deploy" factoryName="dockerfile" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
         <option name="containerName" value="hex-gui" />
@@ -9,9 +9,14 @@
               <option name="name" value="DISPLAY" />
               <option name="value" value="host.docker.internal:0.0" />
             </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="HOST" />
+              <option name="value" value="core" />
+            </DockerEnvVarImpl>
           </list>
         </option>
-        <option name="sourceFilePath" value="gui/Dockerfile" />
+        <option name="commandLineOptions" value="--network host" />
+        <option name="sourceFilePath" value="gui/Dockerfile-local" />
         <option name="volumeBindings">
           <list>
             <DockerVolumeBindingImpl>

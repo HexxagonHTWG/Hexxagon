@@ -70,7 +70,6 @@ lazy val gui = project
     libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31",
   )
   .dependsOn(core)
-  .enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val tui = project
   .settings(
