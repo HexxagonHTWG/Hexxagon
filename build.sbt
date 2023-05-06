@@ -68,6 +68,7 @@ lazy val gui = project
     description := "GUI for Hexxagon",
     libraryDependencies ++= commonDependencies,
     libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31",
+    coverageEnabled := false,
   )
   .dependsOn(core)
 
