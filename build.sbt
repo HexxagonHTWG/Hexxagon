@@ -17,7 +17,6 @@ ThisBuild / credentials ++= {
   val mvnCredentials = Path.userHome / ".sbt" / ".credentials"
   val defaultRealm = "GitHub Package Registry"
   val defaultUser = "HexxagonHTWG"
-  val defaultToken = System.getenv("GITHUB_TOKEN")
   Seq(
     mvnCredentials match {
       case credFile if credFile.exists() => Credentials(credFile)

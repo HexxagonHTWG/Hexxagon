@@ -1,3 +1,20 @@
+This / credentials ++= {
+  val mvnCredentials = Path.userHome / ".sbt" / ".credentials"
+  val defaultRealm = "GitHub Package Registry"
+  val defaultUser = "HexxagonHTWG"
+  Seq(
+    mvnCredentials match {
+      case credFile if credFile.exists() => Credentials(credFile)
+      case _ => Credentials(
+        defaultRealm,
+        "maven.pkg.github.com",
+        defaultUser,
+        System.getenv("GITHUB_TOKEN")
+      )
+    }
+  )
+}
+
 This / libraryDependencies += "org.hex" %% "core" % sys.env.getOrElse("LATEST_VERSION", "0.0.0")
 
 This / libraryDependencies ++= Seq(
