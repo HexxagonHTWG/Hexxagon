@@ -85,9 +85,9 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./gui
-          file: { context }/Dockerfile-local
+          file: ./gui/Dockerfile-local
           push: true
-          tags: ostabo/gui:latest
+          tags: ostabo/gui:latest,ostabo/gui:${{ env.LATEST_VERSION }}
       - name: Tag Release
         uses: rickstaa/action-create-tag@v1
         with:
