@@ -1,6 +1,18 @@
 version: "3.9"
 name: "hexxagon"
 services:
+  database:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
+    container_name: hexxagon-database
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hexxagon
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root
+      MYSQL_PORT: 3306
+      DATABASE_HOST:
   gui:
     container_name: "gui"
     network_mode: "host"
