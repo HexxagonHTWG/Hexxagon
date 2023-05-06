@@ -7,15 +7,6 @@
       <list />
     </option>
     <option name="testKind" value="All in package" />
-    <option name="classBuf">
-      <list>
-        <option value="lib.CommandSpec" />
-        <option value="lib.ObserverSpec" />
-        <option value="lib.OppositeSpec" />
-        <option value="lib.SetHandlerSpec" />
-        <option value="lib.UndoManagerSpec" />
-      </list>
-    </option>
     <option name="searchTest" value="In single module" />
     <option name="shortenClasspath" value="NONE" />
     <method v="2">
