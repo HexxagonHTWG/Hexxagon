@@ -1,0 +1,1 @@
+FROM ostabo/tui:latest

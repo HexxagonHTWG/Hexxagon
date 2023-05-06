@@ -3,22 +3,24 @@ package lib.xml
 import lib.field.FieldInterface
 import lib.{FileIOInterface, Player}
 
+import scala.util.Try
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 
 class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface[Player]:
   private val fileName = "field.xml"
 
-  override def load: FieldInterface[Player] =
-    val file = scala.xml.XML.loadFile(fileName)
-
-    val cells = file \\ "cell"
-    for (cell <- cells) {
-      val r: Int = (cell \ "@row").text.trim.toInt
-      val c: Int = (cell \ "@col").text.trim.toInt
-      val value: Player = Player.fromString(cell.text.trim)
-      field = field.placeAlways(value, c, r)
+  override def load: Try[FieldInterface[Player]] =
+    Try {
+      val file = scala.xml.XML.loadFile(fileName)
+      val cells = file \\ "cell"
+      for (cell <- cells) {
+        val r: Int = (cell \ "@row").text.trim.toInt
+        val c: Int = (cell \ "@col").text.trim.toInt
+        val value: Player = Player.fromString(cell.text.trim)
+        field = field.placeAlways(value, c, r)
+      }
+      field
     }
-    field
 
   override def save(field: FieldInterface[Player]): Unit =
     import java.io.*

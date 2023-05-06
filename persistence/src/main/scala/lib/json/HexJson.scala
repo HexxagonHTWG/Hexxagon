@@ -31,18 +31,18 @@ object HexJson:
       "cell" -> Json.toJson(field.matrix.cell(col, row).toString)
     )
 
-  def decode(field: String): FieldInterface[Player] =
-    val json = Try(Json.parse(field)) match
-      case Success(value) => value
-      case Failure(_) => return defaultField
-    val rows = (json \ "rows").get.toString.toInt
-    val cols = (json \ "cols").get.toString.toInt
-    var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
+  def decode(field: String): Try[FieldInterface[Player]] =
+    Try {
+      val json = Json.parse(field)
+      val rows = (json \ "rows").get.toString.toInt
+      val cols = (json \ "cols").get.toString.toInt
+      var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
 
-    for (index <- 0 until rows * cols) {
-      val row = (json \\ "row")(index).as[Int]
-      val col = (json \\ "col")(index).as[Int]
-      val cell = (json \\ "cell")(index).as[String]
-      hexField = hexField.placeAlways(Player.fromString(cell), col, row)
+      for (index <- 0 until rows * cols) {
+        val row = (json \\ "row")(index).as[Int]
+        val col = (json \\ "col")(index).as[Int]
+        val cell = (json \\ "cell")(index).as[String]
+        hexField = hexField.placeAlways(Player.fromString(cell), col, row)
+      }
+      hexField
     }
-    hexField

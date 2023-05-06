@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="CoreRestService" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="service.CoreRestService" />
+    <module name="core" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="service.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

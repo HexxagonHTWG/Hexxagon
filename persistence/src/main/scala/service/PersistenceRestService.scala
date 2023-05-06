@@ -18,12 +18,17 @@ object PersistenceRestService extends IOApp:
   private lazy val config = ConfigFactory.load()
   private val restController = HttpRoutes.of[IO] {
     case GET -> Root / "load" =>
-      val field = fileIO.load
-      Ok(HexJson.encode(field))
+      fileIO.load match
+        case Success(field) => Ok(HexJson.encode(field))
+        case Failure(_) => InternalServerError("Could not load game")
     case req@POST -> Root / "save" =>
       req.as[String].flatMap { f =>
-        fileIO.save(HexJson.decode(f))
-        Ok("Saved")
+        HexJson.decode(f) match
+          case Success(field) =>
+            fileIO.save(field)
+            Ok("Saved")
+          case Failure(_) =>
+            BadRequest("Invalid field")
       }
   }.orNotFound
   private val loggingService = Logger.httpApp(false, false)(restController)
@@ -31,9 +36,7 @@ object PersistenceRestService extends IOApp:
   def run(args: List[String]): IO[ExitCode] =
     EmberServerBuilder
       .default[IO]
-      .withHost(
-        Host.fromString(Try(config.getString("http.persistence.host")).getOrElse("0.0.0.0")).get
-      )
+      .withHost(Host.fromString("0.0.0.0").get)
       .withPort(
         Port.fromString(Try(config.getString("http.persistence.port")).getOrElse("9091")).get
       )

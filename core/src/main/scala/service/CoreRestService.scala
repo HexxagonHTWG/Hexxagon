@@ -30,9 +30,12 @@ object CoreRestService extends IOApp:
     case POST -> Root / "save" =>
       controller.save()
       defaultResponse
-    case POST -> Root / "load" =>
+    case GET -> Root / "load" =>
+      val currentField = controller.hexField.toString
       controller.load()
-      defaultResponse
+      controller.hexField.toString match
+        case `currentField` => InternalServerError("Could not load game")
+        case _              => defaultResponse
     case POST -> Root / "place" / c / x / y =>
       controller.place(Player.fromString(c), x.toInt, y.toInt)
       defaultResponse
@@ -53,9 +56,7 @@ object CoreRestService extends IOApp:
   def run(args: List[String]): IO[ExitCode] =
     EmberServerBuilder
       .default[IO]
-      .withHost(
-        Host.fromString(Try(config.getString("http.core.host")).getOrElse("0.0.0.0")).get
-      )
+      .withHost(Host.fromString("0.0.0.0").get)
       .withPort(
         Port.fromString(Try(config.getString("http.core.port")).getOrElse("8080")).get
       )

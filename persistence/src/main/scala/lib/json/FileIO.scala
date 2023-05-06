@@ -5,11 +5,12 @@ import lib.{FileIOInterface, Player}
 import play.api.libs.json.*
 
 import scala.io.Source
+import scala.util.{Failure, Success, Try}
 
 case class FileIO() extends FileIOInterface[Player]:
   private val fileName = "field.json"
 
-  override def load: FieldInterface[Player] =
+  override def load: Try[FieldInterface[Player]] =
     val source: Source = Source.fromFile(fileName)
     HexJson.decode(source.getLines.mkString)
 

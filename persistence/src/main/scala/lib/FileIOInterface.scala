@@ -2,13 +2,15 @@ package lib
 
 import lib.field.FieldInterface
 
+import scala.util.Try
+
 /** Interface to implement file IO for the current game status. */
 trait FileIOInterface[T]:
   /** Loads field from a file.
    *
    * @return the loaded field
    */
-  def load: FieldInterface[T]
+  def load: Try[FieldInterface[T]]
 
   /** Saves field to a file.
    *

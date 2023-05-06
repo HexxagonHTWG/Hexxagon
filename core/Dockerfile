@@ -1,0 +1,1 @@
+FROM ostabo/core:latest

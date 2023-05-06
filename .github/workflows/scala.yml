@@ -70,12 +70,24 @@ jobs:
       - name: Compare versions
         run: |
           echo ${{ env.PREVIOUS_VERSION }} --> ${{ env.LATEST_VERSION }}
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Publish
         if: ${{ env.LATEST_VERSION != '' && env.PREVIOUS_VERSION != env.LATEST_VERSION }}
-        run: sbt publish
+        run: sbt Docker/publish
         env:
           LATEST_VERSION: ${{ env.LATEST_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Gui
+        uses: docker/build-push-action@v4
+        with:
+          context: ./gui
+          file: ./gui/Dockerfile-local
+          push: true
+          tags: ostabo/gui:latest,ostabo/gui:${{ env.LATEST_VERSION }}
       - name: Tag Release
         uses: rickstaa/action-create-tag@v1
         with:
