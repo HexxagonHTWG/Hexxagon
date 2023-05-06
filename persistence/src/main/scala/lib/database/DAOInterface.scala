@@ -6,7 +6,7 @@ import lib.field.FieldInterface
 import scala.util.Try
 
 /** Interface to store current game field in database. */
-trait DAOInterface[T] {
+trait DAOInterface[T]:
   /**
    * Save current game field to database.
    * @param field the field to save
@@ -20,4 +20,3 @@ trait DAOInterface[T] {
    * @return Success with the loaded field, Failure otherwise
    */
   def load(gameId: Option[Int] = None): Try[FieldInterface[T]]
-}

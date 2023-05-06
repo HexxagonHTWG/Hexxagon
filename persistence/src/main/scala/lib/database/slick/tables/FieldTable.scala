@@ -5,7 +5,7 @@ import slick.lifted.TableQuery
 
 import scala.annotation.targetName
 
-class FieldTable(tag: Tag) extends Table[(Int, Int, Int, Int, String)](tag, "field") {
+class FieldTable(tag: Tag) extends Table[(Int, Int, Int, Int, String)](tag, "field"):
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
 
   def gameId = column[Int]("game_id")
@@ -20,4 +20,3 @@ class FieldTable(tag: Tag) extends Table[(Int, Int, Int, Int, String)](tag, "fie
 
   def gameFk = foreignKey("game_fk", gameId, new TableQuery(new GameTable(_)))(targetColumns = _.id)
   // TODO: constraints
-}

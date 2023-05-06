@@ -16,7 +16,7 @@ import scala.concurrent.duration.{Duration, DurationInt}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
-object DAOSlick extends DAOInterface[Player] {
+object DAOSlick extends DAOInterface[Player]:
   private val databaseUrl: String =
     "jdbc:mysql://"
       + sys.env.getOrElse("DATABASE_HOST", "localhost:3306") + "/"
@@ -80,4 +80,3 @@ object DAOSlick extends DAOInterface[Player] {
 
   private def max(s1: (Int, Int, Int, String), s2: (Int, Int, Int, String)): (Int, Int, Int, String) =
     if (s1._1 > s2._1) s1 else s2
-}
