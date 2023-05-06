@@ -1,4 +1,4 @@
-This / libraryDependencies += "org.hex" %% "core" % "0.0.0"
+This / libraryDependencies += "org.hex" %% "core" % sys.env.getOrElse("LATEST_VERSION", "0.0.0")
 
 This / libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.2.15",

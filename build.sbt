@@ -1,10 +1,7 @@
 /* =====================================================================================================================
  * General Settings
  * ===================================================================================================================== */
-ThisBuild / version := {
-  val lv = System.getenv("LATEST_VERSION")
-  if (lv == null || lv.isBlank) "0.0.0" else lv
-}
+ThisBuild / version := sys.env.getOrElse("LATEST_VERSION", "0.0.0")
 ThisBuild / scalaVersion := "3.2.2"
 ThisBuild / organization := "org.hex"
 ThisBuild / versionScheme := Some("early-semver")
