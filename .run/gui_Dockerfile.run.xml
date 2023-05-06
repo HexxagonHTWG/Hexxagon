@@ -11,6 +11,7 @@
             </DockerEnvVarImpl>
           </list>
         </option>
+        <option name="commandLineOptions" value="--network host" />
         <option name="sourceFilePath" value="gui/Dockerfile" />
         <option name="volumeBindings">
           <list>

@@ -9,10 +9,6 @@
               <option name="name" value="DISPLAY" />
               <option name="value" value="host.docker.internal:0.0" />
             </DockerEnvVarImpl>
-            <DockerEnvVarImpl>
-              <option name="name" value="HOST" />
-              <option name="value" value="core" />
-            </DockerEnvVarImpl>
           </list>
         </option>
         <option name="commandLineOptions" value="--network host" />

@@ -81,6 +81,13 @@ jobs:
         env:
           LATEST_VERSION: ${{ env.LATEST_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish Gui
+        uses: docker/build-push-action@v4
+        with:
+          context: ./gui
+          file: { context }/Dockerfile-local
+          push: true
+          tags: ostabo/gui:latest
       - name: Tag Release
         uses: rickstaa/action-create-tag@v1
         with:
