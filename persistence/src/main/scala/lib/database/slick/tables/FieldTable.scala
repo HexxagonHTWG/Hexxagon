@@ -6,14 +6,16 @@ import slick.lifted.TableQuery
 import scala.annotation.targetName
 
 class FieldTable(tag: Tag) extends Table[(Int, Int, Int, String)](tag, "field"):
-  def gameId = column[Int]("game_id", O.PrimaryKey)
+  def gameId = column[Int]("game_id")
 
-  def row = column[Int]("row", O.PrimaryKey)
+  def row = column[Int]("row")
 
-  def col = column[Int]("column", O.PrimaryKey)
+  def col = column[Int]("column")
 
   def value = column[String]("value")
 
   def * = (gameId, row, col, value)
+
+  def pk = primaryKey("pk_notifications", (gameId, row, col))
 
   def gameFk = foreignKey("game_fk", gameId, new TableQuery(new GameTable(_)))(targetColumns = _.id)
