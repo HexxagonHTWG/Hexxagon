@@ -41,37 +41,28 @@ object DAOSlick extends DAOInterface[Player]:
 
   override def save(field: FieldInterface[Player]): Try[Unit] =
     Try {
-      val rows = field.matrix.row
-      val cols = field.matrix.col
+      val insertAction = gameTable returning gameTable.map(_.id)
+        += (0, field.matrix.row, field.matrix.col)
 
-      val insertAction = gameTable returning gameTable.map(_.id) += (0, rows, cols)
-      val insertResult = database.run(insertAction)
-      val gameId = Await.result(insertResult, 5 seconds)
+      val gameId = Await.result(database.run(insertAction), 5 seconds)
 
-      for (row <- 0 until rows) {
-        for (col <- 0 until cols) {
-          val cell = field.matrix.cell(col, row)
-          val insertAction = fieldTable += (0, gameId, row, col, cell.toString)
-          val insertResult = database.run(insertAction)
-          Await.result(insertResult, 5 seconds)
-        }
-      }
+      insertField(gameId, field)
     }
 
-  def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
+  override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
     Try {
-      val (gameQuery, fieldQuery) = gameId match
-        case Some(id) => (gameTable.filter(_.id === id),
-          fieldTable.filter(_.gameId === id))
-        case None => (gameTable.filter(_.id === gameTable.map(_.id).max),
-          fieldTable.filter(_.gameId === fieldTable.map(_.gameId).max))
+      val maxGameId = gameTable.map(_.id).max
+      val gameAction = gameId.map(id => gameTable.filter(_.id === id))
+        .getOrElse(gameTable.filter(_.id === maxGameId))
+      val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id))
+        .getOrElse(fieldTable.filter(_.gameId === maxGameId))
 
-      val gameResult = Await.result(database.run(gameQuery.result), 2.second)
+      val gameResult = Await.result(database.run(gameAction.result), 2.second)
       val rows = gameResult.head._2
       val cols = gameResult.head._3
       var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
 
-      val fieldResult = Await.result(database.run(fieldQuery.result), 2.second)
+      val fieldResult = Await.result(database.run(fieldAction.result), 2.second)
       for (row <- 0 until rows) {
         for (col <- 0 until cols) {
           val cell = fieldResult.filter(_._3 == row).filter(_._4 == col).head._5
@@ -79,4 +70,40 @@ object DAOSlick extends DAOInterface[Player]:
         }
       }
       hexField
+    }
+
+  override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      val gameAction = gameTable.filter(_.id === gameId).update((gameId, field.matrix.row, field.matrix.col))
+      val fieldAction = fieldTable.filter(_.gameId === gameId).delete
+
+      Await.result(database.run(gameAction), 5 seconds)
+      Await.result(database.run(fieldAction), 5 seconds)
+
+      insertField(gameId, field)
+    }
+
+  override def delete(gameId: Option[Int]): Try[Unit] =
+    Try {
+      val maxGameId = gameTable.map(_.id).max
+      val gameAction = gameId.map(id => gameTable.filter(_.id === id).delete)
+        .getOrElse(gameTable.filter(_.id === maxGameId).delete)
+      val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id).delete)
+        .getOrElse(fieldTable.filter(_.gameId === maxGameId).delete)
+
+      Await.result(database.run(gameAction), 5 seconds)
+      Await.result(database.run(fieldAction), 5 seconds)
+      Success(())
+    }
+
+  private def insertField(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      for (row <- 0 until field.matrix.row) {
+        for (col <- 0 until field.matrix.col) {
+          val cell = field.matrix.cell(col, row)
+          val insertAction = fieldTable += (0, gameId, row, col, cell.toString)
+
+          Await.result(database.run(insertAction), 5 seconds)
+        }
+      }
     }

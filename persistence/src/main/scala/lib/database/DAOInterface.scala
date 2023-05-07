@@ -20,3 +20,18 @@ trait DAOInterface[T]:
    * @return Success with the loaded field, Failure otherwise
    */
   def load(gameId: Option[Int] = None): Try[FieldInterface[T]]
+
+  /**
+   * Update game field in database.
+   * @param gameId the game id to update
+   * @param field the field to save instead
+   * @return Success if the game was updated successfully, Failure otherwise
+   */
+  def update(gameId: Int, field: FieldInterface[T]): Try[Unit]
+
+  /**
+   * Delete game field from database.
+   * @param gameId the game id to delete. If None, the last game is deleted
+   * @return Success if the game was deleted successfully, Failure otherwise
+   */
+  def delete(gameId: Option[Int]): Try[Unit]

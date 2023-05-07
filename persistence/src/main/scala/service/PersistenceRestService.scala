@@ -22,13 +22,14 @@ object PersistenceRestService extends IOApp:
     case req@POST -> Root / "save" =>
       saveBody(req, dao.save(_))
     case GET -> Root / "load" =>
-      dao.load(None) match
-        case Success(field) => Ok(HexJson.encode(field))
-        case Failure(_) => InternalServerError("Could not load game")
+      loadField(dao.load(None))
+    case req@POST -> Root / "update" / id =>
+      saveBody(req, dao.update(id.toInt, _))
+    case POST -> Root / "delete" / id =>
+      dao.delete(Some(id.toInt))
+      Ok("Deleted")
     case GET -> Root / "loadFile" =>
-      fileIO.load match
-        case Success(field) => Ok(HexJson.encode(field))
-        case Failure(_) => InternalServerError("Could not load game")
+      loadField(fileIO.load)
     case req@POST -> Root / "saveFile" =>
       saveBody(req, fileIO.save(_))
   }.orNotFound
@@ -43,6 +44,11 @@ object PersistenceRestService extends IOApp:
         case Failure(_) =>
           BadRequest("Invalid field")
     }
+
+  private def loadField(load: => Try[FieldInterface[Player]]): IO[Response[IO]] =
+    load match
+      case Success(field) => Ok(HexJson.encode(field))
+      case Failure(_) => InternalServerError("Could not load game")
 
   def run(args: List[String]): IO[ExitCode] =
     EmberServerBuilder
