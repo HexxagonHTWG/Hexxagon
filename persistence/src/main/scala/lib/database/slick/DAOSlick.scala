@@ -76,7 +76,7 @@ object DAOSlick extends DAOInterface[Player]:
       val fieldResult = Await.result(database.run(fieldAction.result), maxWaitTime)
       for (row <- 0 until rows) {
         for (col <- 0 until cols) {
-          val cell = fieldResult.filter(_._2 == row).filter(_._3 == col).head._4
+          val cell = fieldResult.filter(_._3 == row).filter(_._4 == col).head._5
           hexField = hexField.placeAlways(Player.fromString(cell), col, row)
         }
       }
@@ -112,7 +112,7 @@ object DAOSlick extends DAOInterface[Player]:
       for (row <- 0 until field.matrix.row) {
         for (col <- 0 until field.matrix.col) {
           val cell = field.matrix.cell(col, row)
-          val insertAction = fieldTable += (gameId, row, col, cell.toString)
+          val insertAction = fieldTable += (0, gameId, row, col, cell.toString)
 
           Await.result(database.run(insertAction), maxWaitTime)
         }
