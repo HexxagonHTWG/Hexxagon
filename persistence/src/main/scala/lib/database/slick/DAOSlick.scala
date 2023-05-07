@@ -20,7 +20,8 @@ import scala.util.{Failure, Success, Try}
 object DAOSlick extends DAOInterface[Player]:
   private val databaseUrl: String =
     "jdbc:mysql://"
-      + sys.env.getOrElse("DATABASE_HOST", "localhost:3306") + "/"
+      + sys.env.getOrElse("MYSQL_HOST", "localhost") + ":"
+      + sys.env.getOrElse("MYSQL_PORT", "3306") + "/"
       + sys.env.getOrElse("MYSQL_DATABASE", "hexxagon")
       + "?serverTimezone=UTC&useSSL=false"
   private val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "user")
