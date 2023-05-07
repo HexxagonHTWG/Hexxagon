@@ -61,20 +61,20 @@ object DAOSlick extends DAOInterface[Player]:
   def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
     Try {
       val (gameQuery, fieldQuery) = gameId match
-        case Some(id) => (sql"""SELECT * FROM GAME WHERE ID = $id""".as[(Int, Int, Int)],
-          sql"""SELECT * FROM FIELD WHERE GAME_ID = $id""".as[(Int, Int, Int, String)])
-        case None => (sql"""SELECT * FROM GAME ORDER BY ID DESC LIMIT 1""".as[(Int, Int, Int)],
-          sql"""SELECT * FROM FIELD ORDER BY GAME_ID DESC LIMIT 1""".as[(Int, Int, Int, String)])
+        case Some(id) => (gameTable.filter(_.id === id),
+          fieldTable.filter(_.gameId === id))
+        case None => (gameTable.filter(_.id === gameTable.map(_.id).max),
+          fieldTable.filter(_.gameId === fieldTable.map(_.gameId).max))
 
-      val gameResult = Await.result(database.run(gameQuery), 2.second)
-      val rows = gameResult.head._1
-      val cols = gameResult.head._2
+      val gameResult = Await.result(database.run(gameQuery.result), 2.second)
+      val rows = gameResult.head._2
+      val cols = gameResult.head._3
       var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
 
-      val fieldResult = Await.result(database.run(fieldQuery), 2.second)
+      val fieldResult = Await.result(database.run(fieldQuery.result), 2.second)
       for (row <- 0 until rows) {
         for (col <- 0 until cols) {
-          val cell = fieldResult.filter(_._1 == row).filter(_._2 == col).head._4
+          val cell = fieldResult.filter(_._3 == row).filter(_._4 == col).head._5
           hexField = hexField.placeAlways(Player.fromString(cell), col, row)
         }
       }
