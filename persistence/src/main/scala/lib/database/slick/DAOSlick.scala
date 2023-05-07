@@ -10,6 +10,7 @@ import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
 import slick.lifted.TableQuery
 
+import java.sql.SQLNonTransientException
 import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{Duration, DurationInt}
@@ -24,6 +25,7 @@ object DAOSlick extends DAOInterface[Player]:
       + "?serverTimezone=UTC&useSSL=false"
   private val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "user")
   private val databasePassword: String = sys.env.getOrElse("MYSQL_PASSWORD", "root")
+  private val maxWaitTime: Duration = 5 seconds
 
   val database = Database.forURL(
     url = databaseUrl,
@@ -37,14 +39,22 @@ object DAOSlick extends DAOInterface[Player]:
 
   private val setup: DBIOAction[Unit, NoStream, Effect.Schema] =
     DBIO.seq(gameTable.schema.createIfNotExists, fieldTable.schema.createIfNotExists)
-  database.run(setup)
+
+  try {
+    Await.result(database.run(setup), maxWaitTime)
+  } catch {
+    case _: SQLNonTransientException =>
+      println("Waiting for DB connection")
+      Thread.sleep(5000)
+      Await.result(database.run(setup), maxWaitTime)
+  }
 
   override def save(field: FieldInterface[Player]): Try[Unit] =
     Try {
       val insertAction = gameTable returning gameTable.map(_.id)
         += (0, field.matrix.row, field.matrix.col)
 
-      val gameId = Await.result(database.run(insertAction), 5 seconds)
+      val gameId = Await.result(database.run(insertAction), maxWaitTime)
 
       insertField(gameId, field)
     }
@@ -57,15 +67,15 @@ object DAOSlick extends DAOInterface[Player]:
       val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id))
         .getOrElse(fieldTable.filter(_.gameId === maxGameId))
 
-      val gameResult = Await.result(database.run(gameAction.result), 2.second)
+      val gameResult = Await.result(database.run(gameAction.result), maxWaitTime)
       val rows = gameResult.head._2
       val cols = gameResult.head._3
       var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
 
-      val fieldResult = Await.result(database.run(fieldAction.result), 2.second)
+      val fieldResult = Await.result(database.run(fieldAction.result), maxWaitTime)
       for (row <- 0 until rows) {
         for (col <- 0 until cols) {
-          val cell = fieldResult.filter(_._3 == row).filter(_._4 == col).head._5
+          val cell = fieldResult.filter(_._2 == row).filter(_._3 == col).head._4
           hexField = hexField.placeAlways(Player.fromString(cell), col, row)
         }
       }
@@ -77,8 +87,8 @@ object DAOSlick extends DAOInterface[Player]:
       val gameAction = gameTable.filter(_.id === gameId).update((gameId, field.matrix.row, field.matrix.col))
       val fieldAction = fieldTable.filter(_.gameId === gameId).delete
 
-      Await.result(database.run(gameAction), 5 seconds)
-      Await.result(database.run(fieldAction), 5 seconds)
+      Await.result(database.run(gameAction), maxWaitTime)
+      Await.result(database.run(fieldAction), maxWaitTime)
 
       insertField(gameId, field)
     }
@@ -91,8 +101,8 @@ object DAOSlick extends DAOInterface[Player]:
       val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id).delete)
         .getOrElse(fieldTable.filter(_.gameId === maxGameId).delete)
 
-      Await.result(database.run(gameAction), 5 seconds)
-      Await.result(database.run(fieldAction), 5 seconds)
+      Await.result(database.run(gameAction), maxWaitTime)
+      Await.result(database.run(fieldAction), maxWaitTime)
       Success(())
     }
 
@@ -101,9 +111,9 @@ object DAOSlick extends DAOInterface[Player]:
       for (row <- 0 until field.matrix.row) {
         for (col <- 0 until field.matrix.col) {
           val cell = field.matrix.cell(col, row)
-          val insertAction = fieldTable += (0, gameId, row, col, cell.toString)
+          val insertAction = fieldTable += (gameId, row, col, cell.toString)
 
-          Await.result(database.run(insertAction), 5 seconds)
+          Await.result(database.run(insertAction), maxWaitTime)
         }
       }
     }
