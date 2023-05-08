@@ -25,7 +25,7 @@ object DAOSlick extends DAOInterface[Player]:
     s"jdbc:${config.getString("db.protocol")}://" +
       s"${config.getString("db.host")}:" +
       s"${config.getString("db.port")}/" +
-      s"${config.getString("db.name")}?serverTimezone=CET&useSSL=false"
+      s"${config.getString("db.name")}?serverTimezone=CET"
 
   println(databaseUrl)
   private val database = Database.forURL(

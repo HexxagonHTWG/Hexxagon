@@ -41,7 +41,7 @@ services:
     environment:
       - DB_HOST=db
   db:
-    image: mysql:5.7
+    image: mysql:latest
     ports:
       - "3306:3306"
     container_name: db
