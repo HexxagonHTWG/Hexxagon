@@ -1,39 +1,41 @@
 package lib.database.slick
 
+import com.typesafe.config.ConfigFactory
 import di.{FlexibleProviderModule, PersistenceModule}
-import lib.{GameStatus, Player}
 import lib.database.DAOInterface
 import lib.database.slick.tables.{FieldTable, GameTable}
 import lib.field.FieldInterface
+import lib.{GameStatus, Player}
 import play.api.libs.json.Json
 import slick.jdbc.JdbcBackend.Database
 import slick.jdbc.MySQLProfile.api.*
 import slick.lifted.TableQuery
 
 import java.sql.SQLNonTransientException
-import scala.concurrent.{Await, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{Duration, DurationInt}
+import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 object DAOSlick extends DAOInterface[Player]:
-  private val databaseUrl: String =
-    "jdbc:mysql://"
-      + sys.env.getOrElse("MYSQL_HOST", "localhost") + ":"
-      + sys.env.getOrElse("MYSQL_PORT", "3306") + "/"
-      + sys.env.getOrElse("MYSQL_DATABASE", "hexxagon")
-      + "?serverTimezone=UTC&useSSL=false"
-  private val databaseUser: String = sys.env.getOrElse("MYSQL_USER", "user")
-  private val databasePassword: String = sys.env.getOrElse("MYSQL_PASSWORD", "root")
-  private val maxWaitTime: Duration = 5 seconds
 
-  val database = Database.forURL(
+  private lazy val config = ConfigFactory.load()
+  private val databaseUrl: String =
+    s"jdbc:${config.getString("db.protocol")}://" +
+      s"${config.getString("db.host")}:" +
+      s"${config.getString("db.port")}/" +
+      s"${config.getString("db.name")}?serverTimezone=CET&useSSL=false"
+
+  println(databaseUrl)
+  private val database = Database.forURL(
     url = databaseUrl,
-    driver = "com.mysql.cj.jdbc.Driver",
-    user = databaseUser,
-    password = databasePassword
+    driver = config.getString("db.driver"),
+    user = config.getString("db.user"),
+    password = config.getString("db.password")
   )
+
+  private val maxWaitTime: Duration = 5 seconds
 
   private val gameTable = new TableQuery(new GameTable(_))
   private val fieldTable = new TableQuery(new FieldTable(_))
@@ -58,6 +60,18 @@ object DAOSlick extends DAOInterface[Player]:
       val gameId = Await.result(database.run(insertAction), maxWaitTime)
 
       insertField(gameId, field)
+    }
+
+  private def insertField(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      for (row <- 0 until field.matrix.row) {
+        for (col <- 0 until field.matrix.col) {
+          val cell = field.matrix.cell(col, row)
+          val insertAction = fieldTable += (0, gameId, row, col, cell.toString)
+
+          Await.result(database.run(insertAction), maxWaitTime)
+        }
+      }
     }
 
   override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
@@ -105,16 +119,4 @@ object DAOSlick extends DAOInterface[Player]:
       Await.result(database.run(gameAction), maxWaitTime)
       Await.result(database.run(fieldAction), maxWaitTime)
       Success(())
-    }
-
-  private def insertField(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
-    Try {
-      for (row <- 0 until field.matrix.row) {
-        for (col <- 0 until field.matrix.col) {
-          val cell = field.matrix.cell(col, row)
-          val insertAction = fieldTable += (0, gameId, row, col, cell.toString)
-
-          Await.result(database.run(insertAction), maxWaitTime)
-        }
-      }
     }
