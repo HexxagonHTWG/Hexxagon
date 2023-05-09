@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import di.{FlexibleProviderModule, PersistenceModule}
 import lib.database.DAOInterface
-import lib.database.slick.tables.{FieldTable, GameTable}
+import lib.database.slick.tables.{Field, Game}
 import lib.field.FieldInterface
 import lib.{GameStatus, Player}
 import play.api.libs.json.Json
@@ -14,7 +14,7 @@ import slick.lifted.TableQuery
 
 import java.sql.SQLNonTransientException
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.{Duration, DurationInt}
+import scala.concurrent.duration.{Duration, DurationInt, SECONDS}
 import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scala.util.control.Breaks.{break, breakable}
@@ -40,8 +40,8 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
   private val maxWaitSeconds: Duration = config.getInt("db.maxWaitSeconds") seconds
   private val connectionRetryAttempts = config.getInt("db.connectionRetryAttempts")
 
-  private val gameTable = new TableQuery(new GameTable(_))
-  private val fieldTable = new TableQuery(new FieldTable(_))
+  private val gameTable = new TableQuery(new Game(_))
+  private val fieldTable = new TableQuery(new Field(_))
 
   private val setup: DBIOAction[Unit, NoStream, Effect.Schema] =
     DBIO.seq(gameTable.schema.createIfNotExists, fieldTable.schema.createIfNotExists)
@@ -50,8 +50,12 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
     for (i <- 1 to connectionRetryAttempts)
       Try(Await.result(database.run(setup), maxWaitSeconds)) match
         case Success(_) => logger.info("DB connection established"); break
-        case Failure(_) =>
-          logger.info(s"Waiting for DB connection, attempt $i/$connectionRetryAttempts")
+        case Failure(e) =>
+          if e.getMessage.contains("Multiple primary key defined") then // ugly workaround: https://github.com/slick/slick/issues/1999
+            logger.info("Assuming DB connection established")
+            break
+          logger.info(s"DB connection failed - retrying... - $i/$connectionRetryAttempts")
+          logger.debug(e.getMessage)
           Thread.sleep(maxWaitSeconds.toMillis)
   }
 
@@ -60,7 +64,24 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
       val insertAction = gameTable returning gameTable.map(_.id)
         += (0, field.matrix.row, field.matrix.col)
 
-      val gameId = Await.result(database.run(insertAction), maxWaitSeconds)
+      var gameId = Await.result(database.run(insertAction), maxWaitSeconds)
+      val maxGameCount = config.getInt("db.maxGameCount")
+      if gameId > maxGameCount then
+        delete(Some(gameId))
+        logger.warn(s"Game count exceeded: $gameId - Overwriting last game")
+        gameId = maxGameCount
+        update(gameId, field)
+      else
+        insertField(gameId, field)
+    }
+
+  override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      val gameAction = gameTable.filter(_.id === gameId).update((gameId, field.matrix.row, field.matrix.col))
+      val fieldAction = fieldTable.filter(_.gameId === gameId).delete
+
+      Await.result(database.run(gameAction), maxWaitSeconds)
+      Await.result(database.run(fieldAction), maxWaitSeconds)
 
       insertField(gameId, field)
     }
@@ -70,11 +91,24 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
       for (row <- 0 until field.matrix.row) {
         for (col <- 0 until field.matrix.col) {
           val cell = field.matrix.cell(col, row)
-          val insertAction = fieldTable += (0, gameId, row, col, cell.toString)
+          val insertAction = fieldTable += (gameId, row, col, cell.toString)
 
           Await.result(database.run(insertAction), maxWaitSeconds)
         }
       }
+    }
+
+  override def delete(gameId: Option[Int]): Try[Unit] =
+    Try {
+      val maxGameId = gameTable.map(_.id).max
+      val gameAction = gameId.map(id => gameTable.filter(_.id === id).delete)
+        .getOrElse(gameTable.filter(_.id === maxGameId).delete)
+      val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id).delete)
+        .getOrElse(fieldTable.filter(_.gameId === maxGameId).delete)
+
+      Await.result(database.run(gameAction), maxWaitSeconds)
+      Await.result(database.run(fieldAction), maxWaitSeconds)
+      Success(())
     }
 
   override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
@@ -93,33 +127,9 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
       val fieldResult = Await.result(database.run(fieldAction.result), maxWaitSeconds)
       for (row <- 0 until rows) {
         for (col <- 0 until cols) {
-          val cell = fieldResult.filter(_._3 == row).filter(_._4 == col).head._5
+          val cell = fieldResult.filter(_._2 == row).filter(_._3 == col).head._4
           hexField = hexField.placeAlways(Player.fromString(cell), col, row)
         }
       }
       hexField
-    }
-
-  override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
-    Try {
-      val gameAction = gameTable.filter(_.id === gameId).update((gameId, field.matrix.row, field.matrix.col))
-      val fieldAction = fieldTable.filter(_.gameId === gameId).delete
-
-      Await.result(database.run(gameAction), maxWaitSeconds)
-      Await.result(database.run(fieldAction), maxWaitSeconds)
-
-      insertField(gameId, field)
-    }
-
-  override def delete(gameId: Option[Int]): Try[Unit] =
-    Try {
-      val maxGameId = gameTable.map(_.id).max
-      val gameAction = gameId.map(id => gameTable.filter(_.id === id).delete)
-        .getOrElse(gameTable.filter(_.id === maxGameId).delete)
-      val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id).delete)
-        .getOrElse(fieldTable.filter(_.gameId === maxGameId).delete)
-
-      Await.result(database.run(gameAction), maxWaitSeconds)
-      Await.result(database.run(fieldAction), maxWaitSeconds)
-      Success(())
     }
