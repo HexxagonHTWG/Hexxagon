@@ -19,7 +19,7 @@ object Http extends StrictLogging:
     t match
       case Success(response) =>
         val r = response.text()
-        logger.debug(
+        logger.info(
           String.format(loggingFormat,
             verb, url, r
           )
@@ -27,4 +27,4 @@ object Http extends StrictLogging:
         r
       case Failure(exception) =>
         logger.error(s"${exception.getMessage} - $url")
-        ""
+        throw exception

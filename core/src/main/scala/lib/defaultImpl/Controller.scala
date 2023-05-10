@@ -5,7 +5,7 @@ import lib.*
 import lib.GameStatus.*
 import lib.field.FieldInterface
 
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Success, Try}
 import scala.xml.Elem
 
 class Controller(using var hexField: FieldInterface[Player])(using val fileIO: FileIOInterface[Player])
@@ -21,6 +21,16 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
     hexField = undoManager.doStep(hexField, new PlaceAllCommand(hexField, c))
     checkStat()
     notifyObservers()
+
+  private def checkStat(): GameStatus =
+    if hexField.matrix.xCount == GAME_MAX
+      || hexField.matrix.oCount == GAME_MAX
+      || hexField.matrix.oCount + hexField.matrix.xCount == GAME_MAX
+    then gameStatus = GAME_OVER
+    else if emptyMatrix then gameStatus = IDLE
+    gameStatus
+
+  private def emptyMatrix = hexField.matrix.matrix.flatten.collect({ case Player.Empty => Player.Empty }).length == GAME_MAX
 
   override def place(c: Player, x: Int, y: Int): Unit =
     if gameStatus.equals(c.other.gameStatus) then
@@ -58,16 +68,6 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
       checkStat()
       notifyObservers()
 
-  private def checkStat(): GameStatus =
-    if hexField.matrix.xCount == GAME_MAX
-      || hexField.matrix.oCount == GAME_MAX
-      || hexField.matrix.oCount + hexField.matrix.xCount == GAME_MAX
-    then gameStatus = GAME_OVER
-    else if emptyMatrix then gameStatus = IDLE
-    gameStatus
-
-  private def emptyMatrix = hexField.matrix.matrix.flatten.collect({ case Player.Empty => Player.Empty }).length == GAME_MAX
-
   override def reset(): Unit =
     hexField = hexField.reset
     gameStatus = IDLE
@@ -75,19 +75,27 @@ class Controller(using var hexField: FieldInterface[Player])(using val fileIO: F
     undoManager.redoStack = Nil
     notifyObservers()
 
-  override def save(): Unit =
-    fileIO.save(hexField)
-    savedStatus = gameStatus
-    notifyObservers()
+  override def save(): Try[Unit] =
+    Try {
+      fileIO.save(hexField)
+      savedStatus = gameStatus
+      notifyObservers()
+      Success(())
+    }
 
-  override def load(): Unit =
-    fileIO.load match
-      case Success(field) =>
-        hexField = field
-        gameStatus = savedStatus
-        checkStat()
-        notifyObservers()
-      case Failure(_) => logger.error("Failed to load field")
+  override def load(): Try[Unit] =
+    Try {
+      fileIO.load match
+        case Success(field) =>
+          hexField = field
+          gameStatus = savedStatus
+          checkStat()
+          notifyObservers()
+          Success(())
+        case Failure(e) =>
+          logger.error("Failed to load field")
+          Failure(e)
+    }
 
   override def exportField: String =
     fileIO.exportGame(hexField, hexField.matrix.xCount, hexField.matrix.oCount,

@@ -19,7 +19,7 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
       case Success(value) => value
       case Failure(exception) => logger.error(s"${exception.getMessage} - Using fallback url: $fallBackUrl"); fallBackUrl
 
-  var hexField: FieldInterface[Player] = 
+  var hexField: FieldInterface[Player] =
     HexJson.decode(exportField) match
       case Success(value) => value
       case Failure(_) => null
@@ -33,11 +33,17 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
   override def fillAll(c: Player): Unit =
     validate(HexJson.decode(fetch(post, s"$coreUrl/fillAll/$c")))
 
-  override def save(): Unit =
-    validate(HexJson.decode(fetch(post, s"$coreUrl/save")))
+  override def save(): Try[Unit] =
+    Try {
+      validate(HexJson.decode(fetch(post, s"$coreUrl/save")))
+      Success(())
+    }
 
-  override def load(): Unit =
-    validate(HexJson.decode(fetch(get, s"$coreUrl/load")))
+  override def load(): Try[Unit] =
+    Try {
+      validate(HexJson.decode(fetch(get, s"$coreUrl/load")))
+      Success(())
+    }
 
   override def place(c: Player, x: Int, y: Int): Unit =
     validate(HexJson.decode(fetch(post, s"$coreUrl/place/$c/$x/$y")))
@@ -51,11 +57,11 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
   override def reset(): Unit =
     validate(HexJson.decode(fetch(post, s"$coreUrl/reset")))
 
-  override def exportField: String = fetch(get, s"$coreUrl/exportField")
-
   private def validate(res: Try[FieldInterface[Player]]): Unit =
     res match
       case Success(value) =>
         hexField = value
         notifyObservers()
       case Failure(_) => logger.error("Failed to decode field")
+
+  override def exportField: String = fetch(get, s"$coreUrl/exportField")

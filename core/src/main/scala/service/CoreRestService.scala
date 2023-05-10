@@ -3,6 +3,7 @@ package service
 import cats.effect.*
 import com.comcast.ip4s.*
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.StrictLogging
 import di.CoreServerModule.given_ControllerInterface_Player as controller
 import di.{CoreModule, PersistenceModule}
 import lib.defaultImpl.Controller
@@ -14,9 +15,9 @@ import org.http4s.ember.server.*
 import org.http4s.implicits.*
 import org.http4s.server.middleware.Logger
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
-object CoreRestService extends IOApp:
+object CoreRestService extends IOApp with StrictLogging:
 
   private lazy val config = ConfigFactory.load()
   private val restController = HttpRoutes.of[IO] {
@@ -28,14 +29,17 @@ object CoreRestService extends IOApp:
       controller.fillAll(Player.fromString(c))
       defaultResponse
     case POST -> Root / "save" =>
-      controller.save()
-      defaultResponse
+      controller.save() match
+        case Success(_) => defaultResponse
+        case Failure(e) =>
+          logger.error(e.getMessage)
+          InternalServerError("Could not save game")
     case GET -> Root / "load" =>
-      val currentField = controller.hexField.toString
-      controller.load()
-      controller.hexField.toString match
-        case `currentField` => InternalServerError("Could not load game")
-        case _              => defaultResponse
+      controller.load() match
+        case Success(_) => defaultResponse
+        case Failure(e) =>
+          logger.error(e.getMessage)
+          InternalServerError("Could not load game")
     case POST -> Root / "place" / c / x / y =>
       controller.place(Player.fromString(c), x.toInt, y.toInt)
       defaultResponse

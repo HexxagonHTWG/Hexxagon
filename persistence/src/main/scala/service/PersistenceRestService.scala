@@ -3,19 +3,20 @@ package service
 import cats.effect.*
 import com.comcast.ip4s.*
 import com.typesafe.config.ConfigFactory
+import com.typesafe.scalalogging.StrictLogging
 import di.PersistenceModule.given_FileIOInterface_Player as fileIO
 import di.PersistenceRestModule.given_DAOInterface_Player as dao
 import lib.Player
 import lib.field.FieldInterface
 import lib.json.HexJson
-import org.http4s.{HttpRoutes, Request, Response}
 import org.http4s.dsl.io.*
 import org.http4s.ember.server.*
 import org.http4s.server.middleware.Logger
+import org.http4s.{HttpRoutes, Request, Response}
 
 import scala.util.{Failure, Success, Try}
 
-object PersistenceRestService extends IOApp:
+object PersistenceRestService extends IOApp with StrictLogging:
 
   private lazy val config = ConfigFactory.load()
   private val restController = HttpRoutes.of[IO] {
@@ -35,21 +36,6 @@ object PersistenceRestService extends IOApp:
   }.orNotFound
   private val loggingService = Logger.httpApp(false, false)(restController)
 
-  private def saveBody(req: Request[IO], save: FieldInterface[Player] => Unit): IO[Response[IO]] =
-    req.as[String].flatMap { f =>
-      HexJson.decode(f) match
-        case Success(field) =>
-          save(field)
-          Ok("Saved")
-        case Failure(_) =>
-          BadRequest("Invalid field")
-    }
-
-  private def loadField(load: => Try[FieldInterface[Player]]): IO[Response[IO]] =
-    load match
-      case Success(field) => Ok(HexJson.encode(field))
-      case Failure(_) => InternalServerError("Could not load game")
-
   def run(args: List[String]): IO[ExitCode] =
     EmberServerBuilder
       .default[IO]
@@ -61,3 +47,20 @@ object PersistenceRestService extends IOApp:
       .build
       .use(_ => IO.never)
       .as(ExitCode.Success)
+
+  private def saveBody(req: Request[IO], save: FieldInterface[Player] => Try[Unit]): IO[Response[IO]] =
+    req.as[String].flatMap { f =>
+      HexJson.decode(f) match
+        case Success(field) =>
+          save(field) match
+            case Success(_) => Ok("Saved")
+            case Failure(exception) => logger.error(exception.getMessage)
+              InternalServerError("Could not save game")
+        case Failure(_) =>
+          BadRequest("Invalid field")
+    }
+
+  private def loadField(load: => Try[FieldInterface[Player]]): IO[Response[IO]] =
+    load match
+      case Success(field) => Ok(HexJson.encode(field))
+      case Failure(_) => InternalServerError("Could not load game")

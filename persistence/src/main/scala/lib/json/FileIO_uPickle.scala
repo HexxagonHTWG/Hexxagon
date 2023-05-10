@@ -6,7 +6,7 @@ import ujson.Obj
 import upickle.default.*
 
 import scala.io.Source
-import scala.util.Try
+import scala.util.{Success, Try}
 
 class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInterface[Player]:
   private val fileName = "field.json"
@@ -29,14 +29,14 @@ class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInte
       field
     }
 
-  override def save(field: FieldInterface[Player]): Unit =
-    import java.io.*
-    val pw = new PrintWriter(new File(fileName))
-    pw.write(ujson.transform(fieldToJson(field), ujson.StringRenderer(indent = 4)).toString)
-    pw.close()
-
-  override def exportGame(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): String =
-    fieldToJson(field).toString
+  override def save(field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      import java.io.*
+      val pw = new PrintWriter(new File(fileName))
+      pw.write(ujson.transform(fieldToJson(field), ujson.StringRenderer(indent = 4)).toString)
+      pw.close()
+      Success(())
+    }
 
   def fieldToJson(field: FieldInterface[Player]): Obj =
     ujson.Obj(
@@ -56,3 +56,6 @@ class FileIO_uPickle(using var field: FieldInterface[Player]) extends FileIOInte
       "col" -> col,
       "cell" -> field.matrix.cell(col, row).toString
     )
+
+  override def exportGame(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): String =
+    fieldToJson(field).toString

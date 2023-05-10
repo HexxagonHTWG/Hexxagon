@@ -3,6 +3,8 @@ package lib
 import lib.Observable
 import lib.field.FieldInterface
 
+import scala.util.Try
+
 /** Interface to implement the controller unit. */
 trait ControllerInterface[T] extends Observable:
   /** Field of the game. */
@@ -20,12 +22,12 @@ trait ControllerInterface[T] extends Observable:
   /**
    * Saves current field state to FileIO Implementation
    */
-  def save(): Unit
+  def save(): Try[Unit]
 
   /**
    * Load field state from FileIO Implementation
    */
-  def load(): Unit
+  def load(): Try[Unit]
 
   /** Places an object in a cell.
    *
