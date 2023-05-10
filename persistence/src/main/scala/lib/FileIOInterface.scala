@@ -16,7 +16,7 @@ trait FileIOInterface[T]:
    *
    * @param field the field to be saved
    */
-  def save(field: FieldInterface[T]): Unit
+  def save(field: FieldInterface[T]): Try[Unit]
 
   /** Returns the game as String.
    *

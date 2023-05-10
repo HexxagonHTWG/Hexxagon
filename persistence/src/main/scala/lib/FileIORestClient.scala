@@ -20,8 +20,13 @@ case class FileIORestClient() extends FileIOInterface[Player] with StrictLogging
   override def load: Try[FieldInterface[Player]] =
     HexJson.decode(fetch(get, s"$persistenceUrl/load"))
 
-  override def save(field: FieldInterface[Player]): Unit = 
-    fetch(post, s"$persistenceUrl/save", HexJson.encode(field))
+  override def save(field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      fetch(post, s"$persistenceUrl/save", HexJson.encode(field))
+    } match {
+      case Failure(exception) => throw exception
+      case Success(_) => Success(())
+    }
 
   override def exportGame(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): String = fetch(get, s"$persistenceUrl/load")
 }

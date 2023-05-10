@@ -14,11 +14,14 @@ case class FileIO() extends FileIOInterface[Player]:
     val source: Source = Source.fromFile(fileName)
     HexJson.decode(source.getLines.mkString)
 
-  override def save(field: FieldInterface[Player]): Unit =
-    import java.io.{File, PrintWriter}
-    val pw = new PrintWriter(new File(fileName))
-    pw.write(Json.prettyPrint(HexJson.fieldToJson(field)))
-    pw.close()
+  override def save(field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      import java.io.{File, PrintWriter}
+      val pw = new PrintWriter(new File(fileName))
+      pw.write(Json.prettyPrint(HexJson.fieldToJson(field)))
+      pw.close()
+      Success(())
+    }
 
   override def exportGame(field: FieldInterface[Player], xCount: Int, oCount: Int, turn: Int): String =
     gameToJson(field, xCount, oCount, turn).toString

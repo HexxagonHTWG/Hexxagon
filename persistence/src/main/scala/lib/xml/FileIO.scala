@@ -3,7 +3,7 @@ package lib.xml
 import lib.field.FieldInterface
 import lib.{FileIOInterface, Player}
 
-import scala.util.Try
+import scala.util.{Success, Try}
 import scala.xml.{Elem, NodeSeq, PrettyPrinter}
 
 class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface[Player]:
@@ -22,13 +22,16 @@ class FileIO(using var field: FieldInterface[Player]) extends FileIOInterface[Pl
       field
     }
 
-  override def save(field: FieldInterface[Player]): Unit =
-    import java.io.*
-    val pw = new PrintWriter(new File(fileName))
-    val prettyPrinter = new PrettyPrinter(120, 4)
-    val xml = prettyPrinter.format(fieldToXml(field))
-    pw.write(xml)
-    pw.close()
+  override def save(field: FieldInterface[Player]): Try[Unit] =
+    Try {
+      import java.io.*
+      val pw = new PrintWriter(new File(fileName))
+      val prettyPrinter = new PrettyPrinter(120, 4)
+      val xml = prettyPrinter.format(fieldToXml(field))
+      pw.write(xml)
+      pw.close()
+      Success(())
+    }
 
   def fieldToXml(field: FieldInterface[Player]): Elem =
     <field rows={field.matrix.row.toString} cols={field.matrix.col.toString}>
