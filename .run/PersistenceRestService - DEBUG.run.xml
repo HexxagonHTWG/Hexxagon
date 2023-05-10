@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="PersistenceRestService - DEBUG" type="Application" factoryName="Application">
+    <envs>
+      <env name="log.root" value="debug" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="service.PersistenceRestService" />
+    <module name="persistence" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="service.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -30,9 +30,23 @@ services:
       - HOST=persistence
   persistence:
     container_name: "persistence"
+    depends_on:
+      - db
     image: "ostabo/persistence:latest"
     working_dir: /fileio
     ports:
       - "9091:9091"
     volumes:
       - ./:/fileio:xro
+    environment:
+      - DB_HOST=db
+  db:
+    image: mysql:latest
+    ports:
+      - "3306:3306"
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hexxagon
+      MYSQL_USER: user
+      MYSQL_PASSWORD: root

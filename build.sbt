@@ -99,6 +99,9 @@ lazy val persistence = project
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
       "com.lihaoyi" %% "upickle" % "3.1.0", // JSON
       "com.typesafe.play" %% "play-json" % "2.10.0-RC7", // JSON
+      ("com.typesafe.slick" %% "slick" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
+      ("com.typesafe.slick" %% "slick-hikaricp" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
+      "mysql" % "mysql-connector-java" % "8.0.32"
     ),
     dockerExposedPorts ++= Seq(9091)
   )
