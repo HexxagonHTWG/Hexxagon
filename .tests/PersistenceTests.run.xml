@@ -9,6 +9,7 @@
     <option name="testKind" value="All in package" />
     <option name="classBuf">
       <list>
+        <option value="lib.DBSpec" />
         <option value="lib.FileIOSpec" />
       </list>
     </option>
