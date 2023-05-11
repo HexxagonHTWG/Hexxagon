@@ -55,29 +55,22 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
             logger.info("Assuming DB connection established")
             break
           logger.info(s"DB connection failed - retrying... - $i/$connectionRetryAttempts")
-          logger.debug(e.getMessage)
+          logger.warn(e.getMessage)
           Thread.sleep(maxWaitSeconds.toMillis)
   }
+  private val maxGameCount = config.getInt("db.maxGameCount")
+  private var gameIdCounter = 0
 
   override def save(field: FieldInterface[Player]): Try[Unit] =
     Try {
-      val insertAction = gameTable returning gameTable.map(_.id)
-        += (0, field.matrix.row, field.matrix.col)
-
-      var gameId = Await.result(database.run(insertAction), maxWaitSeconds)
-      val maxGameCount = config.getInt("db.maxGameCount")
-      if gameId > maxGameCount then
-        delete(Some(gameId))
-        logger.warn(s"Game count exceeded: $gameId - Overwriting last game")
-        gameId = maxGameCount
-        update(gameId, field)
-      else
-        insertField(gameId, field)
+      val currentGameId = gameIdCounter % maxGameCount
+      update(currentGameId, field)
+      gameIdCounter += 1
     }
 
   override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
     Try {
-      val gameAction = gameTable.filter(_.id === gameId).update((gameId, field.matrix.row, field.matrix.col))
+      val gameAction = gameTable.insertOrUpdate((gameId, field.matrix.row, field.matrix.col))
       val fieldAction = fieldTable.filter(_.gameId === gameId).delete
 
       Await.result(database.run(gameAction), maxWaitSeconds)
@@ -113,11 +106,18 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
 
   override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
     Try {
-      val maxGameId = gameTable.map(_.id).max
-      val gameAction = gameId.map(id => gameTable.filter(_.id === id))
-        .getOrElse(gameTable.filter(_.id === maxGameId))
-      val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id))
-        .getOrElse(fieldTable.filter(_.gameId === maxGameId))
+      val searchId = gameId.getOrElse((gameIdCounter match {
+        case 0 => 0;
+        case _ => gameIdCounter - 1
+      }) % maxGameCount)
+      val gameAction = gameTable
+        .filter(
+          _.id === searchId
+        )
+      val fieldAction = fieldTable
+        .filter(
+          _.gameId === searchId
+        )
 
       val gameResult = Await.result(database.run(gameAction.result), maxWaitSeconds)
       val rows = gameResult.head._2
