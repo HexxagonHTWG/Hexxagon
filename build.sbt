@@ -101,7 +101,8 @@ lazy val persistence = project
       "com.typesafe.play" %% "play-json" % "2.10.0-RC7", // JSON
       ("com.typesafe.slick" %% "slick" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
       ("com.typesafe.slick" %% "slick-hikaricp" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
-      "mysql" % "mysql-connector-java" % "8.0.32"
+      "mysql" % "mysql-connector-java" % "8.0.32",
+      ("org.mongodb.scala" %% "mongo-scala-driver" % "4.3.1").cross(CrossVersion.for3Use2_13),
     ),
     dockerExposedPorts ++= Seq(9091)
   )
