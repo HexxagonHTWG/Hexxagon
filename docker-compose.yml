@@ -56,7 +56,7 @@ services:
       - "27017:27017"
     container_name: mongodb-hexxagon
     restart: always
-    # environment:
-    #  MONGO_INITDB_ROOT_USERNAME: user
-    #  MONGO_INITDB_ROOT_PASSWORD: root
-    #  MONGO_INITDB_DATABASE: hexxagon
+    environment:
+     MONGO_INITDB_ROOT_USERNAME: user
+     MONGO_INITDB_ROOT_PASSWORD: root
+     MONGO_INITDB_DATABASE: hexxagon

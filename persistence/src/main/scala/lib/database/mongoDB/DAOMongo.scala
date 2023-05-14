@@ -25,11 +25,11 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
   private lazy val config = ConfigFactory.load()
   private val databaseUrl: String =
     s"mongodb://" +
-      //s"${config.getString("db.mongodb.user")}:" +
-      //s"${config.getString("db.mongodb.password")}@" +
+      s"${config.getString("db.mongodb.user")}:" +
+      s"${config.getString("db.mongodb.password")}@" +
       s"${config.getString("db.mongodb.host")}:" +
-      s"${config.getString("db.mongodb.port")}"
-      //"/?authSource=admin"
+      s"${config.getString("db.mongodb.port")}" +
+      "/?authSource=admin"
 
   logger.debug(s"Database URL: $databaseUrl")
   private val client: MongoClient = MongoClient(databaseUrl)
