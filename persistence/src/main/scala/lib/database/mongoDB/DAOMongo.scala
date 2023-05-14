@@ -31,7 +31,7 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
       s"${config.getString("db.mongodb.port")}"
       //"/?authSource=admin"
 
-  logger.info(s"Database URL: $databaseUrl")
+  logger.debug(s"Database URL: $databaseUrl")
   private val client: MongoClient = MongoClient(databaseUrl)
   private val db: MongoDatabase = client.getDatabase("hexxagon")
   private val gameCollection: MongoCollection[Document] = db.getCollection("game")
