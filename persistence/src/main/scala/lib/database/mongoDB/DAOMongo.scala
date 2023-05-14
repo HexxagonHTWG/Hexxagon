@@ -55,7 +55,7 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
       }) % maxGameCount)
       val document = Await.result(gameCollection.find(equal("_id", searchId)).projection(excludeId())
         .first().head(), maxWaitSeconds)
-      HexJson.decode(document.toString()).get
+      HexJson.decode(document.get("game").get.asString().getValue).get
     }
 
   override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
