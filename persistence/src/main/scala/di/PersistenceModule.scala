@@ -1,7 +1,7 @@
 package di
 
 import lib.database.DAOInterface
-import lib.database.slick.DAOSlick
+import lib.database.mongoDB.DAOMongo
 import lib.json.{FileIO as FileIOJson, FileIO_uPickle as FileIOJson_uPickle}
 import lib.xml.FileIO as FileIOXml
 import lib.{FileIOInterface, FileIORestClient, Player}
@@ -11,7 +11,7 @@ object PersistenceModule:
 
 object PersistenceRestModule:
   given FileIOInterface[Player] = FileIORestClient()
-  given DAOInterface[Player] = DAOSlick
+  given DAOInterface[Player] = DAOMongo
 
 object XMLPersistenceModule:
   given FileIOInterface[Player] = FileIOXml(using ProviderModule.given_FieldInterface_Player)

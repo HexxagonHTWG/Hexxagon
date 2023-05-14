@@ -31,7 +31,7 @@ services:
   persistence:
     container_name: "persistence"
     depends_on:
-      - db
+      - mongodb-hexxagon
     image: "ostabo/persistence:latest"
     working_dir: /fileio
     ports:
@@ -39,20 +39,24 @@ services:
     volumes:
       - ./:/fileio:xro
     environment:
-      - DB_HOST=db
-  db:
+      - DB_HOST=mongodb-hexxagon
+  mysql:
     image: mysql:latest
     ports:
       - "3306:3306"
-    container_name: db
+    container_name: mysql-hexxagon
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: hexxagon
       MYSQL_USER: user
       MYSQL_PASSWORD: root
-  mongo:
+  mongodb-hexxagon:
     image: mongo:latest
     ports:
       - "27017:27017"
     container_name: mongodb-hexxagon
     restart: always
+    # environment:
+    #  MONGO_INITDB_ROOT_USERNAME: user
+    #  MONGO_INITDB_ROOT_PASSWORD: root
+    #  MONGO_INITDB_DATABASE: hexxagon
