@@ -64,8 +64,9 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
   override def save(field: FieldInterface[Player]): Try[Unit] =
     Try {
       val currentGameId = gameIdCounter % maxGameCount
-      update(currentGameId, field)
-      gameIdCounter += 1
+      update(currentGameId, field) match
+        case Success(_) => gameIdCounter += 1
+        case Failure(e) => throw e
     }
 
   override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
