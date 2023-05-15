@@ -43,19 +43,22 @@ services:
       #- DB_IMPLEMENTATION=mysql
       - DB_IMPLEMENTATION=mongodb
       - DB_PORT=27017
+  #db:
+  #  image: mysql:latest
+  #  ports:
+  #    - "3306:3306"
+  #  container_name: db
+  #  environment:
+  #    MYSQL_ROOT_PASSWORD: root
+  #    MYSQL_USER: user
+  #    MYSQL_PASSWORD: root
+  #    MYSQL_DATABASE: hexxagon
   db:
-    #image: mysql:latest
     image: mongo:latest
     ports:
-      #- "3306:3306"
       - "27017:27017"
     container_name: db
     environment:
-      #MYSQL_ROOT_PASSWORD: root
-      #MYSQL_USER: user
-      #MYSQL_PASSWORD: root
-      #MYSQL_DATABASE: hexxagon
-
       MONGO_INITDB_ROOT_USERNAME: user
       MONGO_INITDB_ROOT_PASSWORD: root
       MONGO_INITDB_DATABASE: hexxagon

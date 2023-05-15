@@ -3,6 +3,7 @@
     <envs>
       <env name="DB_IMPLEMENTATION" value="mongodb" />
       <env name="DB_PORT" value="27017" />
+      <env name="log.root" value="info" />
     </envs>
     <option name="MAIN_CLASS_NAME" value="service.PersistenceRestService" />
     <module name="persistence" />
