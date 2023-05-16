@@ -36,12 +36,12 @@ class DAOMongoSpec extends AnyWordSpec:
         DAOMongo.load() shouldBe a[Success[_]]
       }
       "be able to delete a field" in {
-        DAOMongo.delete(None) shouldBe a[Success[_]]
+        DAOMongo.delete(Some(1)) shouldBe a[Success[_]]
       }
       "be able to update a field" in {
         val mockField = Field()(using new Matrix(5, 5))
-        mockField.place(Player.fromChar('X'), 0, 0)
-        DAOMongo.update(0, mockField) shouldBe a[Success[_]]
+        val updatedField = mockField.place(Player.fromChar('X'), 0, 0)
+        DAOMongo.update(0, updatedField) shouldBe a[Success[_]]
       }
       "be able to load updated field" in {
         val field = DAOMongo.load(Some(0)).get
