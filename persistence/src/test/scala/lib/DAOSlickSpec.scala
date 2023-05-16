@@ -35,18 +35,18 @@ class DAOSlickSpec extends AnyWordSpec:
       "be able to load a field" in {
         DAOSlick.load() shouldBe a[Success[_]]
       }
-      /*"be able to delete a field" in {
-        DAOSlick.delete(None) shouldBe a[Success[_]]
-      }*/
+      "be able to delete a field" in {
+        DAOSlick.delete(Some(1)) shouldBe a[Success[_]]
+      }
       "be able to update a field" in {
         val mockField = Field()(using new Matrix(5, 5))
-        mockField.place(Player.fromChar('X'), 0, 0)
-        DAOSlick.update(0, mockField) shouldBe a[Success[_]]
+        val updatedField = mockField.place(Player.fromChar('X'), 0, 0)
+        DAOSlick.update(0, updatedField) shouldBe a[Success[_]]
       }
-      /*"be able to load updated field" in {
+      "be able to load updated field" in {
         val field = DAOSlick.load(Some(0)).get
         field shouldBe a[FieldInterface[Player]]
         field.matrix.cell(0, 0) shouldBe Player.fromChar('X')
-      }*/
+      }
     }
   }
