@@ -16,7 +16,7 @@ import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
 import play.api.libs.json.JsObject
 
 import scala.concurrent.duration.{Duration, DurationInt, SECONDS}
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, Future, Promise}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
@@ -43,22 +43,21 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
   override def save(field: FieldInterface[Player]): Try[Unit] =
     Try {
       val currentGameId = gameIdCounter % maxGameCount
-      update(currentGameId, field)
-      gameIdCounter += 1
+      update(currentGameId, field) match
+        case Success(_) => gameIdCounter += 1
+        case Failure(e) => throw e
     }
 
   override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
     Try {
       val json = HexJson.encode(field)
 
-      gameCollection.updateOne(equal("_id", gameId), set("game", json), UpdateOptions().upsert(true))
-        .subscribe(new Observer[UpdateResult] {
-          override def onNext(result: UpdateResult): Unit = logger.debug(s"Updated: $result with id $gameId")
-
-          override def onError(e: Throwable): Unit = logger.error(s"Failed: $e")
-
-          override def onComplete(): Unit = logger.debug("Completed")
-        })
+      Await.result(
+        gameCollection.updateOne(equal("_id", gameId), set("game", json), UpdateOptions().upsert(true))
+          .asInstanceOf[SingleObservable[Unit]]
+          .head(),
+        maxWaitSeconds
+      )
     }
 
   override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
@@ -79,13 +78,11 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
           maxWaitSeconds).get("_id").get.asInt32().getValue
       })
 
-      gameCollection.deleteOne(equal("_id", deleteId))
-        .subscribe(new Observer[DeleteResult] {
-          override def onNext(result: DeleteResult): Unit = logger.debug(s"Deleted: $result with id $deleteId")
-
-          override def onError(e: Throwable): Unit = logger.error(s"Failed: $e")
-
-          override def onComplete(): Unit = logger.debug("Completed")
-        })
+      Await.result(
+        gameCollection.deleteOne(equal("_id", deleteId))
+          .asInstanceOf[SingleObservable[Unit]]
+          .head(),
+        maxWaitSeconds
+      )
     }
 }
