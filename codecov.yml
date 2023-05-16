@@ -7,8 +7,9 @@ ignore:
   - "**/FileIORestClient.scala"
   - "**/ProviderModule.scala"
   - "**/Http.scala"
-  - "**/DAOSlick.scala"
-  - "**/tables/**"
+  - "**/slick/**"
+  - "**/mongoDB/**"
+  - "**/DAOInterface.scala"
 coverage:
   status:
     patch:
