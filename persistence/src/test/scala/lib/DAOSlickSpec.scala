@@ -21,7 +21,7 @@ class DAOSlickSpec extends AnyWordSpec:
     "MYSQL_DATABASE" -> "hexxagon").asJava)
   container.start()
 
-  "The MongoDB DAO" when {
+  "The Slick DAO" when {
     "nothing is saved" should {
       "not be able to load a field" in {
         DAOSlick.load() shouldBe a[Failure[_]]

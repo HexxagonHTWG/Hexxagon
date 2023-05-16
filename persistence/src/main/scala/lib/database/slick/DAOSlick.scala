@@ -26,7 +26,7 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
   private val databaseUrl: String =
     s"jdbc:${config.getString("db.protocol")}://" +
       s"${config.getString("db.host")}:" +
-      s"${config.getString("db.port")}/" +
+      s"${config.getString("db.slickPort")}/" +
       s"${config.getString("db.name")}?serverTimezone=CET"
 
   logger.debug(s"Database URL: $databaseUrl")
