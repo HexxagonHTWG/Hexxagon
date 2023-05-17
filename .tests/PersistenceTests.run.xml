@@ -9,7 +9,7 @@
     <option name="testKind" value="All in package" />
     <option name="classBuf">
       <list>
-        <option value="DAOIntegrationSqlSpec" />
+        <option value="DAOIntegrationSpec" />
         <option value="lib.DBSpec" />
         <option value="lib.FileIOSpec" />
       </list>
