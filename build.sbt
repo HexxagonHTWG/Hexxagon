@@ -53,7 +53,6 @@ lazy val commonDependencies = Seq(
   "com.typesafe" % "config" % "1.4.2",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
   "ch.qos.logback" % "logback-classic" % "1.4.6",
-  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.40.12"
 )
 
 /* =====================================================================================================================
@@ -91,6 +90,7 @@ lazy val core = project
   .enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val persistence = project
+  .configs(IntegrationTest)
   .settings(
     name := "persistence",
     description := "Persistence Package for Hexxagon - contains FileIO",
@@ -104,8 +104,11 @@ lazy val persistence = project
       ("com.typesafe.slick" %% "slick-hikaricp" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
       "mysql" % "mysql-connector-java" % "8.0.32",
       ("org.mongodb.scala" %% "mongo-scala-driver" % "4.3.1").cross(CrossVersion.for3Use2_13),
+      "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.40.12" % "it,test",
     ),
-    dockerExposedPorts ++= Seq(9091)
+    dockerExposedPorts ++= Seq(9091),
+    Defaults.itSettings,
+    IntegrationTest / fork := true,
   )
   .dependsOn(provider)
   .enablePlugins(DockerPlugin, JavaAppPackaging)
