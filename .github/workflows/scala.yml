@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build Project and export Coverage
         run: |
-          sbt clean coverage test
+          sbt clean coverage test IntegrationTest/test
           sbt coverageAggregate
       - uses: codecov/codecov-action@v3
         with:

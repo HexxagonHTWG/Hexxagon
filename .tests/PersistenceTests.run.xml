@@ -16,6 +16,7 @@
     </option>
     <option name="searchTest" value="In single module" />
     <option name="shortenClasspath" value="NONE" />
+    <option name="workingDirectory" value="$MODULE_WORKING_DIR$" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>
