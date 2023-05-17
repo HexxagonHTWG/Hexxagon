@@ -21,7 +21,7 @@ object PersistenceRestModule extends StrictLogging:
 
   given DAOInterface[Player] = Try(config.getString("db.implementation")).getOrElse("").toUpperCase() match
     case "MONGO" | "MONGODB" => DAOMongo
-    case "MYSQL" => DAOSlick
+    case "MYSQL" | "SLICK" => DAOSlick
     case _ => logger.warn("No such database implementation - using default"); DAOSlick
 
 object XMLPersistenceModule:
