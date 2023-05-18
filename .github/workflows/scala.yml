@@ -77,7 +77,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Publish
         if: ${{ env.LATEST_VERSION != '' && env.PREVIOUS_VERSION != env.LATEST_VERSION }}
-        run: sbt Docker/publish
+        run: sbt publish Docker/publish
         env:
           LATEST_VERSION: ${{ env.LATEST_VERSION }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

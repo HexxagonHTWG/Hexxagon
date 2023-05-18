@@ -65,6 +65,7 @@ lazy val gui = project
     libraryDependencies ++= commonDependencies,
     libraryDependencies += "org.scalafx" %% "scalafx" % "20.0.0-R31",
     coverageEnabled := false,
+    Docker / publish := {},
   )
   .dependsOn(core)
 
@@ -118,7 +119,8 @@ lazy val provider = project
   .settings(
     name := "provider",
     description := "Provider Package for Hexxagon - contains model",
-    libraryDependencies ++= commonDependencies
+    libraryDependencies ++= commonDependencies,
+    Docker / publish := {},
   )
   .dependsOn(utils)
 
@@ -128,6 +130,7 @@ lazy val utils = project
     description := "Utils Package for Hexxagon - contains useful classes and traits",
     libraryDependencies ++= commonDependencies,
     libraryDependencies += "com.lihaoyi" %% "requests" % "0.8.0",
+    Docker / publish := {},
   )
 
 lazy val root = project
