@@ -24,15 +24,15 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
 
   private lazy val config = ConfigFactory.load()
   private val databaseUrl: String =
-    s"jdbc:${config.getString("db.protocol")}://" +
+    s"jdbc:${config.getString("db.slick.protocol")}://" +
       s"${config.getString("db.host")}:" +
-      s"${config.getString("db.port")}/" +
+      s"${config.getString("db.slick.port")}/" +
       s"${config.getString("db.name")}?serverTimezone=CET"
 
   logger.debug(s"Database URL: $databaseUrl")
   private val database = Database.forURL(
     url = databaseUrl,
-    driver = config.getString("db.driver"),
+    driver = config.getString("db.slick.driver"),
     user = config.getString("db.user"),
     password = config.getString("db.password")
   )
@@ -94,11 +94,9 @@ object DAOSlick extends DAOInterface[Player] with StrictLogging:
 
   override def delete(gameId: Option[Int]): Try[Unit] =
     Try {
-      val maxGameId = gameTable.map(_.id).max
-      val gameAction = gameId.map(id => gameTable.filter(_.id === id).delete)
-        .getOrElse(gameTable.filter(_.id === maxGameId).delete)
-      val fieldAction = gameId.map(id => fieldTable.filter(_.gameId === id).delete)
-        .getOrElse(fieldTable.filter(_.gameId === maxGameId).delete)
+      val finalGameId: Int = gameId.getOrElse(gameTable.map(_.id).max.asInstanceOf[Int])
+      val gameAction = gameTable.filter(_.id === finalGameId).delete
+      val fieldAction = fieldTable.filter(_.gameId === finalGameId).delete
 
       Await.result(database.run(gameAction), maxWaitSeconds)
       Await.result(database.run(fieldAction), maxWaitSeconds)

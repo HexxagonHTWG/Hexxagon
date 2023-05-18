@@ -1,4 +1,4 @@
-package lib.database.slick
+package lib.database
 
 import lib.Player
 import lib.database.DAOInterface
@@ -7,7 +7,7 @@ import lib.field.defaultImpl.{Field, Matrix}
 
 import scala.util.{Success, Try}
 
-case object DAOSlickMock extends DAOInterface[Player]:
+case object DAOMock extends DAOInterface[Player]:
   override def save(field: FieldInterface[Player]): Try[Unit] =
     Try {
       Success(())
@@ -26,9 +26,4 @@ case object DAOSlickMock extends DAOInterface[Player]:
   override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
     Try {
       Field()(using new Matrix(5, 5))
-    }
-
-  private def insertField(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
-    Try {
-      Success(())
     }

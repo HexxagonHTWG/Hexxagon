@@ -1,7 +1,6 @@
 package lib
 
-import lib.database.DAOInterface
-import lib.database.slick.DAOSlickMock
+import lib.database.{DAOInterface, DAOMock}
 import lib.field.FieldInterface
 import lib.field.defaultImpl.{Field, Matrix}
 import org.scalatest.concurrent.ScalaFutures
@@ -32,19 +31,19 @@ class DBSpec extends AnyWordSpec {
     }
     "implemented" should {
       "be a DAOInterface" in {
-        DAOSlickMock shouldBe a[DAOInterface[_]]
+        DAOMock shouldBe a[DAOInterface[_]]
       }
       "contain a method to insert a new game" in {
-        DAOSlickMock.save(mockField) shouldBe a[Success[_]]
+        DAOMock.save(mockField) shouldBe a[Success[_]]
       }
       "contain a method to delete game" in {
-        DAOSlickMock.delete(None) shouldBe a[Success[_]]
+        DAOMock.delete(None) shouldBe a[Success[_]]
       }
       "contain a method to load game" in {
-        DAOSlickMock.load(None) shouldBe a[Success[FieldInterface[_]]]
+        DAOMock.load(None) shouldBe a[Success[FieldInterface[_]]]
       }
       "contain a method to update game" in {
-        DAOSlickMock.update(0, mockField) shouldBe a[Success[_]]
+        DAOMock.update(0, mockField) shouldBe a[Success[_]]
       }
     }
   }
