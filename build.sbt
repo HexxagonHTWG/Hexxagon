@@ -48,11 +48,15 @@ lazy val http4sDependencies = Seq(
   "org.http4s" %% "http4s-dsl" % http4sVersion
 )
 lazy val commonDependencies = Seq(
-  "org.scalactic" %% "scalactic" % "3.2.15",
+  "org.scalactic" %% "scalactic" % "3.2.16",
   "org.scalatest" %% "scalatest" % "3.2.15" % "test",
   "com.typesafe" % "config" % "1.4.2",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
   "ch.qos.logback" % "logback-classic" % "1.4.6",
+)
+lazy val gatlingDependencies = Seq(
+  "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.9.5" % "test" exclude("com.typesafe.scala-logging", "scala-logging_2.13"),
+  "io.gatling" % "gatling-test-framework" % "3.9.5" % "test" exclude("com.typesafe.scala-logging", "scala-logging_2.13"),
 )
 
 /* =====================================================================================================================
@@ -85,10 +89,11 @@ lazy val core = project
     description := "Core Package for Hexxagon - contains controller",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= http4sDependencies,
+    libraryDependencies ++= gatlingDependencies,
     dockerExposedPorts ++= Seq(9090),
   )
   .dependsOn(persistence)
-  .enablePlugins(DockerPlugin, JavaAppPackaging)
+  .enablePlugins(DockerPlugin, JavaAppPackaging, GatlingPlugin)
 
 lazy val persistence = project
   .configs(IntegrationTest)
