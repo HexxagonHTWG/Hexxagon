@@ -5,7 +5,7 @@
     <option name="selectedOptions">
       <list />
     </option>
-    <option name="tasks" value="Gatling/test" />
+    <option name="tasks" value="GatlingIt/test" />
     <option name="useSbtShell" value="false" />
     <option name="vmparams" value="" />
     <option name="workingDir" value="$PROJECT_DIR$" />
