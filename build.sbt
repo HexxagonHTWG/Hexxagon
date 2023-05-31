@@ -38,6 +38,8 @@ ThisBuild / dockerUpdateLatest := true
 ThisBuild / dockerBaseImage := "openjdk:17-jdk"
 ThisBuild / Docker / dockerRepository := Some("docker.io")
 ThisBuild / Docker / dockerUsername := Some("ostabo")
+ThisBuild / Gatling / publishArtifact := false
+ThisBuild / GatlingIt / publishArtifact := false
 
 /* =====================================================================================================================
  * Common Dependencies
