@@ -51,18 +51,58 @@
     </style>
 </head>
 <body>
-<h1>Gatling Reports</h1>
+<h1>Gatling-Reports</h1>
 <h2>Core</h2>
-<ul>
-    <li><a href="./gatling-it-core/loadspec-20230531145524046">Core Load Test</a></li>
-    <li><a href="./gatling-it-core/spikespec-20230531145555762">Core Spike Test</a></li>
-    <li><a href="./gatling-it-core/stressspec-20230531145256310">Core Stress Test</a></li>
-</ul>
+<ul id="gatling-it-core"></ul>
 <h2>Persistence</h2>
-<ul>
-    <li><a href="./gatling-it-persistence/loadspec-20230531145738066">Persistence Load Test</a></li>
-    <li><a href="./gatling-it-persistence/spikespec-20230531145825647">Persistence Spike Test</a></li>
-    <li><a href="./gatling-it-persistence/stressspec-20230531145651645">Persistence Stress Test</a></li>
-</ul>
+<ul id="gatling-it-persistence"></ul>
+
+<script>
+    // Benutzername, Repositoryname, Branch und zusätzliche Ordnerschicht
+    var username = "HexxagonHTWG";
+    var repository = "Hexxagon";
+    var branch = "gatling-reports";
+    var folderLayers = ["gatling-it-core", "gatling-it-persistence"];
+
+    folderLayers.forEach(folderLayer => {
+        // API-URL für Ordnerstruktur auf einem bestimmten Branch und in der zusätzlichen Ordnerschicht
+        var apiUrl = "https://api.github.com/repos/" + username + "/" + repository + "/contents/" + folderLayer + "?ref=" + branch;
+
+        // GitHub API anfragen
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                // Durchlaufe die API-Antwort und erstelle Links für Ordner
+                data.forEach(item => {
+                    if (item.type === "dir") {
+                        const rawName = item.name;
+                        const folderNames = rawName.split("-");
+                        const folderName = folderNames[0];
+                        const year = folderNames[1].substring(0, 4);
+                        const month = folderNames[1].substring(4, 6);
+                        const day = folderNames[1].substring(6, 8);
+                        const hour = folderNames[1].substring(8, 10);
+                        const minute = folderNames[1].substring(10, 12);
+                        const second = folderNames[1].substring(12, 14);
+                        const date = new Date(
+                            year,
+                            month - 1,
+                            day,
+                            hour,
+                            minute,
+                            second
+                        );
+                        const folderLink = document.createElement("a");
+                        folderLink.href = "https://" + username + ".github.io/" + repository + "/" + folderLayer + "/" + rawName + "/";
+                        folderLink.textContent = folderName + " - " + date.toLocaleString();
+
+                        const listItem = document.createElement("li");
+                        listItem.appendChild(folderLink);
+                        document.getElementById(folderLayer).appendChild(listItem);
+                    }
+                });
+            });
+    });
+</script>
 </body>
 </html>
