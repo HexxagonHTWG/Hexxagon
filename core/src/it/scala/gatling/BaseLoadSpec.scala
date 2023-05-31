@@ -7,7 +7,7 @@ import io.gatling.jdbc.Predef.*
 
 import scala.concurrent.duration.*
 
-trait BaseLoadSpec {
+trait BaseLoadSpec:
 
   protected val indexCombinations: Seq[(Int, Int)] = for {
     x <- 0 to 5
@@ -46,4 +46,3 @@ trait BaseLoadSpec {
     )
 
   protected val userAmount = 100
-}

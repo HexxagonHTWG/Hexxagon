@@ -15,7 +15,7 @@ import java.io.File
 import scala.concurrent.duration.*
 import scala.util.{Failure, Success, Try}
 
-class SpikeSpec extends GatlingBaseSpec {
+class SpikeSpec extends GatlingBaseSpec:
 
   val fieldScenario: ScenarioBuilder = scenario("Field Scenario")
     .exec(
@@ -30,4 +30,3 @@ class SpikeSpec extends GatlingBaseSpec {
       nothingFor(10),
     ),
   ).protocols(httpProtocolBuilder)
-}
