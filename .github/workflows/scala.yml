@@ -42,6 +42,28 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           fail_ci_if_error: true
 
+  gatling:
+    #if: github.ref == 'refs/heads/master'
+    name: Gatling Reports 📊
+    needs: run_tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [ core, persistence ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Gatling and create reports for ${{ matrix.project }}
+        run: |
+          sbt "project ${{ matrix.project }}" GatlingIt/test
+      - name: Deploy to GitHub Pages - ${{ matrix.project }}
+        uses: s0/git-publish-subdir-action@develop
+        env:
+          REPO: self
+          BRANCH: gatling-reports
+          FOLDER: ${{ matrix.project }}/target/gatling-it
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_DIR: gatling-it-${{ matrix.project }}
+
   publish:
     if: github.ref == 'refs/heads/master'
     name: Publish packages 📦

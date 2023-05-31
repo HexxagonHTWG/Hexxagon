@@ -38,6 +38,8 @@ ThisBuild / dockerUpdateLatest := true
 ThisBuild / dockerBaseImage := "openjdk:17-jdk"
 ThisBuild / Docker / dockerRepository := Some("docker.io")
 ThisBuild / Docker / dockerUsername := Some("ostabo")
+ThisBuild / Gatling / publishArtifact := false
+ThisBuild / GatlingIt / publishArtifact := false
 
 /* =====================================================================================================================
  * Common Dependencies
@@ -48,11 +50,19 @@ lazy val http4sDependencies = Seq(
   "org.http4s" %% "http4s-dsl" % http4sVersion
 )
 lazy val commonDependencies = Seq(
-  "org.scalactic" %% "scalactic" % "3.2.15",
+  "org.scalactic" %% "scalactic" % "3.2.16",
   "org.scalatest" %% "scalatest" % "3.2.15" % "test",
   "com.typesafe" % "config" % "1.4.2",
   "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5",
   "ch.qos.logback" % "logback-classic" % "1.4.6",
+)
+lazy val integrationTestDependencies = Seq(
+  "org.scalatest" %% "scalatest" % "3.2.15" % "it,test",
+  "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.40.12" % "it,test",
+)
+lazy val gatlingDependencies = Seq(
+  "io.gatling.highcharts" % "gatling-charts-highcharts" % "3.9.5" % "it,test" exclude("com.typesafe.scala-logging", "scala-logging_2.13"),
+  "io.gatling" % "gatling-test-framework" % "3.9.5" % "it,test" exclude("com.typesafe.scala-logging", "scala-logging_2.13"),
 )
 
 /* =====================================================================================================================
@@ -80,15 +90,20 @@ lazy val tui = project
   .enablePlugins(DockerPlugin, JavaAppPackaging)
 
 lazy val core = project
+  .configs(IntegrationTest)
   .settings(
     name := "core",
     description := "Core Package for Hexxagon - contains controller",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= http4sDependencies,
+    libraryDependencies ++= gatlingDependencies,
+    libraryDependencies ++= integrationTestDependencies,
     dockerExposedPorts ++= Seq(9090),
+    Defaults.itSettings,
+    IntegrationTest / fork := true,
   )
   .dependsOn(persistence)
-  .enablePlugins(DockerPlugin, JavaAppPackaging)
+  .enablePlugins(DockerPlugin, JavaAppPackaging, GatlingPlugin)
 
 lazy val persistence = project
   .configs(IntegrationTest)
@@ -97,6 +112,8 @@ lazy val persistence = project
     description := "Persistence Package for Hexxagon - contains FileIO",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= http4sDependencies,
+    libraryDependencies ++= gatlingDependencies,
+    libraryDependencies ++= integrationTestDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
       "com.lihaoyi" %% "upickle" % "3.1.0", // JSON
@@ -105,15 +122,13 @@ lazy val persistence = project
       ("com.typesafe.slick" %% "slick-hikaricp" % "3.5.0-M3").cross(CrossVersion.for3Use2_13),
       "mysql" % "mysql-connector-java" % "8.0.32",
       ("org.mongodb.scala" %% "mongo-scala-driver" % "4.3.1").cross(CrossVersion.for3Use2_13),
-      "org.scalatest" %% "scalatest" % "3.2.15" % "it,test",
-      "com.dimafeng" %% "testcontainers-scala-scalatest" % "0.40.12" % "it,test",
     ),
     dockerExposedPorts ++= Seq(9091),
     Defaults.itSettings,
     IntegrationTest / fork := true,
   )
   .dependsOn(provider)
-  .enablePlugins(DockerPlugin, JavaAppPackaging)
+  .enablePlugins(DockerPlugin, JavaAppPackaging, GatlingPlugin)
 
 lazy val provider = project
   .settings(

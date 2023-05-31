@@ -1,5 +1,32 @@
 version: "3.9"
 services:
+  persistence-sql:
+    depends_on:
+      - db-sql
+    image: "ostabo/persistence:latest"
+    working_dir: /fileio
+    ports:
+      - "9091:9091"
+    volumes:
+      - ./:/fileio:xro
+    environment:
+      - DB_HOST=db-sql
+      - DB_IMPLEMENTATION=sql
+      - DB_PORT=3306
+  persistence-mongo:
+    depends_on:
+      - db-mongo
+    image: "ostabo/persistence:latest"
+    working_dir: /fileio
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./:/fileio:xro
+    environment:
+      - PORT=9092
+      - DB_HOST=db-mongo
+      - DB_IMPLEMENTATION=mongodb
+      - DB_PORT=27017
   db-sql:
     image: mysql:latest
     ports:
