@@ -19,8 +19,9 @@ class LoadSpec extends Simulation with StrictLogging {
 
   private lazy val config = ConfigFactory.load()
   private lazy val fallBackUrl = "http://0.0.0.0:8080"
+  private lazy val port = config.getString("http.test.port")
   private lazy val coreUrl =
-    Try(s"http://${config.getString("http.core.host")}:${config.getString("http.core.port")}") match
+    Try(s"http://${config.getString("http.test.host")}:$port") match
       case Success(value) => value
       case Failure(exception) => logger.error(s"${exception.getMessage} - Using fallback url: $fallBackUrl"); fallBackUrl
 
@@ -28,7 +29,7 @@ class LoadSpec extends Simulation with StrictLogging {
     DockerComposeContainer.Def(
       new File("integration.yml"),
       exposedServices = Seq(
-        ExposedService("core", 9090, Wait.forListeningPort()),
+        ExposedService("core", port.toInt, Wait.forListeningPort()),
       )
     )
 

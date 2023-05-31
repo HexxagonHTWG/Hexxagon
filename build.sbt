@@ -101,7 +101,7 @@ lazy val core = project
     IntegrationTest / fork := true
   )
   .dependsOn(persistence)
-  .enablePlugins(DockerPlugin, JavaAppPackaging, GatlingPlugin)
+  .enablePlugins(GatlingPlugin, DockerPlugin, JavaAppPackaging)
 
 lazy val persistence = project
   .configs(IntegrationTest)
@@ -110,6 +110,7 @@ lazy val persistence = project
     description := "Persistence Package for Hexxagon - contains FileIO",
     libraryDependencies ++= commonDependencies,
     libraryDependencies ++= http4sDependencies,
+    libraryDependencies ++= gatlingDependencies,
     libraryDependencies ++= integrationTestDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
@@ -125,7 +126,7 @@ lazy val persistence = project
     IntegrationTest / fork := true,
   )
   .dependsOn(provider)
-  .enablePlugins(DockerPlugin, JavaAppPackaging)
+  .enablePlugins(GatlingPlugin, DockerPlugin, JavaAppPackaging)
 
 lazy val provider = project
   .settings(
