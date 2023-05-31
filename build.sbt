@@ -98,6 +98,7 @@ lazy val core = project
     libraryDependencies ++= integrationTestDependencies,
     dockerExposedPorts ++= Seq(9090),
     Defaults.itSettings,
+    IntegrationTest / fork := true
   )
   .dependsOn(persistence)
   .enablePlugins(DockerPlugin, JavaAppPackaging, GatlingPlugin)

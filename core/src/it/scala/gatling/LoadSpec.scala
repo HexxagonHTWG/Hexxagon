@@ -31,14 +31,6 @@ class LoadSpec extends Simulation with StrictLogging {
         ExposedService("core", 9090, Wait.forListeningPort()),
       )
     )
-  before {
-    testContainer.start()
-    testContainer.wait(30000)
-  }
-
-  after {
-
-  }
 
   val httpProtocolBuilder: HttpProtocolBuilder = http
     .baseUrl(coreUrl)
@@ -65,11 +57,30 @@ class LoadSpec extends Simulation with StrictLogging {
         session.set("requestParams", s"$currentPlayer/$y/$x")
       ).exec(
         http("Place")
-          .post("/place/${requestParams}")
+          .post("/place/#{requestParams}")
       )
     }
 
+  var container: DockerComposeContainer = _
+  before {
+    container = testContainer.start()
+  }
+  after {
+    container.stop()
+  }
+
+  val statusScenario: ScenarioBuilder = scenario("Status Scenario")
+    .exec(
+      http("Status")
+        .get("/status")
+    )
+    .exec(
+      http("Field")
+        .get("/field")
+    )
+
   setUp(
-    placeScenario.inject(rampUsers(1000).during(20.seconds))
+    placeScenario.inject(rampUsers(1000).during(20.seconds)),
+    statusScenario.inject(rampUsers(1000).during(20.seconds))
   ).protocols(httpProtocolBuilder)
 }
