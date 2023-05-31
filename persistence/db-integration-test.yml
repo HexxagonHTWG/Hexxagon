@@ -4,11 +4,8 @@ services:
     depends_on:
       - db-sql
     image: "ostabo/persistence:latest"
-    working_dir: /fileio
     ports:
       - "9091:9091"
-    volumes:
-      - ./:/fileio:xro
     environment:
       - DB_HOST=db-sql
       - DB_IMPLEMENTATION=sql
@@ -17,11 +14,8 @@ services:
     depends_on:
       - db-mongo
     image: "ostabo/persistence:latest"
-    working_dir: /fileio
     ports:
       - "9092:9092"
-    volumes:
-      - ./:/fileio:xro
     environment:
       - PORT=9092
       - DB_HOST=db-mongo
