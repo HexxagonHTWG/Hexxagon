@@ -98,10 +98,10 @@ lazy val core = project
     libraryDependencies ++= integrationTestDependencies,
     dockerExposedPorts ++= Seq(9090),
     Defaults.itSettings,
-    IntegrationTest / fork := true
+    IntegrationTest / fork := true,
   )
   .dependsOn(persistence)
-  .enablePlugins(GatlingPlugin, DockerPlugin, JavaAppPackaging)
+  .enablePlugins(DockerPlugin, JavaAppPackaging, GatlingPlugin)
 
 lazy val persistence = project
   .configs(IntegrationTest)
@@ -126,7 +126,7 @@ lazy val persistence = project
     IntegrationTest / fork := true,
   )
   .dependsOn(provider)
-  .enablePlugins(GatlingPlugin, DockerPlugin, JavaAppPackaging)
+  .enablePlugins(DockerPlugin, JavaAppPackaging, GatlingPlugin)
 
 lazy val provider = project
   .settings(
