@@ -1,0 +1,10 @@
+{
+  "simulation": "gatling.StressSpec",
+  "simulationId": "stressspec-20230531193652939",
+  "start": 1685561813968,
+  "description": "",
+  "scenarios": ["Place Scenario", "Status Scenario"],
+  "assertions": [
+
+  ]
+}

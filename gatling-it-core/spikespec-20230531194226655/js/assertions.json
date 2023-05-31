@@ -1,0 +1,10 @@
+{
+  "simulation": "gatling.SpikeSpec",
+  "simulationId": "spikespec-20230531194226655",
+  "start": 1685562157942,
+  "description": "",
+  "scenarios": ["Field Scenario"],
+  "assertions": [
+
+  ]
+}
