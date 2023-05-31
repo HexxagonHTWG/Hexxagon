@@ -43,7 +43,7 @@ jobs:
           fail_ci_if_error: true
 
   gatling:
-    #if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     name: Gatling Reports 📊
     needs: run_tests
     runs-on: ubuntu-latest
