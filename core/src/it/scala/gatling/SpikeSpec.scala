@@ -25,8 +25,8 @@ class SpikeSpec extends GatlingBaseSpec:
 
   setUp(
     fieldScenario.inject(
-      nothingFor(10),
+      rampUsers(2).during(10),
       atOnceUsers(100),
-      nothingFor(10),
-    ),
+      rampUsers(2).during(10),
+    )
   ).protocols(httpProtocolBuilder)

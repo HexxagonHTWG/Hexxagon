@@ -71,3 +71,4 @@ trait GatlingBaseSpec extends Simulation with StrictLogging:
   protected val fullDuration: FiniteDuration = 20.seconds
   protected val waitDuration: FiniteDuration = 10.seconds
   protected val userAmount = 100
+  protected val lowUserAmount = 2

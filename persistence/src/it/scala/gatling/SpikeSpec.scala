@@ -9,24 +9,24 @@ import scala.concurrent.duration.*
 class SpikeSpec extends GatlingBaseSpec:
   setUp(
     saveScenario("MySql").inject(
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
       atOnceUsers(userAmount),
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
     ).protocols(httpSqlBuilder),
     loadScenario("MySql").inject(
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
       atOnceUsers(userAmount),
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
     ).protocols(httpSqlBuilder),
 
     saveScenario("MongoDB").inject(
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
       atOnceUsers(userAmount),
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
     ).protocols(httpMongoBuilder),
     loadScenario("MongoDB").inject(
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
       atOnceUsers(userAmount),
-      nothingFor(waitDuration),
+      rampUsers(lowUserAmount).during(waitDuration),
     ).protocols(httpMongoBuilder),
   )
