@@ -1,0 +1,10 @@
+{
+  "simulation": "gatling.SpikeSpec",
+  "simulationId": "spikespec-20230603192814561",
+  "start": 1685820495582,
+  "description": "",
+  "scenarios": ["MongoDB - Load Scenario", "MongoDB - Save Scenario", "MySql - Save Scenario", "MySql - Load Scenario"],
+  "assertions": [
+
+  ]
+}
