@@ -1,0 +1,415 @@
+{
+  "type": "GROUP",
+"name": "All Requests",
+"path": "",
+"pathFormatted": "group_missing-name-b06d1",
+"stats": {
+    "name": "All Requests",
+    "numberOfRequests": {
+        "total": 400,
+        "ok": 306,
+        "ko": 94
+    },
+    "minResponseTime": {
+        "total": 16,
+        "ok": 16,
+        "ko": 2247
+    },
+    "maxResponseTime": {
+        "total": 9371,
+        "ok": 9371,
+        "ko": 5096
+    },
+    "meanResponseTime": {
+        "total": 2409,
+        "ok": 1989,
+        "ko": 3777
+    },
+    "standardDeviation": {
+        "total": 2390,
+        "ok": 2561,
+        "ko": 709
+    },
+    "percentiles1": {
+        "total": 2464,
+        "ok": 93,
+        "ko": 3810
+    },
+    "percentiles2": {
+        "total": 4247,
+        "ok": 4006,
+        "ko": 4328
+    },
+    "percentiles3": {
+        "total": 6703,
+        "ok": 7334,
+        "ko": 4805
+    },
+    "percentiles4": {
+        "total": 8511,
+        "ok": 8684,
+        "ko": 4994
+    },
+    "group1": {
+    "name": "t < 800 ms",
+    "htmlName": "t < 800 ms",
+    "count": 172,
+    "percentage": 43
+},
+    "group2": {
+    "name": "800 ms <= t < 1200 ms",
+    "htmlName": "t >= 800 ms <br> t < 1200 ms",
+    "count": 10,
+    "percentage": 3
+},
+    "group3": {
+    "name": "t >= 1200 ms",
+    "htmlName": "t >= 1200 ms",
+    "count": 124,
+    "percentage": 31
+},
+    "group4": {
+    "name": "failed",
+    "htmlName": "failed",
+    "count": 94,
+    "percentage": 24
+},
+    "meanNumberOfRequestsPerSecond": {
+        "total": 16.666666666666668,
+        "ok": 12.75,
+        "ko": 3.9166666666666665
+    }
+},
+"contents": {
+"req_mongodb---load-1e535": {
+        "type": "REQUEST",
+        "name": "MongoDB - Load",
+"path": "MongoDB - Load",
+"pathFormatted": "req_mongodb---load-1e535",
+"stats": {
+    "name": "MongoDB - Load",
+    "numberOfRequests": {
+        "total": 100,
+        "ok": 100,
+        "ko": 0
+    },
+    "minResponseTime": {
+        "total": 16,
+        "ok": 16,
+        "ko": 0
+    },
+    "maxResponseTime": {
+        "total": 2602,
+        "ok": 2602,
+        "ko": 0
+    },
+    "meanResponseTime": {
+        "total": 293,
+        "ok": 293,
+        "ko": 0
+    },
+    "standardDeviation": {
+        "total": 577,
+        "ok": 577,
+        "ko": 0
+    },
+    "percentiles1": {
+        "total": 44,
+        "ok": 44,
+        "ko": 0
+    },
+    "percentiles2": {
+        "total": 78,
+        "ok": 78,
+        "ko": 0
+    },
+    "percentiles3": {
+        "total": 1675,
+        "ok": 1675,
+        "ko": 0
+    },
+    "percentiles4": {
+        "total": 2461,
+        "ok": 2461,
+        "ko": 0
+    },
+    "group1": {
+    "name": "t < 800 ms",
+    "htmlName": "t < 800 ms",
+    "count": 86,
+    "percentage": 86
+},
+    "group2": {
+    "name": "800 ms <= t < 1200 ms",
+    "htmlName": "t >= 800 ms <br> t < 1200 ms",
+    "count": 5,
+    "percentage": 5
+},
+    "group3": {
+    "name": "t >= 1200 ms",
+    "htmlName": "t >= 1200 ms",
+    "count": 9,
+    "percentage": 9
+},
+    "group4": {
+    "name": "failed",
+    "htmlName": "failed",
+    "count": 0,
+    "percentage": 0
+},
+    "meanNumberOfRequestsPerSecond": {
+        "total": 4.166666666666667,
+        "ok": 4.166666666666667,
+        "ko": 0
+    }
+}
+    },"req_mysql---load-068dd": {
+        "type": "REQUEST",
+        "name": "MySql - Load",
+"path": "MySql - Load",
+"pathFormatted": "req_mysql---load-068dd",
+"stats": {
+    "name": "MySql - Load",
+    "numberOfRequests": {
+        "total": 100,
+        "ok": 6,
+        "ko": 94
+    },
+    "minResponseTime": {
+        "total": 2247,
+        "ok": 3009,
+        "ko": 2247
+    },
+    "maxResponseTime": {
+        "total": 5096,
+        "ok": 4998,
+        "ko": 5096
+    },
+    "meanResponseTime": {
+        "total": 3800,
+        "ok": 4166,
+        "ko": 3777
+    },
+    "standardDeviation": {
+        "total": 713,
+        "ok": 679,
+        "ko": 709
+    },
+    "percentiles1": {
+        "total": 3877,
+        "ok": 4414,
+        "ko": 3810
+    },
+    "percentiles2": {
+        "total": 4414,
+        "ok": 4596,
+        "ko": 4328
+    },
+    "percentiles3": {
+        "total": 4846,
+        "ok": 4900,
+        "ko": 4805
+    },
+    "percentiles4": {
+        "total": 4999,
+        "ok": 4978,
+        "ko": 4994
+    },
+    "group1": {
+    "name": "t < 800 ms",
+    "htmlName": "t < 800 ms",
+    "count": 0,
+    "percentage": 0
+},
+    "group2": {
+    "name": "800 ms <= t < 1200 ms",
+    "htmlName": "t >= 800 ms <br> t < 1200 ms",
+    "count": 0,
+    "percentage": 0
+},
+    "group3": {
+    "name": "t >= 1200 ms",
+    "htmlName": "t >= 1200 ms",
+    "count": 6,
+    "percentage": 6
+},
+    "group4": {
+    "name": "failed",
+    "htmlName": "failed",
+    "count": 94,
+    "percentage": 94
+},
+    "meanNumberOfRequestsPerSecond": {
+        "total": 4.166666666666667,
+        "ok": 0.25,
+        "ko": 3.9166666666666665
+    }
+}
+    },"req_mysql---save-7eab2": {
+        "type": "REQUEST",
+        "name": "MySql - Save",
+"path": "MySql - Save",
+"pathFormatted": "req_mysql---save-7eab2",
+"stats": {
+    "name": "MySql - Save",
+    "numberOfRequests": {
+        "total": 100,
+        "ok": 100,
+        "ko": 0
+    },
+    "minResponseTime": {
+        "total": 2787,
+        "ok": 2787,
+        "ko": 0
+    },
+    "maxResponseTime": {
+        "total": 9371,
+        "ok": 9371,
+        "ko": 0
+    },
+    "meanResponseTime": {
+        "total": 5250,
+        "ok": 5250,
+        "ko": 0
+    },
+    "standardDeviation": {
+        "total": 1645,
+        "ok": 1645,
+        "ko": 0
+    },
+    "percentiles1": {
+        "total": 4884,
+        "ok": 4884,
+        "ko": 0
+    },
+    "percentiles2": {
+        "total": 6150,
+        "ok": 6150,
+        "ko": 0
+    },
+    "percentiles3": {
+        "total": 8490,
+        "ok": 8490,
+        "ko": 0
+    },
+    "percentiles4": {
+        "total": 8865,
+        "ok": 8865,
+        "ko": 0
+    },
+    "group1": {
+    "name": "t < 800 ms",
+    "htmlName": "t < 800 ms",
+    "count": 0,
+    "percentage": 0
+},
+    "group2": {
+    "name": "800 ms <= t < 1200 ms",
+    "htmlName": "t >= 800 ms <br> t < 1200 ms",
+    "count": 0,
+    "percentage": 0
+},
+    "group3": {
+    "name": "t >= 1200 ms",
+    "htmlName": "t >= 1200 ms",
+    "count": 100,
+    "percentage": 100
+},
+    "group4": {
+    "name": "failed",
+    "htmlName": "failed",
+    "count": 0,
+    "percentage": 0
+},
+    "meanNumberOfRequestsPerSecond": {
+        "total": 4.166666666666667,
+        "ok": 4.166666666666667,
+        "ko": 0
+    }
+}
+    },"req_mongodb---save-5c0eb": {
+        "type": "REQUEST",
+        "name": "MongoDB - Save",
+"path": "MongoDB - Save",
+"pathFormatted": "req_mongodb---save-5c0eb",
+"stats": {
+    "name": "MongoDB - Save",
+    "numberOfRequests": {
+        "total": 100,
+        "ok": 100,
+        "ko": 0
+    },
+    "minResponseTime": {
+        "total": 17,
+        "ok": 17,
+        "ko": 0
+    },
+    "maxResponseTime": {
+        "total": 2747,
+        "ok": 2747,
+        "ko": 0
+    },
+    "meanResponseTime": {
+        "total": 294,
+        "ok": 294,
+        "ko": 0
+    },
+    "standardDeviation": {
+        "total": 582,
+        "ok": 582,
+        "ko": 0
+    },
+    "percentiles1": {
+        "total": 41,
+        "ok": 41,
+        "ko": 0
+    },
+    "percentiles2": {
+        "total": 74,
+        "ok": 74,
+        "ko": 0
+    },
+    "percentiles3": {
+        "total": 1657,
+        "ok": 1657,
+        "ko": 0
+    },
+    "percentiles4": {
+        "total": 2566,
+        "ok": 2566,
+        "ko": 0
+    },
+    "group1": {
+    "name": "t < 800 ms",
+    "htmlName": "t < 800 ms",
+    "count": 86,
+    "percentage": 86
+},
+    "group2": {
+    "name": "800 ms <= t < 1200 ms",
+    "htmlName": "t >= 800 ms <br> t < 1200 ms",
+    "count": 5,
+    "percentage": 5
+},
+    "group3": {
+    "name": "t >= 1200 ms",
+    "htmlName": "t >= 1200 ms",
+    "count": 9,
+    "percentage": 9
+},
+    "group4": {
+    "name": "failed",
+    "htmlName": "failed",
+    "count": 0,
+    "percentage": 0
+},
+    "meanNumberOfRequestsPerSecond": {
+        "total": 4.166666666666667,
+        "ok": 4.166666666666667,
+        "ko": 0
+    }
+}
+    }
+}
+
+}
