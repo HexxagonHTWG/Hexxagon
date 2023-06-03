@@ -1,0 +1,10 @@
+{
+  "simulation": "gatling.StressSpec",
+  "simulationId": "stressspec-20230603172325666",
+  "start": 1685813006739,
+  "description": "",
+  "scenarios": ["MongoDB - Load Scenario", "MySql - Load Scenario", "MongoDB - Save Scenario", "MySql - Save Scenario"],
+  "assertions": [
+
+  ]
+}
