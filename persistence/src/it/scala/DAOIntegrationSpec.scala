@@ -4,7 +4,8 @@ import com.typesafe.config.ConfigFactory
 import lib.Player
 import lib.database.DAOInterface
 import lib.database.mongoDB.DAOMongo
-import lib.database.slick.DAOSlick
+import lib.database.slick.defaultImpl.DAOSlick
+import lib.database.slick.jsonImpl.DAOSlick as DAOSlickJson
 import lib.field.FieldInterface
 import lib.field.defaultImpl.{Field, Matrix}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -52,6 +53,35 @@ class DAOIntegrationSpec extends AnyWordSpec with TestContainerForAll:
       }
       "be able to load updated field" in {
         val field = DAOSlick.load(Some(0)).get
+        field shouldBe a[FieldInterface[Player]]
+        field.matrix.cell(0, 0) shouldBe Player.fromChar('X')
+      }
+    }
+  }
+  "The Slick DAO with JSON" when {
+    "nothing is saved" should {
+      "not be able to load a field" in {
+        DAOSlickJson.load() shouldBe a[Failure[_]]
+      }
+    }
+    "something is saved" should {
+      "be able to save a field" in {
+        val mockField = Field()(using new Matrix(5, 5))
+        DAOSlickJson.save(mockField) shouldBe a[Success[_]]
+      }
+      "be able to load a field" in {
+        DAOSlickJson.load() shouldBe a[Success[_]]
+      }
+      "be able to delete a field" in {
+        DAOSlickJson.delete(Some(1)) shouldBe a[Success[_]]
+      }
+      "be able to update a field" in {
+        val mockField = Field()(using new Matrix(5, 5))
+        val updatedField = mockField.place(Player.fromChar('X'), 0, 0)
+        DAOSlickJson.update(0, updatedField) shouldBe a[Success[_]]
+      }
+      "be able to load updated field" in {
+        val field = DAOSlickJson.load(Some(0)).get
         field shouldBe a[FieldInterface[Player]]
         field.matrix.cell(0, 0) shouldBe Player.fromChar('X')
       }

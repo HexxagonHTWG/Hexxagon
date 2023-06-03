@@ -1,4 +1,4 @@
-package lib.database.slick.tables
+package lib.database.slick.defaultImpl.tables
 
 import slick.jdbc.MySQLProfile.api.*
 import slick.lifted.TableQuery
