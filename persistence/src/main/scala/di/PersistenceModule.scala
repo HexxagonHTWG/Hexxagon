@@ -4,7 +4,8 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import lib.database.DAOInterface
 import lib.database.mongoDB.DAOMongo
-import lib.database.slick.DAOSlick
+import lib.database.slick.defaultImpl.DAOSlick
+import lib.database.slick.jsonImpl.DAOSlick as DAOSlickJson
 import lib.json.{FileIO as FileIOJson, FileIO_uPickle as FileIOJson_uPickle}
 import lib.xml.FileIO as FileIOXml
 import lib.{FileIOInterface, FileIORestClient, Player}
@@ -22,6 +23,7 @@ object PersistenceRestModule extends StrictLogging:
   given DAOInterface[Player] = Try(config.getString("db.implementation")).getOrElse("").toUpperCase() match
     case "MONGO" | "MONGODB" => DAOMongo
     case "MYSQL" | "SLICK" => DAOSlick
+    case "MYSQLJSON" | "SLICKJSON" => DAOSlickJson
     case _ => logger.warn("No such database implementation - using default"); DAOSlick
 
 object XMLPersistenceModule:
