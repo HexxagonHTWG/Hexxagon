@@ -73,7 +73,45 @@
             .then(response => response.json())
             .then(data => {
                 // Durchlaufe die API-Antwort und erstelle Links für Ordner
-                data.forEach(item => {
+                data.sort((item1, item2) => {
+                    if (item1.type === "dir") {
+                        // sort by date
+                        const rawName = item1.name;
+                        const folderNames = rawName.split("-");
+                        const year = folderNames[1].substring(0, 4);
+                        const month = folderNames[1].substring(4, 6);
+                        const day = folderNames[1].substring(6, 8);
+                        const hour = folderNames[1].substring(8, 10);
+                        const minute = folderNames[1].substring(10, 12);
+                        const second = folderNames[1].substring(12, 14);
+                        const date = new Date(
+                            year,
+                            month - 1,
+                            day,
+                            hour,
+                            minute,
+                            second
+                        );
+                        // sort by date
+                        const rawName2 = item2.name;
+                        const folderNames2 = rawName2.split("-");
+                        const year2 = folderNames2[1].substring(0, 4);
+                        const month2 = folderNames2[1].substring(4, 6);
+                        const day2 = folderNames2[1].substring(6, 8);
+                        const hour2 = folderNames2[1].substring(8, 10);
+                        const minute2 = folderNames2[1].substring(10, 12);
+                        const second2 = folderNames2[1].substring(12, 14);
+                        const date2 = new Date(
+                            year2,
+                            month2 - 1,
+                            day2,
+                            hour2,
+                            minute2,
+                            second2
+                        );
+                        return date2 - date;
+                    }
+                }).forEach(item => {
                     if (item.type === "dir") {
                         const rawName = item.name;
                         const folderNames = rawName.split("-");
@@ -93,7 +131,7 @@
                             second
                         );
                         const folderLink = document.createElement("a");
-                        folderLink.href = "https://" + username + ".github.io/" + repository + "/" + folderLayer + "/" + rawName + "/";
+                        folderLink.href = "./" + folderLayer + "/" + rawName + "/";
                         folderLink.textContent = folderName + " - " + date.toLocaleString();
 
                         const listItem = document.createElement("li");
