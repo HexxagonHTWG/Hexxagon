@@ -1,0 +1,10 @@
+{
+  "simulation": "gatling.LoadSpec",
+  "simulationId": "loadspec-20230603192949773",
+  "start": 1685820590751,
+  "description": "",
+  "scenarios": ["Place Scenario", "Status Scenario"],
+  "assertions": [
+
+  ]
+}
