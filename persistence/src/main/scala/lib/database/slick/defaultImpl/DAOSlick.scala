@@ -25,27 +25,27 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
 
   init(DBIO.seq(gameTable.schema.createIfNotExists, fieldTable.schema.createIfNotExists))
 
-  override def save(field: FieldInterface[Player]): Try[Unit] =
-    Try {
+  override def save(field: FieldInterface[Player]): Future[Try[Unit]] =
+    Future {
       val currentGameId = gameIdCounter % maxGameCount
-      update(currentGameId, field) match
-        case Success(_) => gameIdCounter += 1
-        case Failure(e) => throw e
+      Await.result(update(currentGameId, field), maxWaitSeconds) match
+        case Success(_) => Success(gameIdCounter += 1)
+        case Failure(e) => Failure(e)
     }
 
-  override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
-    Try {
+  override def update(gameId: Int, field: FieldInterface[Player]): Future[Try[Unit]] =
+    Future {
       val gameAction = gameTable.insertOrUpdate((gameId, field.matrix.row, field.matrix.col))
       val fieldAction = fieldTable.filter(_.gameId === gameId).delete
 
       Await.result(database.run(gameAction), maxWaitSeconds)
       Await.result(database.run(fieldAction), maxWaitSeconds)
 
-      insertField(gameId, field)
+      Await.result(insertField(gameId, field), maxWaitSeconds)
     }
 
-  private def insertField(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
-    Try {
+  private def insertField(gameId: Int, field: FieldInterface[Player]): Future[Try[Unit]] =
+    Future {
       for (row <- 0 until field.matrix.row) {
         for (col <- 0 until field.matrix.col) {
           val cell = field.matrix.cell(col, row)
@@ -54,10 +54,11 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
           Await.result(database.run(insertAction), maxWaitSeconds)
         }
       }
+      Success(())
     }
 
-  override def delete(gameId: Option[Int]): Try[Unit] =
-    Try {
+  override def delete(gameId: Option[Int]): Future[Try[Unit]] =
+    Future {
       val finalGameId: Int = gameId.getOrElse(gameTable.map(_.id).max.asInstanceOf[Int])
       val gameAction = gameTable.filter(_.id === finalGameId).delete
       val fieldAction = fieldTable.filter(_.gameId === finalGameId).delete
@@ -67,8 +68,8 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
       Success(())
     }
 
-  override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
-    Try {
+  override def load(gameId: Option[Int]): Future[Try[FieldInterface[Player]]] =
+    Future {
       val searchId = gameId.getOrElse((gameIdCounter match {
         case 0 => 0;
         case _ => gameIdCounter - 1
@@ -94,7 +95,7 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
           hexField = hexField.placeAlways(Player.fromString(cell), col, row)
         }
       }
-      hexField
+      Success(hexField)
     }
 
   private def gameTable = new TableQuery(new Game(_))
