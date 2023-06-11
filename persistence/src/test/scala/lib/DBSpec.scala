@@ -1,5 +1,6 @@
 package lib
 
+import com.typesafe.config.ConfigFactory
 import lib.database.{DAOInterface, DAOMock}
 import lib.field.FieldInterface
 import lib.field.defaultImpl.{Field, Matrix}
@@ -9,21 +10,29 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.matchers.should.Matchers.{a, should, shouldBe}
 import org.scalatest.wordspec.AnyWordSpec
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.{Duration, DurationInt}
+import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 import scala.util.{Success, Try}
 
 class DBSpec extends AnyWordSpec {
+  private lazy val config = ConfigFactory.load()
+  private val maxWaitSeconds: Duration = config.getInt("db.maxWaitSeconds") seconds
+
   "A Database Interface" when {
     val mockField = Field()(using new Matrix(5, 5))
     "defined" should {
       "have the necessary crud operations" in {
         class AnyDAO extends DAOInterface[Any]:
-          override def save(field: FieldInterface[Any]): Try[Unit] = Try(())
+          override def save(field: FieldInterface[Any]): Future[Try[Unit]] = Future(Try(()))
 
-          override def delete(id: Option[Int]): Try[Unit] = Try(())
+          override def delete(id: Option[Int]): Future[Try[Unit]] = Future(Try(()))
 
-          override def load(id: Option[Int]): Try[FieldInterface[Any]] = Try(mockField.asInstanceOf[FieldInterface[Any]])
+          override def load(id: Option[Int]): Future[Try[FieldInterface[Any]]] = 
+            Future(Try(mockField.asInstanceOf[FieldInterface[Any]]))
 
-          override def update(id: Int, field: FieldInterface[Any]): Try[Unit] = Try(())
+          override def update(id: Int, field: FieldInterface[Any]): Future[Try[Unit]] = Future(Try(()))
         end AnyDAO
         val anyDAO = new AnyDAO
         anyDAO shouldBe a[DAOInterface[_]]
@@ -34,16 +43,16 @@ class DBSpec extends AnyWordSpec {
         DAOMock shouldBe a[DAOInterface[_]]
       }
       "contain a method to insert a new game" in {
-        DAOMock.save(mockField) shouldBe a[Success[_]]
+        Await.result(DAOMock.save(mockField), maxWaitSeconds) shouldBe a[Success[_]]
       }
       "contain a method to delete game" in {
-        DAOMock.delete(None) shouldBe a[Success[_]]
+        Await.result(DAOMock.delete(None), maxWaitSeconds) shouldBe a[Success[_]]
       }
       "contain a method to load game" in {
-        DAOMock.load(None) shouldBe a[Success[FieldInterface[_]]]
+        Await.result(DAOMock.load(None), maxWaitSeconds) shouldBe a[Success[FieldInterface[_]]]
       }
       "contain a method to update game" in {
-        DAOMock.update(0, mockField) shouldBe a[Success[_]]
+        Await.result(DAOMock.update(0, mockField), maxWaitSeconds) shouldBe a[Success[_]]
       }
     }
   }
