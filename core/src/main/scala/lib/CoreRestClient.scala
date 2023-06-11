@@ -1,7 +1,16 @@
 package lib
 
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.*
+import akka.http.scaladsl.model.HttpMethods.*
+import akka.http.scaladsl.server.Directives.*
+import akka.http.scaladsl.server.{ExceptionHandler, Route}
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
+import concurrent.ExecutionContext.Implicits.global
 import di.CoreModule
 import geny.Bytes
 import lib.Http.fetch
@@ -18,44 +27,77 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
     Try(s"http://${config.getString("http.core.host")}:${config.getString("http.core.port")}") match
       case Success(value) => value
       case Failure(exception) => logger.error(s"${exception.getMessage} - Using fallback url: $fallBackUrl"); fallBackUrl
+  private val system: ActorSystem[Any] = ActorSystem(Behaviors.empty, "my-system")
+  given ActorSystem[Any] = system
 
   var hexField: FieldInterface[Player] =
     HexJson.decode(exportField) match
       case Success(value) => value
       case Failure(_) => null
 
-  override def gameStatus: GameStatus = GameStatus.valueOf(
-    fetch(get, s"$coreUrl/status") match
-      case "" => "ERROR"
-      case x => x
-  )
+  override def gameStatus: GameStatus =
+    var res: GameStatus = null
+    Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/status"))
+    .onComplete {
+      case Success(value) => value.entity.asInstanceOf[String] match
+        case "" => res = GameStatus.valueOf("ERROR")
+        case x => res = GameStatus.valueOf(x)
+      case Failure(e) => throw e
+    }
+    res
 
   override def fillAll(c: Player): Unit =
-    validate(HexJson.decode(fetch(post, s"$coreUrl/fillAll/$c")))
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/fillAll/$c"))
+      .onComplete {
+        case Success(value) => validate(HexJson.decode(value.toString))
+        case Failure(e) => throw e
+      }
 
   override def save(): Try[Unit] =
-    Try {
-      validate(HexJson.decode(fetch(post, s"$coreUrl/save")))
-      Success(())
-    }
+    var res: Try[Unit] = null
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/save"))
+      .onComplete {
+        case Success(value) => res = Try(validate(HexJson.decode(value.toString)))
+        case Failure(e) => throw e
+      }
+    res
 
   override def load(): Try[Unit] =
-    Try {
-      validate(HexJson.decode(fetch(get, s"$coreUrl/load")))
-      Success(())
-    }
+    var res: Try[Unit] = null
+    Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/load"))
+      .onComplete {
+        case Success(value) => res = Try(validate(HexJson.decode(value.toString)))
+        case Failure(e) => throw e
+      }
+    res
 
   override def place(c: Player, x: Int, y: Int): Unit =
-    validate(HexJson.decode(fetch(post, s"$coreUrl/place/$c/$x/$y")))
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/place/$c/$x/$y"))
+      .onComplete {
+        case Success(value) => validate(HexJson.decode(value.toString))
+        case Failure(e) => throw e
+      }
 
   override def undo(): Unit =
-    validate(HexJson.decode(fetch(post, s"$coreUrl/undo")))
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/undo"))
+      .onComplete {
+        case Success(value) => validate(HexJson.decode(value.toString))
+        case Failure(e) => throw e
+      }
 
   override def redo(): Unit =
-    validate(HexJson.decode(fetch(post, s"$coreUrl/redo")))
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/redo"))
+      .onComplete {
+        case Success(value) => validate(HexJson.decode(value.toString))
+        case Failure(e) => throw e
+      }
 
   override def reset(): Unit =
-    validate(HexJson.decode(fetch(post, s"$coreUrl/reset")))
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/reset"))
+      .onComplete {
+        case Success(value) => validate(HexJson.decode(value.toString))
+        case Failure(e) => throw e
+      }
 
   private def validate(res: Try[FieldInterface[Player]]): Unit =
     res match
@@ -64,4 +106,11 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
         notifyObservers()
       case Failure(_) => logger.error("Failed to decode field")
 
-  override def exportField: String = fetch(get, s"$coreUrl/exportField")
+  override def exportField: String =
+    var res: String = null
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/exportField"))
+      .onComplete {
+        case Success(value) => res = value.entity.asInstanceOf[String]
+        case Failure(e) => throw e
+      }
+    res
