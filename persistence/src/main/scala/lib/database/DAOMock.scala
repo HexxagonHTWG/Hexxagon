@@ -5,9 +5,9 @@ import lib.database.DAOInterface
 import lib.field.FieldInterface
 import lib.field.defaultImpl.{Field, Matrix}
 
-import scala.util.{Success, Try}
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Try}
 
 case object DAOMock extends DAOInterface[Player]:
   override def save(field: FieldInterface[Player]): Future[Try[Unit]] =

@@ -1,16 +1,15 @@
 package lib
 
+import akka.actor.typed.ActorSystem
+import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.*
 import akka.http.scaladsl.model.HttpMethods.*
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.actor.typed.ActorSystem
-import akka.actor.typed.scaladsl.Behaviors
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
-import concurrent.ExecutionContext.Implicits.global
 import di.CoreModule
 import geny.Bytes
 import lib.Http.fetch
@@ -18,6 +17,7 @@ import lib.field.FieldInterface
 import lib.json.HexJson
 import requests.{Requester, Response, get, post}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success, Try}
 
 case class CoreRestClient() extends ControllerInterface[Player] with StrictLogging:

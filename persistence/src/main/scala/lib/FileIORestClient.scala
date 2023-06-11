@@ -8,7 +8,6 @@ import akka.http.scaladsl.model.HttpMethods.*
 import akka.http.scaladsl.server.Directives.*
 import akka.http.scaladsl.server.{ExceptionHandler, Route}
 import akka.http.scaladsl.unmarshalling.Unmarshal
-import concurrent.ExecutionContext.Implicits.global
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.StrictLogging
 import lib.Http.fetch
@@ -16,6 +15,7 @@ import lib.field.FieldInterface
 import lib.json.HexJson
 import requests.{get, post}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success, Try}
 
 case class FileIORestClient() extends FileIOInterface[Player] with StrictLogging {
