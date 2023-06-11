@@ -84,18 +84,23 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
         )
 
       val gameResult = Await.result(database.run(gameAction.result), maxWaitSeconds)
-      val rows = gameResult.head._2
-      val cols = gameResult.head._3
-      var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
-
       val fieldResult = Await.result(database.run(fieldAction.result), maxWaitSeconds)
-      for (row <- 0 until rows) {
-        for (col <- 0 until cols) {
-          val cell = fieldResult.filter(_._2 == row).filter(_._3 == col).head._4
-          hexField = hexField.placeAlways(Player.fromString(cell), col, row)
-        }
+      
+      (gameResult.size, fieldResult.size) match {
+        case (0, _) => Failure(new SQLNonTransientException("No game found"))
+        case (_, 0) => Failure(new SQLNonTransientException("No field found"))
+        case (_, _) => val rows = gameResult.head._2
+          val cols = gameResult.head._3
+          var hexField = FlexibleProviderModule(rows, cols).given_FieldInterface_Player
+
+          for (row <- 0 until rows) {
+            for (col <- 0 until cols) {
+              val cell = fieldResult.filter(_._2 == row).filter(_._3 == col).head._4
+              hexField = hexField.placeAlways(Player.fromString(cell), col, row)
+            }
+          }
+          Success(hexField)
       }
-      Success(hexField)
     }
 
   private def gameTable = new TableQuery(new Game(_))

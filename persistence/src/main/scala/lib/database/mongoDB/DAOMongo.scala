@@ -71,7 +71,7 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
         .first().head(), maxWaitSeconds)
       Try(HexJson.decode(document.get("game").get.asString().getValue).get) match {
         case Success(field) => Success(field)
-        case Failure(e) => throw e
+        case Failure(e) => Failure(e)
       }
     }
 

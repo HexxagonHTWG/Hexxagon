@@ -64,5 +64,7 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
         )
 
       val gameResult = Await.result(database.run(gameAction.result), maxWaitSeconds)
-      HexJson.decode(gameResult.head._2)
+      gameResult.size match
+        case 0 => Failure(new SQLNonTransientException("No game found"))
+        case _ => HexJson.decode(gameResult.head._2)
     }

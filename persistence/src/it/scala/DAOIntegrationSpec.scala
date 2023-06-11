@@ -83,7 +83,7 @@ class DAOIntegrationSpec extends AnyWordSpec with TestContainerForAll:
       "be able to update a field" in {
         val mockField = Field()(using new Matrix(5, 5))
         val updatedField = mockField.place(Player.fromChar('X'), 0, 0)
-        DAOSlickJson.update(0, updatedField) shouldBe a[Success[_]]
+        Await.result(DAOSlickJson.update(0, updatedField), maxWaitSeconds) shouldBe a[Success[_]]
       }
       "be able to load updated field" in {
         val field = Await.result(DAOSlickJson.load(Some(0)), maxWaitSeconds).get
