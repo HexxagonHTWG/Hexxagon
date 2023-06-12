@@ -37,7 +37,8 @@ case class FileIORestClient() extends FileIOInterface[Player] with StrictLogging
     res
 
   override def save(field: FieldInterface[Player]): Try[Unit] =
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$persistenceUrl/save"))
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$persistenceUrl/save",
+      entity = HexJson.encode(field)))
       .onComplete {
         case Failure(_) => Failure(new Exception("Failed to save game"))
         case Success(_) =>
