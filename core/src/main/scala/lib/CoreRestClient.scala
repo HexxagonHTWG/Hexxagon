@@ -55,7 +55,8 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
 
   override def save(): Try[Unit] =
     var res: Try[Unit] = null
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/save"))
+    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/save",
+      entity = HttpEntity(HexJson.encode(hexField))))
       .onComplete {
         case Success(value) => res = Try(validate(HexJson.decode(value.toString)))
         case Failure(e) => throw e
