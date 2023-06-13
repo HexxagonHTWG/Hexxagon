@@ -109,7 +109,7 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
 
   override def exportField: String =
     var res: String = null
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/exportField"))
+    Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/exportField"))
       .onComplete {
         case Success(value) => res = value.entity.asInstanceOf[String]
         case Failure(e) => throw e
