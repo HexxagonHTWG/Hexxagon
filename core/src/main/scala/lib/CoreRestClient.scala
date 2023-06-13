@@ -111,7 +111,7 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
     var res: String = null
     Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/exportField"))
       .onComplete {
-        case Success(value) => res = value.entity.asInstanceOf[String]
+        case Success(value) => res = value.entity.toString
         case Failure(e) => throw e
       }
     res
