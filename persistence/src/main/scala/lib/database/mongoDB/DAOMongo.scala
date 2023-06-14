@@ -15,8 +15,9 @@ import org.mongodb.scala.model.Updates.set
 import org.mongodb.scala.result.{DeleteResult, InsertOneResult, UpdateResult}
 import play.api.libs.json.JsObject
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{Duration, DurationInt, SECONDS}
-import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.{Await, Future}
 import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
@@ -40,49 +41,39 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
   private val maxGameCount = config.getInt("db.maxGameCount")
   private var gameIdCounter = 0
 
-  override def save(field: FieldInterface[Player]): Try[Unit] =
-    Try {
+  override def save(field: FieldInterface[Player]): Future[Any] =
       val currentGameId = gameIdCounter % maxGameCount
-      update(currentGameId, field) match
-        case Success(_) => gameIdCounter += 1
-        case Failure(e) => throw e
-    }
+      update(currentGameId, field).andThen { x =>
+        gameIdCounter += 1
+      }
 
-  override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
-    Try {
+  override def update(gameId: Int, field: FieldInterface[Player]): Future[Any] =
       val json = HexJson.encode(field)
-
-      Await.result(
-        gameCollection.updateOne(equal("_id", gameId), set("game", json), UpdateOptions().upsert(true))
+      gameCollection.updateOne(equal("_id", gameId), set("game", json), UpdateOptions().upsert(true))
           .asInstanceOf[SingleObservable[Unit]]
-          .head(),
-        maxWaitSeconds
-      )
-    }
+          .head()
 
-  override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
-    Try {
+  override def load(gameId: Option[Int]): Future[Try[FieldInterface[Player]]] =
+    Future {
       val searchId = gameId.getOrElse((gameIdCounter match {
         case 0 => 0
         case _ => gameIdCounter - 1
       }) % maxGameCount)
       val document = Await.result(gameCollection.find(equal("_id", searchId)).projection(excludeId())
         .first().head(), maxWaitSeconds)
-      HexJson.decode(document.get("game").get.asString().getValue).get
+      Try(HexJson.decode(document.get("game").get.asString().getValue).get) match {
+        case Success(field) => Success(field)
+        case Failure(e) => Failure(e)
+      }
     }
 
-  override def delete(gameId: Option[Int]): Try[Unit] =
-    Try {
-      val deleteId = gameId.getOrElse({
-        Await.result(gameCollection.find().sort(Document("_id" -> -1)).first().head(),
-          maxWaitSeconds).get("_id").get.asInt32().getValue
-      })
-
-      Await.result(
-        gameCollection.deleteOne(equal("_id", deleteId))
-          .asInstanceOf[SingleObservable[Unit]]
-          .head(),
-        maxWaitSeconds
-      )
-    }
-}
+  override def delete(gameId: Option[Int]): Future[Any] =
+    val deleteId = gameId.getOrElse({
+      Await.result(gameCollection.find().sort(Document("_id" -> -1)).first().head(),
+        maxWaitSeconds).get("_id").get.asInt32().getValue
+    })
+    
+    gameCollection.deleteOne(equal("_id", deleteId))
+        .asInstanceOf[SingleObservable[Unit]]
+        .head()
+  }

@@ -9,8 +9,8 @@ import io.gatling.core.structure.ScenarioBuilder
 import io.gatling.http.Predef.*
 import io.gatling.http.protocol.HttpProtocolBuilder
 import io.gatling.jdbc.Predef.*
-import org.testcontainers.containers.wait.strategy.Wait
 import lib.json.HexJson
+import org.testcontainers.containers.wait.strategy.Wait
 
 import java.io.File
 import scala.concurrent.duration.*

@@ -25,24 +25,24 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
 
   init(DBIO.seq(gameTable.schema.createIfNotExists))
 
-  override def save(field: FieldInterface[Player]): Try[Unit] =
-    Try {
+  override def save(field: FieldInterface[Player]): Future[Try[Unit]] =
+    Future {
       val currentGameId = gameIdCounter % maxGameCount
-      update(currentGameId, field) match
-        case Success(_) => gameIdCounter += 1
-        case Failure(e) => throw e
+      Await.result(update(currentGameId, field), maxWaitSeconds) match
+        case Success(_) => Success(gameIdCounter += 1)
+        case Failure(e) => Failure(e)
     }
-
-  override def update(gameId: Int, field: FieldInterface[Player]): Try[Unit] =
-    Try {
+  
+  override def update(gameId: Int, field: FieldInterface[Player]): Future[Try[Unit]] =
+    Future {
       val gameAction = gameTable.insertOrUpdate((gameId, HexJson.encode(field)))
 
       Await.result(database.run(gameAction), maxWaitSeconds)
       Success(())
     }
 
-  override def delete(gameId: Option[Int]): Try[Unit] =
-    Try {
+  override def delete(gameId: Option[Int]): Future[Try[Unit]] =
+    Future {
       val finalGameId: Int = gameId.getOrElse(gameTable.map(_.id).max.asInstanceOf[Int])
       val gameAction = gameTable.filter(_.id === finalGameId).delete
 
@@ -52,8 +52,8 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
 
   private def gameTable = new TableQuery(new GameJson(_))
 
-  override def load(gameId: Option[Int]): Try[FieldInterface[Player]] =
-    Try {
+  override def load(gameId: Option[Int]): Future[Try[FieldInterface[Player]]] =
+    Future {
       val searchId = gameId.getOrElse((gameIdCounter match {
         case 0 => 0;
         case _ => gameIdCounter - 1
@@ -64,7 +64,7 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
         )
 
       val gameResult = Await.result(database.run(gameAction.result), maxWaitSeconds)
-      HexJson.decode(gameResult.head._2) match
-        case Success(field) => field
-        case Failure(e) => throw e
+      gameResult.size match
+        case 0 => Failure(new SQLNonTransientException("No game found"))
+        case _ => HexJson.decode(gameResult.head._2)
     }

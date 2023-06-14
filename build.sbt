@@ -65,6 +65,13 @@ lazy val gatlingDependencies = Seq(
   "io.gatling" % "gatling-test-framework" % "3.9.5" % "it,test" exclude("com.typesafe.scala-logging", "scala-logging_2.13"),
 )
 
+lazy val akkaDependencies = Seq(
+  ("com.typesafe.akka" %% "akka-http" % "10.5.0").cross(CrossVersion.for3Use2_13),
+  ("com.typesafe.akka" %% "akka-actor" % "2.8.0").cross(CrossVersion.for3Use2_13),
+  ("com.typesafe.akka" %% "akka-actor-typed" % "2.8.0").cross(CrossVersion.for3Use2_13),
+  ("com.typesafe.akka" %% "akka-stream" % "2.8.0").cross(CrossVersion.for3Use2_13)
+)
+
 /* =====================================================================================================================
  * Project Settings
  * ===================================================================================================================== */
@@ -98,6 +105,7 @@ lazy val core = project
     libraryDependencies ++= http4sDependencies,
     libraryDependencies ++= gatlingDependencies,
     libraryDependencies ++= integrationTestDependencies,
+    libraryDependencies ++= akkaDependencies,
     dockerExposedPorts ++= Seq(9090),
     Defaults.itSettings,
     IntegrationTest / fork := true,
@@ -114,6 +122,7 @@ lazy val persistence = project
     libraryDependencies ++= http4sDependencies,
     libraryDependencies ++= gatlingDependencies,
     libraryDependencies ++= integrationTestDependencies,
+    libraryDependencies ++= akkaDependencies,
     libraryDependencies ++= Seq(
       "org.scala-lang.modules" %% "scala-xml" % "2.1.0", // XML
       "com.lihaoyi" %% "upickle" % "3.1.0", // JSON
