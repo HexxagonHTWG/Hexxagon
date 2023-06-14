@@ -13,7 +13,7 @@ trait DAOInterface[T]:
    * @param field the field to save
    * @return Success if the field was saved successfully, Failure otherwise
    */
-  def save(field: FieldInterface[T]): Future[Try[Unit]]
+  def save(field: FieldInterface[T]): Future[Any]
 
   /**
    * Load game field from database.
@@ -28,11 +28,11 @@ trait DAOInterface[T]:
    * @param field the field to save instead
    * @return Success if the game was updated successfully, Failure otherwise
    */
-  def update(gameId: Int, field: FieldInterface[T]): Future[Try[Unit]]
+  def update(gameId: Int, field: FieldInterface[T]): Future[Any]
 
   /**
    * Delete game field from database.
    * @param gameId the game id to delete. If None, the last game is deleted
    * @return Success if the game was deleted successfully, Failure otherwise
    */
-  def delete(gameId: Option[Int]): Future[Try[Unit]]
+  def delete(gameId: Option[Int]): Future[Any]

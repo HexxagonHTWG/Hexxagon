@@ -41,25 +41,17 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
   private val maxGameCount = config.getInt("db.maxGameCount")
   private var gameIdCounter = 0
 
-  override def save(field: FieldInterface[Player]): Future[Try[Unit]] =
-    Future {
+  override def save(field: FieldInterface[Player]): Future[Any] =
       val currentGameId = gameIdCounter % maxGameCount
-      Await.result(update(currentGameId, field), maxWaitSeconds) match
-        case Success(_) => Success(gameIdCounter += 1)
-        case Failure(e) => Failure(e)
-    }
+      update(currentGameId, field).andThen { x =>
+        gameIdCounter += 1
+      }
 
-  override def update(gameId: Int, field: FieldInterface[Player]): Future[Try[Unit]] =
-    Future {
+  override def update(gameId: Int, field: FieldInterface[Player]): Future[Any] =
       val json = HexJson.encode(field)
-
-      Success(Await.result(
-        gameCollection.updateOne(equal("_id", gameId), set("game", json), UpdateOptions().upsert(true))
+      gameCollection.updateOne(equal("_id", gameId), set("game", json), UpdateOptions().upsert(true))
           .asInstanceOf[SingleObservable[Unit]]
-          .head(),
-        maxWaitSeconds
-      ))
-    }
+          .head()
 
   override def load(gameId: Option[Int]): Future[Try[FieldInterface[Player]]] =
     Future {
@@ -75,19 +67,13 @@ object DAOMongo extends DAOInterface[Player] with StrictLogging {
       }
     }
 
-  override def delete(gameId: Option[Int]): Future[Try[Unit]] =
-    Future {
-      val deleteId = gameId.getOrElse({
-        Await.result(gameCollection.find().sort(Document("_id" -> -1)).first().head(),
-          maxWaitSeconds).get("_id").get.asInt32().getValue
-      })
-
-      Await.result(
-        gameCollection.deleteOne(equal("_id", deleteId))
-          .asInstanceOf[SingleObservable[Unit]]
-          .head(),
-        maxWaitSeconds
-      )
-      Success(())
-    }
-}
+  override def delete(gameId: Option[Int]): Future[Any] =
+    val deleteId = gameId.getOrElse({
+      Await.result(gameCollection.find().sort(Document("_id" -> -1)).first().head(),
+        maxWaitSeconds).get("_id").get.asInt32().getValue
+    })
+    
+    gameCollection.deleteOne(equal("_id", deleteId))
+        .asInstanceOf[SingleObservable[Unit]]
+        .head()
+  }

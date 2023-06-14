@@ -25,48 +25,36 @@ object DAOSlick extends DAOInterface[Player] with SlickBase:
 
   init(DBIO.seq(gameTable.schema.createIfNotExists, fieldTable.schema.createIfNotExists))
 
-  override def save(field: FieldInterface[Player]): Future[Try[Unit]] =
-    Future {
-      val currentGameId = gameIdCounter % maxGameCount
-      Await.result(update(currentGameId, field), maxWaitSeconds) match
-        case Success(_) => Success(gameIdCounter += 1)
-        case Failure(e) => Failure(e)
+  override def save(field: FieldInterface[Player]): Future[Any] =
+    val currentGameId = gameIdCounter % maxGameCount
+    update(currentGameId, field).andThen { x =>
+      gameIdCounter += 1
     }
 
-  override def update(gameId: Int, field: FieldInterface[Player]): Future[Try[Unit]] =
-    Future {
+  override def update(gameId: Int, field: FieldInterface[Player]): Future[Any] =
       val gameAction = gameTable.insertOrUpdate((gameId, field.matrix.row, field.matrix.col))
       val fieldAction = fieldTable.filter(_.gameId === gameId).delete
 
-      Await.result(database.run(gameAction), maxWaitSeconds)
-      Await.result(database.run(fieldAction), maxWaitSeconds)
+      database.run(gameAction).andThen(_ => database.run(fieldAction)).andThen(_ => insertField(gameId, field))
 
-      Await.result(insertField(gameId, field), maxWaitSeconds)
-    }
-
-  private def insertField(gameId: Int, field: FieldInterface[Player]): Future[Try[Unit]] =
+  private def insertField(gameId: Int, field: FieldInterface[Player]): Future[Any] =
     Future {
       for (row <- 0 until field.matrix.row) {
         for (col <- 0 until field.matrix.col) {
           val cell = field.matrix.cell(col, row)
           val insertAction = fieldTable += (gameId, row, col, cell.toString)
 
-          Await.result(database.run(insertAction), maxWaitSeconds)
+          database.run(insertAction)
         }
       }
-      Success(())
     }
 
-  override def delete(gameId: Option[Int]): Future[Try[Unit]] =
-    Future {
-      val finalGameId: Int = gameId.getOrElse(gameTable.map(_.id).max.asInstanceOf[Int])
-      val gameAction = gameTable.filter(_.id === finalGameId).delete
-      val fieldAction = fieldTable.filter(_.gameId === finalGameId).delete
+  override def delete(gameId: Option[Int]): Future[Any] =
+    val finalGameId: Int = gameId.getOrElse(gameTable.map(_.id).max.asInstanceOf[Int])
+    val gameAction = gameTable.filter(_.id === finalGameId).delete
+    val fieldAction = fieldTable.filter(_.gameId === finalGameId).delete
 
-      Await.result(database.run(gameAction), maxWaitSeconds)
-      Await.result(database.run(fieldAction), maxWaitSeconds)
-      Success(())
-    }
+    database.run(gameAction).andThen(_ => database.run(fieldAction))
 
   override def load(gameId: Option[Int]): Future[Try[FieldInterface[Player]]] =
     Future {

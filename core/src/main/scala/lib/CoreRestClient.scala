@@ -18,10 +18,16 @@ import lib.json.HexJson
 import requests.{Requester, Response, get, post}
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.Duration
+import concurrent.duration.DurationInt
+import scala.concurrent.{Await, Future}
+import scala.language.postfixOps
 import scala.util.{Failure, Success, Try}
 
 case class CoreRestClient() extends ControllerInterface[Player] with StrictLogging:
   private lazy val config = ConfigFactory.load()
+  private val maxWaitSeconds: Duration = config.getInt("db.maxWaitSeconds") seconds
+
   private val fallBackUrl = "http://0.0.0.0:8080"
   private val coreUrl =
     Try(s"http://${config.getString("http.core.host")}:${config.getString("http.core.port")}") match
@@ -36,69 +42,47 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
       case Failure(_) => null
 
   override def gameStatus: GameStatus =
-    var res: GameStatus = null
-    Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/status"))
-    .onComplete {
-      case Success(value) => value.entity.asInstanceOf[String] match
-        case "" => res = GameStatus.valueOf("ERROR")
-        case x => res = GameStatus.valueOf(x)
-      case Failure(e) => throw e
-    }
-    res
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/status"))
+    GameStatus.valueOf(getResponseAsString(response) match
+      case "" => "ERROR"
+      case x => x)
 
   override def fillAll(c: Player): Unit =
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/fillAll/$c"))
-      .onComplete {
-        case Success(value) => validate(HexJson.decode(value.toString))
-        case Failure(e) => throw e
-      }
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/fillAll/$c"))
+    Try(validateResponse(response))
 
   override def save(): Try[Unit] =
-    var res: Try[Unit] = null
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/save",
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/save",
       entity = HttpEntity(HexJson.encode(hexField))))
-      .onComplete {
-        case Success(value) => res = Try(validate(HexJson.decode(value.toString)))
-        case Failure(e) => throw e
-      }
-    res
+    Try(validateResponse(response))
 
   override def load(): Try[Unit] =
-    var res: Try[Unit] = null
-    Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/load"))
-      .onComplete {
-        case Success(value) => res = Try(validate(HexJson.decode(value.toString)))
-        case Failure(e) => throw e
-      }
-    res
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/load"))
+    Try(validateResponse(response))
 
   override def place(c: Player, x: Int, y: Int): Unit =
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/place/$c/$x/$y"))
-      .onComplete {
-        case Success(value) => validate(HexJson.decode(value.toString))
-        case Failure(e) => throw e
-      }
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/place/$c/$x/$y"))
+    validateResponse(response)
 
   override def undo(): Unit =
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/undo"))
-      .onComplete {
-        case Success(value) => validate(HexJson.decode(value.toString))
-        case Failure(e) => throw e
-      }
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/undo"))
+    validateResponse(response)
 
   override def redo(): Unit =
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/redo"))
-      .onComplete {
-        case Success(value) => validate(HexJson.decode(value.toString))
-        case Failure(e) => throw e
-      }
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/redo"))
+    validateResponse(response)
 
   override def reset(): Unit =
-    Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/reset"))
-      .onComplete {
-        case Success(value) => validate(HexJson.decode(value.toString))
-        case Failure(e) => throw e
-      }
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.POST, uri = s"$coreUrl/reset"))
+    validateResponse(response)
 
   private def validate(res: Try[FieldInterface[Player]]): Unit =
     res match
@@ -108,10 +92,13 @@ case class CoreRestClient() extends ControllerInterface[Player] with StrictLoggi
       case Failure(_) => logger.error("Failed to decode field")
 
   override def exportField: String =
-    var res: String = null
-    Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/exportField"))
-      .onComplete {
-        case Success(value) => res = value.entity.toString
-        case Failure(e) => throw e
-      }
-    res
+    val response: Future[HttpResponse] =
+      Http().singleRequest(HttpRequest(method = HttpMethods.GET, uri = s"$coreUrl/exportField"))
+    getResponseAsString(response)
+
+  private def validateResponse(res: Future[HttpResponse]): Unit =
+    validate(HexJson.decode(getResponseAsString(res)))
+
+  private def getResponseAsString(res: Future[HttpResponse]): String =
+    val responseAsString: Future[String] = Unmarshal(Await.result(res, maxWaitSeconds).entity).to[String]
+    Await.result(responseAsString, maxWaitSeconds)

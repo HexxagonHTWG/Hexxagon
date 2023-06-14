@@ -34,7 +34,7 @@ object PersistenceRestService extends IOApp with StrictLogging:
     case req@POST -> Root / "update" / id =>
       saveBody(req, dao.update(id.toInt, _))
     case POST -> Root / "delete" / id =>
-      dao.delete(Some(id.toInt))
+      Await.result(dao.delete(Some(id.toInt)), maxWaitSeconds)
       Ok("Deleted")
     case GET -> Root / "loadFile" =>
       loadField(Future(fileIO.load))
@@ -55,11 +55,11 @@ object PersistenceRestService extends IOApp with StrictLogging:
       .use(_ => IO.never)
       .as(ExitCode.Success)
 
-  private def saveBody(req: Request[IO], save: FieldInterface[Player] => Future[Try[Unit]]): IO[Response[IO]] =
+  private def saveBody(req: Request[IO], save: FieldInterface[Player] => Future[Any]): IO[Response[IO]] =
     req.as[String].flatMap { f =>
       HexJson.decode(f) match
         case Success(field) =>
-          Await.result(save(field), maxWaitSeconds) match
+          Try(Await.result(save(field), maxWaitSeconds)) match
             case Success(_) => Ok("Saved")
             case Failure(exception) => logger.error(exception.getMessage)
               InternalServerError("Could not save game")
